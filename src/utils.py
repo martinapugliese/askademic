@@ -19,8 +19,3 @@ def get_arxiv_categories():
         d_categories[cat_long.strip()] = cat_id.strip()
 
     return d_categories
-
-
-if __name__ == "__main__":
-    taxonomy_dict = get_arxiv_categories()
-    print(taxonomy_dict)

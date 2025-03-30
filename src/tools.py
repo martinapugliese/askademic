@@ -9,6 +9,7 @@ import requests
 
 from utils import get_arxiv_categories
 
+logging.basicConfig(level=logging.INFO, filename="logs.txt")
 logger = logging.getLogger(__name__)
 
 
@@ -29,18 +30,19 @@ def identify_latest_day(category: str = "cs.AI"):
     url = f"{base_url}search_query={search_query}&start=0&max_results=1"
     url += f"&sortBy=submittedDate&sortOrder=descending"
 
-    print("*** DAY url:", url)
+    logger.info(f"*** API URL to find latest available day: {url}")
 
     res = requests.get(url, timeout=360)
     if not res.ok:
         latest_day = "Not Found"
+        logger.error(f"Error fetching latest day: {res.status_code}")
     else:
         # remove the time part
         latest_day = feedparser.parse(res.content)["entries"][0]["published"].split(
             "T"
         )[0]
 
-    print("*** latest day:", latest_day)
+    logger.info(f"Latest available day: {latest_day}")
 
     return latest_day
 
@@ -78,7 +80,7 @@ def search_articles(
         f"{base_url}search_query={search_query}&start={start}&max_results={max_results}"
     )
     url += f"&sortBy={sortby}&sortOrder=descending"
-    print("*** url:", url)
+    logger.info(f"*** API URL to search articles: {url}")
 
     res = requests.get(url, timeout=360)
     if not res.ok:
@@ -110,7 +112,7 @@ def retrieve_recent_articles(
     search_query = f"cat:{category}"
     url = f"{base_url}search_query={search_query}&start=0&max_results=300"
     url += f"&sortBy=submittedDate&sortOrder=descending"
-    print("*** url:", url)
+    logger.info(f"*** API URL to retrieve recent articles: {url}")
 
     response = requests.get(url, timeout=360)
     if not response.ok:
@@ -137,7 +139,7 @@ def get_article(url: str, max_attempts: int = 10) -> str:
         max_attempts: the maximum number of attempts to open the article. Default is 10. Do not change this parameter.
     """
 
-    print("**** article url:", url)
+    logger.info(f"*** API URL to retrieve article: {url}")
 
     attempts = 0
     article = ""
@@ -156,7 +158,9 @@ def get_article(url: str, max_attempts: int = 10) -> str:
                     article = "Not Found"
                 break
         except requests.exceptions.ConnectionError:
-            print("ConnectionError occurred. Retrying in 60 seconds...")
+            logger.error(
+                f"ConnectionError exception occurred, retrying in 60 seconds..."
+            )
             time.sleep(60)
             attempts += 1
 

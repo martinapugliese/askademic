@@ -36,22 +36,6 @@ class Category(BaseModel):
     category_name: str = Field(description="The category name of the topic requested.")
 
 
-class ArticleInfo(BaseModel):
-    title: str = Field(description="Title of the article")
-    summary: str = Field(description="Summary of the article, in 3 lines")
-    examples: list[str] = Field(
-        description="Relevant examples aiding comprehension, taken from the article, if there are."
-    )
-    topic: str = Field(description="Topic of the article")
-
-
-class ArticlesListResponse(BaseModel):
-    category_id: Category = Field(description="The category requested.")
-    article: list[ArticleInfo] = Field(
-        description="List of article retrieved with all the info"
-    )
-
-
 class SummaryResponse(BaseModel):
     category: Category = Field(description="The category of the articles.")
     latest_published_day: str = Field(
