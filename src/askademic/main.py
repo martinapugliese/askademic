@@ -31,7 +31,7 @@ async def main():
         )
     )
 
-    memory = Memory(max_request_tokens=5e5)
+    memory = Memory(max_request_tokens=1e5)
 
     while True:
         user_question = Prompt.ask(

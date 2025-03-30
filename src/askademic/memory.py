@@ -36,11 +36,12 @@ class Memory:
 
         if total_tokens > self.get_last_message_tokens():
 
-            logger.info(f"*** Adding messages current total tokens: {total_tokens}")
+            logger.info(f"*** Adding messages, current total tokens: {total_tokens}")
             self._message_history.append({
                 "total_tokens": total_tokens,
                 "message": message
             })
+        self._prune_history()
 
     def get_messages(self):
         messages = []
