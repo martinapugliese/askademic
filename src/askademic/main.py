@@ -5,14 +5,18 @@ from inspect import cleandoc
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 from rich.prompt import Prompt
+import asyncio
+import nest_asyncio
+
 
 from askademic.agents import orchestrator_agent
+from memory import Memory
 
 console = Console()
 logger = logging.getLogger(__name__)
 
 
-def main():
+async def main():
 
     console.print(
         cleandoc(
@@ -26,6 +30,8 @@ def main():
     """
         )
     )
+
+    memory = Memory(max_request_tokens=5e5)
 
     while True:
         user_question = Prompt.ask(
@@ -44,12 +50,18 @@ def main():
         while attempts < max_attempts:
 
             try:
-                agent_result = orchestrator_agent.run(
+                agent_result = await orchestrator_agent.run(
                     user_question,
                     usage_limits=UsageLimits(request_limit=20),  # limit requests
+                    message_history=memory.get_messages(),
                 )
                 for k in agent_result.data.__dict__:
                     console.print(f"{k}: {getattr(agent_result.data, k)}")
+
+                memory.add_message(
+                    agent_result.usage().total_tokens,
+                    agent_result.new_messages(),
+                )
 
                 break
             except Exception as e:
@@ -59,4 +71,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
