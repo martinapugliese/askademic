@@ -1,5 +1,9 @@
+import logging
 from typing import List, Dict
 from pydantic_ai.messages import ModelMessage
+
+logging.basicConfig(level=logging.INFO, filename="logs.txt")
+logger = logging.getLogger(__name__)
 
 class Memory:
 
@@ -26,9 +30,13 @@ class Memory:
                 m["total_tokens"] -= first_message_tokens
             total_tokens = self._message_history[-1]["total_tokens"]
 
+        logger.info(f"*** Pruned messages, current total tokens: {total_tokens}")
+
     def add_message(self, total_tokens: int, message: ModelMessage):
 
         if total_tokens > self.get_last_message_tokens():
+
+            logger.info(f"*** Adding messages current total tokens: {total_tokens}")
             self._message_history.append({
                 "total_tokens": total_tokens,
                 "message": message
