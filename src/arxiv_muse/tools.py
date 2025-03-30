@@ -7,7 +7,7 @@ import pandas as pd
 import pymupdf
 import requests
 
-from utils import get_arxiv_categories
+from arxiv_muse.utils import get_arxiv_categories
 
 logging.basicConfig(level=logging.INFO, filename="logs.txt")
 logger = logging.getLogger(__name__)

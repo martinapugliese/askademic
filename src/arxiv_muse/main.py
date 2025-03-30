@@ -8,7 +8,7 @@ from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 from rich.prompt import Prompt
 
-from agents import orchestrator_agent
+from arxiv_muse.agents import orchestrator_agent
 
 nest_asyncio.apply()  # Allows nesting of event loops
 
