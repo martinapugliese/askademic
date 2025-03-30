@@ -1,18 +1,17 @@
 from typing import Literal
 
-import httpx
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext, Tool
 
-from constants import GEMINI_2_FLASH_MODEL_ID
-from prompts import (  # SYSTEM_PROMPT_QUESTION,; SYSTEM_PROMPT_SUMMARY,
+from askademic.constants import GEMINI_2_FLASH_MODEL_ID
+from askademic.prompts import (  # SYSTEM_PROMPT_QUESTION,; SYSTEM_PROMPT_SUMMARY,
     SYSTEM_PROMPT_ORCHESTRATOR,
     SYSTEM_PROMPT_QUESTION,
     SYSTEM_PROMPT_SUMMARY,
     USER_PROMPT_QUESTION_TEMPLATE,
     USER_PROMPT_SUMMARY_TEMPLATE,
 )
-from tools import (
+from askademic.tools import (
     choose_category,
     get_article,
     identify_latest_day,
