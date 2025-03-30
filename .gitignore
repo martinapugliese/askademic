@@ -25,3 +25,7 @@ pdfs/
 
 # logs
 *.txt
+
+
+#nbs
+*.ipynb
