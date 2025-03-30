@@ -6,7 +6,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "arxiv-muse"
+name = "askademic"
 version = "0.0.1"
 dependencies = [
   "pydantic==2.10.6",
@@ -20,7 +20,8 @@ dependencies = [
   "asyncio==3.4.3",
   "nest-asyncio==1.6.0",
   "rich==13.9.4",
-  "pytest==8.3.5"
+  "pytest==8.3.5",
+  "pre-commit==4.2.0"
 ]
 requires-python = ">=3.11"
 
@@ -30,18 +31,11 @@ classifiers = [
 ]
 
 [tool.setuptools]
-py-modules = [
-  "src"]
-
-
-[project.optional-dependencies]
-dev = [
-  "pre-commit",
-  "pytest"
-]
+packages = ["askademic"]
+package-dir = { "" = "src" }
 
 [project.scripts]
-arxiv-muse = "arxiv_muse.main:main"
+askademic = "askademic.main:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

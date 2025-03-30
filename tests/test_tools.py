@@ -2,10 +2,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from arxiv_muse.utils import get_arxiv_categories
+from askademic.tools import identify_latest_day
+from askademic.utils import get_arxiv_categories
 
 
-@patch("arxiv_muse.utils.requests.get")
+@patch("askademic.utils.requests.get")
 def test_get_arxiv_categories_200(mock_requests_get):
 
     # Sample HTML response mimicking the arXiv category taxonomy page
@@ -34,7 +35,7 @@ def test_get_arxiv_categories_200(mock_requests_get):
     mock_requests_get.assert_called_once_with("https://arxiv.org/category_taxonomy")
 
 
-@patch("arxiv_muse.utils.requests.get")
+@patch("askademic.utils.requests.get")
 def test_get_arxiv_categories_non_200(mock_requests_get):
     # Mock the response object with a non-200 status code
     mock_response = MagicMock()
@@ -46,3 +47,43 @@ def test_get_arxiv_categories_non_200(mock_requests_get):
         get_arxiv_categories()
 
     mock_requests_get.assert_called_once_with("https://arxiv.org/category_taxonomy")
+
+
+@patch("askademic.tools.requests.get")
+@patch("askademic.tools.feedparser.parse")
+def test_identify_latest_day(mock_feedparser_parse, mock_requests_get):
+    # Mock the response from requests.get
+    mock_response = MagicMock()
+    mock_response.ok = True
+    mock_response.content = b"mock content"
+    mock_requests_get.return_value = mock_response
+
+    # Mock the parsed feedparser response
+    mock_feedparser_parse.return_value = {
+        "entries": [{"published": "2025-03-29T12:00:00Z"}]
+    }
+    result = identify_latest_day("cs.AI")
+
+    assert result == "2025-03-29"
+    mock_requests_get.assert_called_once_with(
+        "http://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=1&sortBy=submittedDate&sortOrder=descending",
+        timeout=360,
+    )
+    mock_feedparser_parse.assert_called_once_with(b"mock content")
+
+
+@patch("askademic.tools.requests.get")
+def test_identify_latest_day_error(mock_requests_get):
+    # Mock the response with an error status
+    mock_response = MagicMock()
+    mock_response.ok = False
+    mock_response.status_code = 500
+    mock_requests_get.return_value = mock_response
+
+    result = identify_latest_day("cs.AI")
+
+    assert result == "Not Found"
+    mock_requests_get.assert_called_once_with(
+        "http://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=1&sortBy=submittedDate&sortOrder=descending",
+        timeout=360,
+    )

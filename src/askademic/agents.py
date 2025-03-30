@@ -1,23 +1,22 @@
 from typing import Literal
 
-import httpx
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext, Tool
-from tools import (
-    choose_category,
-    get_article,
-    identify_latest_day,
-    retrieve_recent_articles,
-    search_articles,
-)
 
-from arxiv_muse.constants import GEMINI_2_FLASH_MODEL_ID
-from arxiv_muse.prompts import (  # SYSTEM_PROMPT_QUESTION,; SYSTEM_PROMPT_SUMMARY,
+from askademic.constants import GEMINI_2_FLASH_MODEL_ID
+from askademic.prompts import (  # SYSTEM_PROMPT_QUESTION,; SYSTEM_PROMPT_SUMMARY,
     SYSTEM_PROMPT_ORCHESTRATOR,
     SYSTEM_PROMPT_QUESTION,
     SYSTEM_PROMPT_SUMMARY,
     USER_PROMPT_QUESTION_TEMPLATE,
     USER_PROMPT_SUMMARY_TEMPLATE,
+)
+from askademic.tools import (
+    choose_category,
+    get_article,
+    identify_latest_day,
+    retrieve_recent_articles,
+    search_articles,
 )
 
 

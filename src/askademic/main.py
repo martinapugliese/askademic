@@ -1,27 +1,23 @@
-import asyncio
 import logging
 import time
 from inspect import cleandoc
 
-import nest_asyncio
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 from rich.prompt import Prompt
 
-from arxiv_muse.agents import orchestrator_agent
-
-nest_asyncio.apply()  # Allows nesting of event loops
+from askademic.agents import orchestrator_agent
 
 console = Console()
 logger = logging.getLogger(__name__)
 
 
-async def main():
+def main():
 
     console.print(
         cleandoc(
             """
-    [bold cyan]Hello, welcome to the arXivMuse![/bold cyan] :smiley:
+    [bold cyan]Hello, welcome to Askademic![/bold cyan] :smiley:
     [bold cyan]
     I can assist you with
     - summarizing the latest literature in a field or topic (published in the latest available day),
@@ -48,7 +44,7 @@ async def main():
         while attempts < max_attempts:
 
             try:
-                agent_result = await orchestrator_agent.run(
+                agent_result = orchestrator_agent.run(
                     user_question,
                     usage_limits=UsageLimits(request_limit=20),  # limit requests
                 )
@@ -63,4 +59,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
