@@ -2,6 +2,7 @@ import logging
 import time
 from inspect import cleandoc
 
+from memory import Memory
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 from rich.prompt import Prompt
@@ -27,6 +28,8 @@ def main():
         )
     )
 
+    memory = Memory(max_request_tokens=1e5)
+
     while True:
         user_question = Prompt.ask(
             "[bold yellow]Ask me a question (or type 'exit' to quit)[/bold yellow] :speech_balloon:"
@@ -44,12 +47,18 @@ def main():
         while attempts < max_attempts:
 
             try:
-                agent_result = orchestrator_agent.run(
+                agent_result = orchestrator_agent.run_sync(
                     user_question,
                     usage_limits=UsageLimits(request_limit=20),  # limit requests
+                    message_history=memory.get_messages(),
                 )
                 for k in agent_result.data.__dict__:
                     console.print(f"{k}: {getattr(agent_result.data, k)}")
+
+                memory.add_message(
+                    agent_result.usage().total_tokens,
+                    agent_result.new_messages(),
+                )
 
                 break
             except Exception as e:
