@@ -6,7 +6,7 @@ from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 from rich.prompt import Prompt
 
-from askademic.agents import orchestrator_agent
+from askademic.agents import allower_agent, orchestrator_agent
 from askademic.memory import Memory
 
 console = Console()
@@ -47,18 +47,29 @@ def main():
         while attempts < max_attempts:
 
             try:
-                agent_result = orchestrator_agent.run_sync(
-                    user_question,
-                    usage_limits=UsageLimits(request_limit=20),  # limit requests
-                    message_history=memory.get_messages(),
-                )
-                for k in agent_result.data.__dict__:
-                    console.print(f"{k}: {getattr(agent_result.data, k)}")
 
-                memory.add_message(
-                    agent_result.usage().total_tokens,
-                    agent_result.new_messages(),
+                allower = allower_agent.run_sync(
+                    user_question,
+                    usage_limits=UsageLimits(request_limit=20),  # limit to 10 requests
                 )
+
+                if allower.data.is_scientific:
+                    agent_result = orchestrator_agent.run_sync(
+                        user_question,
+                        usage_limits=UsageLimits(request_limit=20),  # limit requests
+                        message_history=memory.get_messages(),
+                    )
+                    for k in agent_result.data.__dict__:
+                        console.print(f"{k}: {getattr(agent_result.data, k)}")
+
+                    memory.add_message(
+                        agent_result.usage().total_tokens,
+                        agent_result.new_messages(),
+                    )
+                else:
+                    console.print(
+                        "[bold red]The question is not scientific, please try again.[/bold red]"
+                    )
 
                 break
             except Exception as e:
