@@ -2,12 +2,12 @@ import logging
 import time
 from inspect import cleandoc
 
-from memory import Memory
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 from rich.prompt import Prompt
 
 from askademic.agents import orchestrator_agent
+from askademic.memory import Memory
 
 console = Console()
 logger = logging.getLogger(__name__)
