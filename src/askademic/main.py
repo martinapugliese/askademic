@@ -80,4 +80,6 @@ async def main():
 
 
 if __name__ == "__main__":
+    # TODO: this fix is temporary. We should monitor pydantic-ai issues and see when they solve it
+    # The workaround is described here: https://github.com/pydantic/pydantic-ai/issues/748
     asyncio.run(main())
