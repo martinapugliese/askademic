@@ -5,9 +5,11 @@ from pydantic_ai import Agent, RunContext, Tool
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
 from askademic.prompts import (  # SYSTEM_PROMPT_QUESTION,; SYSTEM_PROMPT_SUMMARY,
+    SYSTEM_PROMPT_ALLOWER_TEMPLATE,
     SYSTEM_PROMPT_ORCHESTRATOR,
     SYSTEM_PROMPT_QUESTION,
     SYSTEM_PROMPT_SUMMARY,
+    USER_PROMPT_ALLOWER_TEMPLATE,
     USER_PROMPT_QUESTION_TEMPLATE,
     USER_PROMPT_SUMMARY_TEMPLATE,
 )
@@ -45,6 +47,12 @@ class SummaryResponse(BaseModel):
     )
 
 
+class AllowResponse(BaseModel):
+    is_scientific: bool = Field(
+        description="Whether the question/request is scientific or not."
+    )
+
+
 class Context(BaseModel):
     pass
 
@@ -70,6 +78,12 @@ question_agent = Agent(
         Tool(get_article, takes_ctx=False),
     ],
     model_settings={"max_tokens": 1000, "temperature": 0},
+)
+
+allower_agent = Agent(
+    GEMINI_2_FLASH_MODEL_ID,
+    system_prompt=SYSTEM_PROMPT_ALLOWER_TEMPLATE,
+    result_type=AllowResponse,
 )
 
 orchestrator_agent = Agent(

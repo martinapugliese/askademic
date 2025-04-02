@@ -2,7 +2,7 @@ import asyncio
 import time
 
 import nest_asyncio
-from agents import orchestrator_agent
+from agents import allower_agent, orchestrator_agent
 from pydantic_ai.usage import UsageLimits
 
 nest_asyncio.apply()  # Allows nesting of event loops
@@ -10,6 +10,7 @@ nest_asyncio.apply()  # Allows nesting of event loops
 # THIS IS ONLY FOR LOCAL TESTING
 
 question_list = [
+    "Hello",
     "Find the most recent articles about AI",
     "What are the most recent articles published about reinforcement learning?",
     "What are the most recent articles published about neutrinos?",
@@ -33,11 +34,23 @@ async def main():
 
         while attempts < max_attempts:
             try:
-                result = await orchestrator_agent.run(
+
+                allower = await allower_agent.run(
                     question,
                     usage_limits=UsageLimits(request_limit=20),  # limit to 10 requests
                 )
-                print(result)
+
+                if allower.data.is_scientific:
+                    result = await orchestrator_agent.run(
+                        question,
+                        usage_limits=UsageLimits(
+                            request_limit=20
+                        ),  # limit to 10 requests
+                    )
+                    print(result)
+
+                else:
+                    print("The question is not scientific")
                 break
             except Exception as e:
                 print("Exception has occurred", e)
