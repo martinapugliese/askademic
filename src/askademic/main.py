@@ -68,7 +68,7 @@ def main():
                     )
                 else:
                     console.print(
-                        "[bold red]The question is not scientific, please try again.[/bold red]"
+                        "[bold red]This question isn't scientific—it's more of a disturbance in the Force! Try again, young Padawan.[/bold red]"
                     )
 
                 break

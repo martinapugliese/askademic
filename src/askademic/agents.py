@@ -5,10 +5,10 @@ from pydantic_ai import Agent, RunContext, Tool
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
 from askademic.prompts import (  # SYSTEM_PROMPT_QUESTION,; SYSTEM_PROMPT_SUMMARY,
+    SYSTEM_PROMPT_ALLOWER_TEMPLATE,
     SYSTEM_PROMPT_ORCHESTRATOR,
     SYSTEM_PROMPT_QUESTION,
     SYSTEM_PROMPT_SUMMARY,
-    SYSTEM_PROMT_ALLOWER_TEMPLATE,
     USER_PROMPT_ALLOWER_TEMPLATE,
     USER_PROMPT_QUESTION_TEMPLATE,
     USER_PROMPT_SUMMARY_TEMPLATE,
@@ -82,7 +82,7 @@ question_agent = Agent(
 
 allower_agent = Agent(
     GEMINI_2_FLASH_MODEL_ID,
-    system_prompt=SYSTEM_PROMT_ALLOWER_TEMPLATE,
+    system_prompt=SYSTEM_PROMPT_ALLOWER_TEMPLATE,
     result_type=AllowResponse,
 )
 

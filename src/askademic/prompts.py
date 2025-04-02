@@ -81,7 +81,7 @@ SYSTEM_PROMPT_QUESTION = cleandoc(
     """
 )
 
-SYSTEM_PROMT_ALLOWER_TEMPLATE = cleandoc(
+SYSTEM_PROMPT_ALLOWER_TEMPLATE = cleandoc(
     """
     You are an experienced reader of academic literature and an expert
     in discriminating between scientific and non-scientific content.
