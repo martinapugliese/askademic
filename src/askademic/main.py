@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import time
 from inspect import cleandoc
@@ -13,7 +14,7 @@ console = Console()
 logger = logging.getLogger(__name__)
 
 
-def main():
+async def main():
 
     console.print(
         cleandoc(
@@ -48,13 +49,13 @@ def main():
 
             try:
 
-                allower = allower_agent.run_sync(
+                allower = await allower_agent.run(
                     user_question,
                     usage_limits=UsageLimits(request_limit=20),  # limit to 10 requests
                 )
 
                 if allower.data.is_scientific:
-                    agent_result = orchestrator_agent.run_sync(
+                    agent_result = await orchestrator_agent.run(
                         user_question,
                         usage_limits=UsageLimits(request_limit=20),  # limit requests
                         message_history=memory.get_messages(),
@@ -79,4 +80,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
