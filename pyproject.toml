@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "askademic"
-version = "0.0.1"
+version = "0.0.1-beta"
 dependencies = [
   "pydantic==2.10.6",
   "pydantic-ai==0.0.44",
@@ -35,7 +35,7 @@ packages = ["askademic"]
 package-dir = { "" = "src" }
 
 [project.scripts]
-askademic = "askademic.main:main"
+askademic = "askademic.main:_main"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

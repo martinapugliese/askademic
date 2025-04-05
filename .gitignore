@@ -1,8 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 
-# Unit test / coverage reports TODO
-
 # Jupyter Notebook
 .ipynb_checkpoints
 */.ipynb_checkpoints
