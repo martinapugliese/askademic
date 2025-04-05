@@ -14,8 +14,8 @@ from askademic.prompts import (
     USER_PROMPT_SUMMARY_TEMPLATE,
 )
 from askademic.tools import (
-    choose_category,
     get_article,
+    get_categories,
     identify_latest_day,
     retrieve_recent_articles,
     search_articles,
@@ -39,7 +39,7 @@ class Category(BaseModel):
 
 class SummaryResponse(BaseModel):
     category: Category = Field(description="The category of the articles.")
-    latest_published_date: str = Field(
+    latest_published_day: str = Field(
         description="The latest day of publications available on the API."
     )
     summary: str = Field(
@@ -65,7 +65,7 @@ summary_agent = Agent(
     system_prompt=SYSTEM_PROMPT_SUMMARY,
     result_type=SummaryResponse,
     tools=[
-        Tool(choose_category, takes_ctx=False),
+        Tool(get_categories, takes_ctx=False),
         Tool(identify_latest_day, takes_ctx=False),
         Tool(retrieve_recent_articles, takes_ctx=False),
     ],

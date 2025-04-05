@@ -4,22 +4,22 @@ from datetime import datetime
 from io import BytesIO
 
 import feedparser
-
-# import pandas as pd
 import pymupdf
 import requests
 
 from askademic.constants import ARXIV_BASE_URL
-from askademic.utils import get_arxiv_categories, organise_api_response_as_dataframe
+from askademic.utils import list_categories, organise_api_response_as_dataframe
 
 logging.basicConfig(level=logging.INFO, filename="logs.txt")
 logger = logging.getLogger(__name__)
 
 
-def choose_category(topic: str) -> dict:
-    categories = get_arxiv_categories()
+def get_categories() -> dict:
 
-    return categories
+    # these are from page "https://arxiv.org/category_taxonomy"
+    # alternative would be to scrape the page but it's not a good idea as you risk getting banned
+    # unfortunately there isn't an API endpoint for these
+    return list_categories()
 
 
 def identify_latest_day(category: str = "cs.AI") -> str:
@@ -58,7 +58,7 @@ def search_articles(
 ):
     """
     Search articles on arXiv according to the query value in the text context of the article abstracts.
-    It returns a markdown table with max_results articles and the following values:
+    Return a markdown table with max_results articles and the following values:
     - pdf: the url to the article pdf
     - updated: the last time the article was updated
     - published: the date when the article was published
@@ -82,18 +82,6 @@ def search_articles(
     logger.info(f"{datetime.now()}: API URL to search articles: {url}")
 
     response = requests.get(url, timeout=360)
-    # if not response.ok:
-    #     df_articles = pd.DataFrame()
-    #     logger.error(f"{datetime.now()}: Error fetching articles: {response.status_code}")
-    # else:
-    #     articles_list = feedparser.parse(response.content)["entries"]
-    #     df_articles = pd.DataFrame(articles_list)[
-    #         ["id", "updated", "published", "title", "summary"]
-    #     ]
-    #     df_articles = df_articles.rename(columns={"summary": "abstract"})
-    #     df_articles.id = df_articles.id.apply(lambda s: s.replace("/abs/", "/pdf/"))
-    #     df_articles = df_articles.to_markdown(index=False)
-
     df_articles = organise_api_response_as_dataframe(response)
 
     markdown = f"""
@@ -109,6 +97,18 @@ def retrieve_recent_articles(
     category: str = "cs.AI",
     latest_day: str = "2022-01-01",
 ):
+    """
+    Search articles on arXiv by category, filtering to the ones publichshed on the latest available day.
+    Return a markdown table with articles and the following values:
+    - pdf: the url to the article pdf
+    - updated: the last time the article was updated
+    - published: the date when the article was published
+    - title: the article title
+    - summary: a summary of the article's content
+    Args:
+        category: the category ID used for the search
+        latest_day: the day of publications to filter articles by
+    """
 
     search_query = f"cat:{category}"
     # 300 is empirical: there should never be more articles in a day for a category
@@ -117,16 +117,6 @@ def retrieve_recent_articles(
     logger.info(f"{datetime.now()}: API URL to retrieve recent articles: {url}")
 
     response = requests.get(url, timeout=360)
-    # if not response.ok:
-    #     df_articles = pd.DataFrame()
-    #     logger.error(f"{datetime.now()}: No articles found for category {category}")
-    # else:
-    #     articles_list = feedparser.parse(response.content)["entries"]
-    #     df_articles = pd.DataFrame(articles_list)[
-    #         ["id", "updated", "published", "title", "summary"]
-    #     ]
-    #     df_articles = df_articles.rename(columns={"summary": "abstract"})
-
     df_articles = organise_api_response_as_dataframe(response)
 
     # remove time part from published and filter DF to latest day (string)
@@ -171,6 +161,8 @@ def get_article(url: str, max_attempts: int = 10) -> str:
 
     # curtail the article to 100k characters (there can be books, too long)
     article = article[:100000]
+
+    print(f"Article length: {len(article)}")
 
     article = f"""
         -------{url}------------
