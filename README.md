@@ -42,7 +42,7 @@ You just run it with command `askademic` from the terminal.
 
 ### Examples
 
-Open the toggles for some screenshots of what you get as
+Open the toggles for some screenshots of what you get
 
 <details>
 <summary>When you ask for a summary of latest papers</summary>
@@ -64,7 +64,7 @@ Open the toggles for some screenshots of what you get as
 </details>
 
 <details>
-<summary>When you ask something non-scientific, it'll give you a pun!</summary>
+<summary>When you ask something non-scientific, you deserve a pun!</summary>
 
 ![example of question1](assets/pun.png)
 </details>
