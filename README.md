@@ -42,7 +42,7 @@ Open the toggles for some screenshots of what you get as
 
 <details>
 <summary>When you ask for a summary of latest papers</summary>
-![ddsd](assets/summary1.png)
+![example of summary1](assets/summary1.png)
 </details>
 
 ## Acknowledgments
