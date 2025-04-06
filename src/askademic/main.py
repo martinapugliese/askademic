@@ -10,6 +10,7 @@ from rich.prompt import Prompt
 
 from askademic.agents import allower_agent, orchestrator_agent
 from askademic.memory import Memory
+from askademic.prompts import USER_PROMPT_ALLOWER_TEMPLATE
 
 today = datetime.now().strftime("%Y-%m-%d")
 
@@ -63,7 +64,7 @@ async def ask_me():
             try:
 
                 allower = await allower_agent.run(
-                    user_question,
+                    USER_PROMPT_ALLOWER_TEMPLATE.format(question=user_question),
                     usage_limits=UsageLimits(request_limit=20),  # limit to 10 requests
                 )
 

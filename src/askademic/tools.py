@@ -164,8 +164,6 @@ def get_article(url: str, max_attempts: int = 10) -> str:
     # curtail the article to 100k characters (there can be books, too long)
     article = article[:100000]
 
-    print(f"Article length: {len(article)}")
-
     article = f"""
         -------{url}------------
         {article}
