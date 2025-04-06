@@ -4,6 +4,7 @@ Askademic is an AI agent that helps you with finding information in research pap
 * summarise the latest papers in a category/subcategory for you
 * answer questions by retrieving relevant papers and searching within them to produce an answer
 It also allows you to have a conversation, that is, to ask for follow-up questions.
+And, it has an eye for things non-scientific... see below.
 
 It works as a CLI tool.
 
@@ -42,8 +43,34 @@ Open the toggles for some screenshots of what you get as
 
 <details>
 <summary>When you ask for a summary of latest papers</summary>
+
 ![example of summary1](assets/summary1.png)
+
+![example of summary2](assets/summary2.png)
+
 </details>
+
+<details>
+<summary>When you ask questions - with and without follow-up</summary>
+
+![example of question1](assets/question1.png)
+
+![example of question2](assets/question2.png)
+
+![example of question3](assets/question3_and_convo.png)
+</details>
+
+<details>
+<summary>When you ask something non-scientific, it'll give you a pun!</summary>
+
+![example of question1](assets/pun.png)
+</details>
+
+## Roadmap and issues
+
+This is a beta. If you see this, please try it and give us feedback. If you find quirks or something that is not great, you are more than welcome to open an issue in this repo, please describe the issue clearly, ideally with screenshots.
+
+We have several ideas to develop this further, adding new capabilities and features, so stay tuned!
 
 ## Acknowledgments
 
