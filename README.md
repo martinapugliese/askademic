@@ -69,7 +69,7 @@ Open the toggles for some screenshots of what you get as
 ![example of question1](assets/pun.png)
 </details>
 
-## Roadmap and issues
+## Roadmap and issues
 
 This is a beta. If you see this, please try it and give us feedback. If you find quirks or something that is not great, you are more than welcome to open an issue in this repo, please describe the issue clearly, ideally with screenshots.
 
