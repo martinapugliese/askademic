@@ -4,6 +4,9 @@ Askademic is an AI agent that helps you with finding information in research pap
 * summarise the latest papers in a category/subcategory for you
 * answer questions by retrieving relevant papers and searching within them to produce an answer
 It also allows you to have a conversation, that is, to ask for follow-up questions.
+
+As for everything that uses LLM, check your outputs - it can male mistakes. The tool is designed to provide short answers and suggestions, leaving to the user the effort to dive deeper into the matter.
+
 And, it has an eye for things non-scientific... see below.
 
 It works as a CLI tool.
