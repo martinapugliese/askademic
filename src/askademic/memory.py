@@ -4,7 +4,9 @@ from typing import Dict, List
 
 from pydantic_ai.messages import ModelMessage
 
-logging.basicConfig(level=logging.INFO, filename="logs.txt")
+today = datetime.now().strftime("%Y-%m-%d")
+
+logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 

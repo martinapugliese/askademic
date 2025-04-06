@@ -10,7 +10,9 @@ import requests
 from askademic.constants import ARXIV_BASE_URL
 from askademic.utils import list_categories, organise_api_response_as_dataframe
 
-logging.basicConfig(level=logging.INFO, filename="logs.txt")
+today = datetime.now().strftime("%Y-%m-%d")
+
+logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 

@@ -11,20 +11,30 @@ from rich.prompt import Prompt
 from askademic.agents import allower_agent, orchestrator_agent
 from askademic.memory import Memory
 
-console = Console()
+today = datetime.now().strftime("%Y-%m-%d")
+
+logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
+console = Console()
 
-async def _main():
+
+async def ask_me():
 
     console.print(
         cleandoc(
             """
     [bold cyan]Hello, welcome to Askademic![/bold cyan] :smiley:
     [bold cyan]
-    I can assist you with
-    - summarizing the latest literature in a field or topic (published in the latest available day),
-    - answering specific questions
+    You can ask me to:
+    - summarize the latest literature (published in the latest available day) in an arXiv category or subcategory,
+    - retrieve answers for specific research questions/topics
+
+    Ask me a question with either of these requests.
+    For the summary, I will find the best matching arXiv category to your request.
+    For the specific topic, I will look for relevant papers and find the answer for you.
+
+    I will write to a logs file filenamed with today's date.
     [/bold cyan]
     """
         )
@@ -75,14 +85,17 @@ async def _main():
 
                 break
             except Exception as e:
-                logger.error(
-                    f"{datetime.now()}: An error has occurred: {e}, retrying in 60 seconds..."
-                )
+                logger.error(f"An error has occurred: {e}, retrying in 60 seconds...")
                 time.sleep(60)
                 attempts += 1
 
 
+# TODO: we have to wrap because main can't be async
+# this fix is temporary. We should monitor pydantic-ai issues and see when they solve it
+# The workaround is described here: https://github.com/pydantic/pydantic-ai/issues/748
+def main():
+    asyncio.run(ask_me())
+
+
 if __name__ == "__main__":
-    # TODO: this fix is temporary. We should monitor pydantic-ai issues and see when they solve it
-    # The workaround is described here: https://github.com/pydantic/pydantic-ai/issues/748
-    asyncio.run(_main())
+    main()
