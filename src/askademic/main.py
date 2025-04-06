@@ -34,6 +34,8 @@ async def ask_me():
     For the summary, I will find the best matching arXiv category to your request.
     For the specific topic, I will look for relevant papers and find the answer for you.
 
+    I will do my best but I may occasionally get confused - please let me know on GitHub if you notice anything odd!
+
     I will write to a logs file filenamed with today's date.
     [/bold cyan]
     """

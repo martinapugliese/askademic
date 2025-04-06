@@ -87,6 +87,7 @@ allower_agent = Agent(
     GEMINI_2_FLASH_MODEL_ID,
     system_prompt=SYSTEM_PROMPT_ALLOWER_TEMPLATE,
     result_type=AllowResponse,
+    model_settings={"max_tokens": 1000, "temperature": 0},
 )
 
 orchestrator_agent = Agent(

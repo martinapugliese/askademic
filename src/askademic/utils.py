@@ -4,7 +4,9 @@ from datetime import datetime
 import feedparser
 import pandas as pd
 
-logging.basicConfig(level=logging.INFO, filename="logs.txt")
+today = datetime.now().strftime("%Y-%m-%d")
+
+logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 
