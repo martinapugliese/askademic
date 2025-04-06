@@ -1,9 +1,12 @@
 import logging
+from datetime import datetime
 from typing import Dict, List
 
 from pydantic_ai.messages import ModelMessage
 
-logging.basicConfig(level=logging.INFO, filename="logs.txt")
+today = datetime.now().strftime("%Y-%m-%d")
+
+logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 
@@ -31,7 +34,9 @@ class Memory:
             total_tokens = self.get_total_tokens()
 
         total_tokens = self.get_total_tokens()
-        logger.info(f"*** Pruned messages, current total tokens: {total_tokens}")
+        logger.info(
+            f"{datetime.now()}: Pruned messages, current total tokens: {total_tokens}"
+        )
 
     def add_message(self, message_tokens: int, message: ModelMessage):
         """Add a message to the memory."""
@@ -42,7 +47,9 @@ class Memory:
         )
 
         total_tokens = self.get_total_tokens()
-        logger.info(f"*** Adding messages, current total tokens: {total_tokens}")
+        logger.info(
+            f"{datetime.now()}: Adding messages, current total tokens: {total_tokens}"
+        )
 
     def get_messages(self):
         """Get the message history."""

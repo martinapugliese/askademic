@@ -4,18 +4,17 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext, Tool
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts import (  # SYSTEM_PROMPT_QUESTION,; SYSTEM_PROMPT_SUMMARY,
+from askademic.prompts import (
     SYSTEM_PROMPT_ALLOWER_TEMPLATE,
     SYSTEM_PROMPT_ORCHESTRATOR,
     SYSTEM_PROMPT_QUESTION,
     SYSTEM_PROMPT_SUMMARY,
-    USER_PROMPT_ALLOWER_TEMPLATE,
     USER_PROMPT_QUESTION_TEMPLATE,
     USER_PROMPT_SUMMARY_TEMPLATE,
 )
 from askademic.tools import (
-    choose_category,
     get_article,
+    get_categories,
     identify_latest_day,
     retrieve_recent_articles,
     search_articles,
@@ -45,6 +44,9 @@ class SummaryResponse(BaseModel):
     summary: str = Field(
         description="Global summary of all abstracts, identifying topics."
     )
+    recent_papers_url: str = Field(
+        description="arXiv URL to the most recent papers in the chosen category"
+    )
 
 
 class AllowResponse(BaseModel):
@@ -62,7 +64,7 @@ summary_agent = Agent(
     system_prompt=SYSTEM_PROMPT_SUMMARY,
     result_type=SummaryResponse,
     tools=[
-        Tool(choose_category, takes_ctx=False),
+        Tool(get_categories, takes_ctx=False),
         Tool(identify_latest_day, takes_ctx=False),
         Tool(retrieve_recent_articles, takes_ctx=False),
     ],
@@ -84,6 +86,7 @@ allower_agent = Agent(
     GEMINI_2_FLASH_MODEL_ID,
     system_prompt=SYSTEM_PROMPT_ALLOWER_TEMPLATE,
     result_type=AllowResponse,
+    model_settings={"max_tokens": 1000, "temperature": 0},
 )
 
 orchestrator_agent = Agent(
