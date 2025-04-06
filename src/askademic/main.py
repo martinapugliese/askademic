@@ -65,7 +65,7 @@ async def ask_me():
 
                 allower = await allower_agent.run(
                     USER_PROMPT_ALLOWER_TEMPLATE.format(question=user_question),
-                    usage_limits=UsageLimits(request_limit=20),  # limit to 10 requests
+                    usage_limits=UsageLimits(request_limit=20),  # limit to 20 requests
                 )
 
                 if allower.data.is_scientific:
