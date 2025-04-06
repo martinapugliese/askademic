@@ -83,9 +83,8 @@ async def ask_me():
                         agent_result.new_messages(),
                     )
                 else:
-                    console.print(
-                        "[bold red]This question isn't scientific—it's more of a disturbance in the Force! Try again, young Padawan.[/bold red]"
-                    )
+                    pun = allower.data.pun
+                    console.print(f"[bold red]{pun}[/bold red]")
 
                 break
             except Exception as e:

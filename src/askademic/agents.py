@@ -53,6 +53,9 @@ class AllowResponse(BaseModel):
     is_scientific: bool = Field(
         description="Whether the question/request is scientific or not."
     )
+    pun: str = Field(
+        description="A pun about how the question/request is not scientific. Generate this only when is_scientific is False."
+    )
 
 
 class Context(BaseModel):

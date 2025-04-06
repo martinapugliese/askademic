@@ -153,7 +153,10 @@ USER_PROMPT_ALLOWER_TEMPLATE = cleandoc(
     - "What is the best recipe for chocolate cake?"
     - Small talk, chit-chat, or any other non-scientific question.
 
-    The question to evaluate:
+    If the question/request is not scientific, generate a pun about how the question/request is not scientific.
+    If the question/request is scientific, do not generate a pun.
+
+    The question/request to evaluate:
     '{question}'
 """
 )
