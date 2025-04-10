@@ -122,7 +122,8 @@ USER_PROMPT_SUMMARY_TEMPLATE = cleandoc(
 
     Follow these steps when creating the answer:
     1. Use the get_categories tool to first list all available categories and then choose the most relevant arXiv category for the request.
-    2. Use the retrieve_recent_articles tool to query for articles in the chosen category that have been published in the latest available day.
+    2. If there are more than one matching categories, choose the most relevant one - you must choose only one category
+    3. Use the retrieve_recent_articles tool to query for articles in the chosen category that have been published in the latest available day.
     4. Generate a global summary of abstracts and identify topics.
     5. Also generate the arXiv URL to the most recent papers in the chosen category,
        building it starting from "https://arxiv.org/list/", concatenating the category ID and then "/new"
