@@ -30,7 +30,7 @@ This release is a beta and askademic has not been published on PyPI _yet_.
 2. `cd` into it and pip install it as `pip install .`
 
   Alternatively, you can `pip install` from the GitHub link.
-  Alternatively, you can use `uv`, running `uv tool install --python python3.11 .`. This lets you choose the exact Python version for your environment, which is useful for testing or compatibility.
+  Or, use `uv` with `uv tool install --python python3.11 .` — this lets you choose the exact Python version for your environment, which is useful for testing or compatibility.
 
 3. Then, you need a Gemini API key. Head to [Google AI Studio](https://aistudio.google.com/app/apikey) to generate it and run
 
