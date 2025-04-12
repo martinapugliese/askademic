@@ -1,6 +1,3 @@
-import asyncio
-
-import nest_asyncio
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
 
@@ -16,8 +13,6 @@ from askademic.tools import (
     identify_latest_day,
     retrieve_recent_articles,
 )
-
-nest_asyncio.apply()  # Allows nesting of event loops
 
 
 class Category(BaseModel):
@@ -100,15 +95,3 @@ class SummaryAgent:
 
 
 summary_agent = SummaryAgent()
-
-
-# Example usage: Remove this part in production
-async def main():
-    summary = await summary_agent(
-        "What are the latest advancements in quantum computing?"
-    )
-    print(summary)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
