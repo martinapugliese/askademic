@@ -1,9 +1,12 @@
 import asyncio
+import os
 from unittest.mock import MagicMock
 
 import pytest
 import pytest_asyncio
 from pydantic_ai.agent import AgentRunResult
+
+os.environ["GEMINI_API_KEY"] = "mocked_gemini_api_key"
 
 from askademic.summarizer import Category, Summary, SummaryAgent, SummaryResponse
 
