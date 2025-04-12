@@ -8,8 +8,9 @@ from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 from rich.prompt import Prompt
 
-from askademic.agents import allower_agent, orchestrator_agent
+from askademic.allower import allower_agent
 from askademic.memory import Memory
+from askademic.orchestrator import orchestrator_agent
 from askademic.prompts import USER_PROMPT_ALLOWER_TEMPLATE
 
 today = datetime.now().strftime("%Y-%m-%d")
