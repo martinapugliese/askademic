@@ -62,6 +62,9 @@ class SummaryAgent:
             model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
+        self._identify_latest_day = identify_latest_day
+        self._retrieve_recent_articles = retrieve_recent_articles
+
     async def __call__(self, request: str) -> SummaryResponse:
         """
         Get the summary of the latest articles in a specific category.
@@ -76,10 +79,10 @@ class SummaryAgent:
         )
 
         # Get the latest published day
-        latest_day = identify_latest_day(category.data.category_id)
+        latest_day = self._identify_latest_day(category.data.category_id)
 
         # Get the articles
-        articles = retrieve_recent_articles(
+        articles = self._retrieve_recent_articles(
             category=category.data.category_id, latest_day=latest_day
         )
 
