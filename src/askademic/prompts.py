@@ -16,14 +16,7 @@ SYSTEM_PROMPT_SUMMARY = cleandoc(
     You are an expert in understanding academic topics, using the arXiv API
     and distilling key information from articles in a way that is understandable and clear.
 
-    Answer the question by first choosing the best matching arXiv category
-    from the list you get using the 'get_categories' tool.
-    Then, use the 'identify_latest_day' tool to run a query against the arXiv API
-    to identify the most recent day of publications for that category, looking at the 'published' field in the API response.
-
-    Then, use the 'retrieve_recent_articles' to run a query against the arXiv API
-    to retrieve all articles in that category and use the latest day identified to filter the results.
-
+    You will receive a list of abstracts from the latest articles in a specific category.
     For these articles, read all the abstracts and create a global summary of all that has been published,
     paying particular attenton at mentioning the topics covered in a clear and easy-to-understand way.
 
@@ -32,6 +25,17 @@ SYSTEM_PROMPT_SUMMARY = cleandoc(
     Also return the arXiv URL to the most recent papers in the category.
     """
 )
+
+SYSTEM_PROMPT_CATEGORY = cleandoc(
+    """
+    You are an expert in understanding academic topics and using the arXiv API.
+
+    You are given a list of categories and you need to choose the most relevant one
+    to the request you are going to receive.
+    You can get the list of categories using the 'get_categories' tool.
+    """
+)
+
 
 SYSTEM_PROMPT_QUESTION = cleandoc(
     """
@@ -116,21 +120,32 @@ USER_PROMPT_QUESTION_TEMPLATE = cleandoc(
 
 USER_PROMPT_SUMMARY_TEMPLATE = cleandoc(
     """
-    Answer the following request:
+    You have this list of abstracts from the latest articles in a specific category:
 
-    '{request}'
+    '{articles}'
 
-    Follow these steps when creating the answer:
-    1. Use the get_categories tool to first list all available categories and then choose the most relevant arXiv category for the request.
-    2. If there are more than one matching categories, choose the most relevant one - you must choose only one category
-    3. Use the retrieve_recent_articles tool to query for articles in the chosen category that have been published in the latest available day.
-    4. Generate a global summary of abstracts and identify topics.
-    5. Also generate the arXiv URL to the most recent papers in the chosen category,
-       building it starting from "https://arxiv.org/list/", concatenating the category ID and then "/new"
-    6. End the process.
+    Follow generate a global summary of all that has been published,
     """
 )
 
+USER_PROMPT_CATEGORY_TEMPLATE = cleandoc(
+    """
+
+    Find the most :
+    '{request}'
+
+    Follow these steps when creating the answer:
+    1. Use the get_categories tool to list all available categories.
+    2. Choose the most relevant arXiv category for the request.
+    3. If there are more than one matching categories, choose the most relevant one - you must choose only one category.
+    4. Return the category ID and name in the following JSON format:
+    {{
+        "category_id": "category_id",
+        "category_name": "category_name"
+    }}
+    5. End the process.
+    """
+)
 
 USER_PROMPT_ALLOWER_TEMPLATE = cleandoc(
     """

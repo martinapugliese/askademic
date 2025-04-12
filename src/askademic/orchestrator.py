@@ -1,14 +1,8 @@
-from typing import Literal
-
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts import (
-    SYSTEM_PROMPT_ORCHESTRATOR,
-    USER_PROMPT_QUESTION_TEMPLATE,
-    USER_PROMPT_SUMMARY_TEMPLATE,
-)
+from askademic.prompts import SYSTEM_PROMPT_ORCHESTRATOR, USER_PROMPT_QUESTION_TEMPLATE
 from askademic.question import QuestionAnswerResponse, question_agent
 from askademic.summarizer import SummaryResponse, summary_agent
 
@@ -35,8 +29,7 @@ async def summarise_latest_articles(
         ctx: the context
         request: the request
     """
-    prompt = USER_PROMPT_SUMMARY_TEMPLATE.format(request=request)
-    r = await summary_agent.run(prompt)
+    r = await summary_agent(request=request)
     return r
 
 
