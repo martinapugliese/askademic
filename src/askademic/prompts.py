@@ -124,7 +124,9 @@ USER_PROMPT_SUMMARY_TEMPLATE = cleandoc(
 
     '{articles}'
 
-    Follow generate a global summary of all that has been published,
+    Generate a global summary of all that has been published.
+    Identify the topics covered in a clear and easy-to-understand way.
+    Describe each topic in a few sentences, citing the articles you used to define it.
     """
 )
 
