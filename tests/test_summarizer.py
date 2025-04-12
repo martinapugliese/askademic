@@ -22,6 +22,18 @@ testdata = [
             recent_papers_url="https://arxiv.org/list/cs.AI/new",
         ),
     ),
+    (
+        "get me the latest papers in ML",
+        Category(category_id="cs.LG", category_name="Machine Learning"),
+        "2025-03-30",
+        Summary(summary="Summary of cs.LG articles."),
+        SummaryResponse(
+            category=Category(category_id="cs.LG", category_name="Machine Learning"),
+            latest_published_day="2025-03-30",
+            summary=Summary(summary="Summary of cs.LG articles."),
+            recent_papers_url="https://arxiv.org/list/cs.LG/new",
+        ),
+    ),
 ]
 
 
