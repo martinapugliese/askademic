@@ -30,17 +30,17 @@ Works with Python 3.11 and above. Currently in beta, not yet published on PyPI.
 
 # Installation & setup
 
-It's recommended to use a virtual environment.
-
 1. Clone this repo
 2. `cd` into it and pip install it as `pip install .` Alternatively, you can `pip install` from the GitHub link. Or, use `uv` with `uv tool install --python python3.11 .` — this lets you choose the exact Python version for your environment, which is useful for testing or compatibility.
 3. Then, you need a Gemini API key. Head to [Google AI Studio](https://aistudio.google.com/app/apikey) to generate it and run
+4. Set the env var for it
 
+You can use
 ```
 export GEMINI_API_KEY=your-api-key
 ```
 
-This will save your API key to the environment. **If you're not using a virtual env, make sure to add the key to your bash/ZSH profile instead.**
+This will only persist your API key to the session. To persist it globally you need to add it to your bash/ZSH profile.
 
 Note: Gemini has a good free tier, and askademic has been designed in such a way to not exceed its quotas - for typical use this'll be the case.
 
