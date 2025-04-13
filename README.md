@@ -1,6 +1,6 @@
 <h1 align="center">Askademic</h1>
 
-## What is this 
+## What is this
 
 Askademic is an AI agent that helps you with finding information in research papers. It queries the arXiv API and can:
 * summarise the latest papers in a category/subcategory for you
@@ -19,10 +19,6 @@ Askademic uses Google Gemini 2.0 as its underlying LLM. We aim to expand it to a
 * it works pretty well for this use cases
 
 Askademic is built on [PydanticAI](https://ai.pydantic.dev/) as its agents framework.
-
-## ⚠️ Warning
-
-This project is currently in beta. We are currently sorting out some issues that arose with people using it, specifically in regards to the summariser feature: sometimes the agent gets stuck in an (infinite?) loop where it doesn't produce an answer. Stay tuned!
 
 ## Requirements
 
