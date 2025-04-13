@@ -21,7 +21,7 @@ testdata = [
                 category_id="cs.AI", category_name="Artificial Intelligence"
             ),
             latest_published_day="2025-03-29",
-            summary=Summary(summary="Summary of cs.AI articles."),
+            summary="Summary of cs.AI articles.",
             recent_papers_url="https://arxiv.org/list/cs.AI/new",
         ),
     ),
@@ -33,7 +33,7 @@ testdata = [
         SummaryResponse(
             category=Category(category_id="cs.LG", category_name="Machine Learning"),
             latest_published_day="2025-03-30",
-            summary=Summary(summary="Summary of cs.LG articles."),
+            summary="Summary of cs.LG articles.",
             recent_papers_url="https://arxiv.org/list/cs.LG/new",
         ),
     ),
