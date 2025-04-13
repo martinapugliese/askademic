@@ -1,6 +1,8 @@
-<h1 align="center">Askademic</h1>
+<h1 align="center">
+Askademic
 
----
+![example workflow](https://github.com/martinapugliese/askademic/actions/workflows/python-package.yml/badge.svg)
+</h1>
 
 # What is this
 
@@ -38,7 +40,7 @@ It's recommended to use a virtual environment.
 export GEMINI_API_KEY=your-api-key
 ```
 
-This will save your API key to the environment. If you've not been using a virtual env, make sure to add the key to your bash/ZSH profile.
+This will save your API key to the environment. **If you're not using a virtual env, make sure to add the key to your bash/ZSH profile instead.**
 
 Note: Gemini has a good free tier, and askademic has been designed in such a way to not exceed its quotas - for typical use this'll be the case.
 
@@ -72,13 +74,9 @@ This is a beta. If you see this, please try it and give us feedback. If you find
 
 We have several ideas to develop this further, adding new capabilities and features, so stay tuned!
 
----
-
 # Acknowledgments
 
 Thank you to arXiv for use of its open access interoperability. This [service/ product] was not reviewed or approved by, nor does it necessarily express or reflect the policies or opinions of, arXiv.
-
----
 
 # Licence
 
