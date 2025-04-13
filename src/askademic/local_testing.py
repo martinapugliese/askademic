@@ -2,8 +2,10 @@ import asyncio
 import time
 
 import nest_asyncio
-from agents import allower_agent, orchestrator_agent
 from pydantic_ai.usage import UsageLimits
+
+from askademic.allower import allower_agent
+from askademic.orchestrator import orchestrator_agent
 
 nest_asyncio.apply()  # Allows nesting of event loops
 
