@@ -31,7 +31,7 @@ class SummaryResponse(BaseModel):
     latest_published_day: str = Field(
         description="The latest day of publications available on the API."
     )
-    summary: Summary = Field(
+    summary: str = Field(
         description="Global summary of all abstracts, identifying topics."
     )
     recent_papers_url: str = Field(
@@ -89,7 +89,7 @@ class SummaryAgent:
         return SummaryResponse(
             category=category.data,
             latest_published_day=latest_day,
-            summary=summary.data,
+            summary=summary.data.summary,
             recent_papers_url=f"https://arxiv.org/list/{category.data.category_id}/new",
         )
 
