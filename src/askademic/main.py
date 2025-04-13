@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import time
 from datetime import datetime
 from inspect import cleandoc
@@ -7,6 +8,18 @@ from inspect import cleandoc
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 from rich.prompt import Prompt
+
+console = Console()
+
+# check this here because if not set the following imports will fail
+if not os.getenv("GEMINI_API_KEY"):
+    console.print(
+        """
+    [bold red]The GEMINI_API_KEY is not set. Please set it in your environment variables.[/bold red]
+    [bold red]See the README for instructions.[/bold red]
+    """
+    )
+    exit()
 
 from askademic.allower import allower_agent
 from askademic.memory import Memory
@@ -17,8 +30,6 @@ today = datetime.now().strftime("%Y-%m-%d")
 
 logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
 logger = logging.getLogger(__name__)
-
-console = Console()
 
 
 async def ask_me():
@@ -35,8 +46,6 @@ async def ask_me():
     Ask me a question with either of these requests.
     For the summary, I will find the best matching arXiv category to your request.
     For the specific topic, I will look for relevant papers and find the answer for you.
-
-    I will do my best but I may occasionally get confused - please let me know on GitHub if you notice anything odd!
 
     I will write to a logs file filenamed with today's date.
     [/bold cyan]
@@ -87,7 +96,10 @@ async def ask_me():
                     )
                 else:
                     pun = allower.data.pun
-                    console.print(f"[bold red]{pun}[/bold red]")
+                    console.print(
+                        f"""{pun} - Ask me something scientific please! :smiley:
+                    """
+                    )
 
                 break
             except Exception as e:
@@ -100,6 +112,7 @@ async def ask_me():
 # this fix is temporary. We should monitor pydantic-ai issues and see when they solve it
 # The workaround is described here: https://github.com/pydantic/pydantic-ai/issues/748
 def main():
+
     asyncio.run(ask_me())
 
 
