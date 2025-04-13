@@ -56,11 +56,16 @@ async def ask_me():
     memory = Memory(max_request_tokens=1e5)
 
     while True:
-        user_question = Prompt.ask(
-            "[bold yellow]Ask me a question (or type 'exit' to quit)[/bold yellow] :speech_balloon:"
-        )
 
-        if user_question.lower() == "exit":
+        try:
+            user_question = Prompt.ask(
+                "[bold yellow]Ask me a question (CTRL+D or type 'exit' to quit)[/bold yellow] :speech_balloon:"
+            )
+
+            if user_question.lower() == "exit":
+                console.print("[bold cyan]Goodbye![/bold cyan] :wave:")
+                break
+        except EOFError:
             console.print("[bold cyan]Goodbye![/bold cyan] :wave:")
             break
 
