@@ -55,6 +55,59 @@ def identify_latest_day(category: str = "cs.AI") -> str:
 def search_articles(
     query: str = "lyapunov exponents",
     sortby: str = "submittedDate",
+    prefix: str = "abs",
+    start: int = 0,
+    max_results: int = 20,
+):
+    """
+    Search articles on arXiv according to the query value.
+    Return a markdown table with max_results articles and the following values:
+    - pdf: the url to the article pdf
+    - updated: the last time the article was updated
+    - published: the date when the article was published
+    - title: the article title
+    - summary: a summary of the article's content
+    Args:
+        query: the query used for the search
+        sortby: how to sort the results. Possible values:
+            - relevance (most relevant on the top)
+            - lastUpdatedDate (most recently updated on the top)
+            - submittedDate (most recently submitted on top)
+        prefix: the prefix used for the search. Possible values:
+            - abs (abstract)
+            - all (all)
+            - ti (title)
+            - au (author)
+            - co (comment)
+            - cat (category)
+            - id (arXiv ID)
+            - jr (journal reference)
+        start: the index of the ranking where the table starts, add +20 to get the next table chunk
+        max_results: the total number of articles to retrieve. The default value is 20.
+    """
+
+    time.sleep(0.5)
+
+    search_query = f"{prefix}:{query.lower()}"
+    url = f"{ARXIV_BASE_URL}search_query={search_query}&start={start}&max_results={max_results}"
+    url += f"&sortBy={sortby}&sortOrder=descending"
+    logger.info(f"{datetime.now()}: API URL to search articles: {url}")
+
+    response = requests.get(url, timeout=360)
+    df_articles = organise_api_response_as_dataframe(response)
+
+    markdown = f"""
+        ---{query}-{sortby}----
+        {df_articles.to_markdown(index=False)}
+        ------------------------
+    """
+
+    return markdown
+
+
+def search_articles_by_abs(
+    query: str = "lyapunov exponents",
+    sortby: str = "submittedDate",
     start: int = 0,
     max_results: int = 20,
 ):
@@ -72,27 +125,68 @@ def search_articles(
             - relevance (most relevant on the top)
             - lastUpdatedDate (most recently updated on the top)
             - submittedDate (most recently submitted on top)
+        prefix: the prefix used for the search. Possible values:
+            - abs (abstract)
+            - all (all)
+            - ti (title)
+            - au (author)
+            - co (comment)
+            - cat (category)
+            - id (arXiv ID)
+            - jr (journal reference)
         start: the index of the ranking where the table starts, add +20 to get the next table chunk
         max_results: the total number of articles to retrieve. The default value is 20.
     """
 
-    time.sleep(0.5)
+    return search_articles(
+        query=query,
+        sortby=sortby,
+        prefix="abs",
+        start=start,
+        max_results=max_results,
+    )
 
-    search_query = f"abs:{query.lower()}"
-    url = f"{ARXIV_BASE_URL}search_query={search_query}&start={start}&max_results={max_results}"
-    url += f"&sortBy={sortby}&sortOrder=descending"
-    logger.info(f"{datetime.now()}: API URL to search articles: {url}")
 
-    response = requests.get(url, timeout=360)
-    df_articles = organise_api_response_as_dataframe(response)
-
-    markdown = f"""
-        ---{query}-{sortby}----
-        {df_articles.to_markdown(index=False)}
-        ------------------------
+def search_articles_by_title(
+    query: str = "lyapunov exponents",
+    sortby: str = "submittedDate",
+    start: int = 0,
+    max_results: int = 20,
+):
+    """
+    Search articles on arXiv according to the query value in the text context of the article abstracts.
+    Return a markdown table with max_results articles and the following values:
+    - pdf: the url to the article pdf
+    - updated: the last time the article was updated
+    - published: the date when the article was published
+    - title: the article title
+    - summary: a summary of the article's content
+    Args:
+        query: the query used for the search
+        sortby: how to sort the results. Possible values:
+            - relevance (most relevant on the top)
+            - lastUpdatedDate (most recently updated on the top)
+            - submittedDate (most recently submitted on top)
+        prefix: the prefix used for the search. Possible values:
+            - abs (abstract)
+            - all (all)
+            - ti (title)
+            - au (author)
+            - co (comment)
+            - cat (category)
+            - id (arXiv ID)
+            - jr (journal reference)
+        start: the index of the ranking where the table starts, add +20 to get the next table chunk
+        max_results: the total number of articles to retrieve. The default value is 20.
     """
 
-    return markdown
+    return search_articles(
+        query=query,
+        sortby=sortby,
+        prefix="ti",
+        start=start,
+        max_results=max_results,
+    )
 
 
 def retrieve_recent_articles(

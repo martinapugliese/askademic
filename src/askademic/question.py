@@ -5,7 +5,7 @@ from pydantic_ai import Agent, Tool
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
 from askademic.prompts import SYSTEM_PROMPT_QUESTION
-from askademic.tools import get_article, search_articles
+from askademic.tools import get_article, search_articles_by_abs
 
 
 class QuestionAnswerResponse(BaseModel):
@@ -23,7 +23,7 @@ question_agent = Agent(
     system_prompt=SYSTEM_PROMPT_QUESTION,
     result_type=QuestionAnswerResponse,
     tools=[
-        Tool(search_articles, takes_ctx=False),
+        Tool(search_articles_by_abs, takes_ctx=False),
         Tool(get_article, takes_ctx=False),
     ],
     model_settings={"max_tokens": 1000, "temperature": 0},
