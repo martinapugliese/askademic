@@ -5,6 +5,7 @@
 Askademic is an AI agent that helps you with finding information in research papers. It queries the arXiv API and can:
 * summarise the latest papers in a category/subcategory for you
 * answer questions by retrieving relevant papers and searching within them to produce an answer
+* answer questions regarding a specific paper you are interested in
 It also allows you to have a conversation, that is, to ask for follow-up questions.
 
 As for everything that uses LLM, check your outputs - it can male mistakes. The tool is designed to provide short answers and suggestions, leaving to the user the effort to dive deeper into the matter.
