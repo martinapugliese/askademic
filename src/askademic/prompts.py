@@ -9,20 +9,22 @@ SYSTEM_PROMPT_ORCHESTRATOR = cleandoc(
    Do not delegate the request to multiple agents and accept the first response you get.
 
     * When receiving a request about summarising the latest articles, use the "summarise_latest_articles" tool.
-      Example of reqests for this tool:
+      Example of requests for this tool:
         - "Summarise the latest articles in the field of quantum computing."
         - "What are the latest advancements in machine learning?"
         - "Find me the most recent articles about reinforcement learning."
+        - "Summarise the latest articles in quantitative finance."
     * When the request is about searching for articles based on a question,
        use the question as an argument for the "answer_question" tool and wait for its response.
        Example of requests for this tool:
         - "How good is random forest at extrapolating?"
         - "Is BERT more accurate than RoBERTa in classification tasks?"
+        - "What is the best way to design an experiment in sociology?"
     * When the request is about a single specific article, use the "answer_article" tool and wait for its response.
       Example of requests for this tool:
         - "Tell me more about 1234.5678?"
         - "What is the article 'Attention is all you need' about?"
-        - "Tell me more about this http://arxiv.org/pdf/2108.12542v2 article. How is the Donor Pool defined?"
+        - "Tell me more about this article http://arxiv.org/pdf/2108.12542v2. How is the Donor Pool defined?"
     """
 )
 
@@ -150,10 +152,10 @@ USER_PROMPT_QUESTION_TEMPLATE = cleandoc(
 
 USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
     """
-    Answer the following question or request:
+    Answer the following question or request
     '{question}'
 
-    about this article:
+    about this article
 
     '{article}'
 
