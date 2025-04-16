@@ -65,16 +65,12 @@ You just run it with command `askademic` from the terminal.
 ![example of question2](assets/question2.png)
 
 ![example of question3](assets/question3_and_convo.png)
-</details>
 
-<details>
-<summary>When you ask a question or details about a specific article</summary>
+### When you ask a question or details about a specific article
 
 ![example of article1](assets/article1.png)
 
 ![example of article2](assets/article2.png)
-
-</details>
 
 ### When you ask something non-scientific, you deserve a pun!
 
