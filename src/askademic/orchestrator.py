@@ -1,3 +1,6 @@
+import logging
+from datetime import datetime
+
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 
@@ -11,6 +14,11 @@ from askademic.prompts import (
 from askademic.question import QuestionAnswerResponse, question_agent
 from askademic.summarizer import SummaryResponse, summary_agent
 
+today = datetime.now().strftime("%Y-%m-%d")
+
+logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
+logger = logging.getLogger(__name__)
+
 
 class Context(BaseModel):
     pass
@@ -19,7 +27,7 @@ class Context(BaseModel):
 orchestrator_agent = Agent(
     GEMINI_2_FLASH_MODEL_ID,
     system_prompt=SYSTEM_PROMPT_ORCHESTRATOR,
-    result_type=SummaryResponse | QuestionAnswerResponse,
+    result_type=SummaryResponse | QuestionAnswerResponse | ArticleResponse,
     model_settings={"max_tokens": 1000, "temperature": 0},
 )
 
@@ -34,6 +42,7 @@ async def summarise_latest_articles(
         ctx: the context
         request: the request
     """
+    logger.info(f"{datetime.now()}: Calling Summary Agent with this request: {request}")
     r = await summary_agent(request=request)
     return r
 
@@ -46,7 +55,7 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
         ctx: the context
         question: the question
     """
-
+    logger.info(f"{datetime.now()}: Calling QA Agent with this question: {question}")
     prompt = USER_PROMPT_QUESTION_TEMPLATE.format(question=question)
     r = await question_agent.run(prompt)
     return r
@@ -64,7 +73,9 @@ async def answer_article(
         article: the article title, link or article id
         question: the question
     """
-
+    logger.info(
+        f"{datetime.now()}: Calling Article Agent with this question and: {question}  (article: {article})"
+    )
     prompt = USER_PROMPT_ARTICLE_TEMPLATE.format(question=question, article=article)
     r = await article_agent.run(prompt)
     return r
