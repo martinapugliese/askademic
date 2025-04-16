@@ -125,15 +125,6 @@ def search_articles_by_abs(
             - relevance (most relevant on the top)
             - lastUpdatedDate (most recently updated on the top)
             - submittedDate (most recently submitted on top)
-        prefix: the prefix used for the search. Possible values:
-            - abs (abstract)
-            - all (all)
-            - ti (title)
-            - au (author)
-            - co (comment)
-            - cat (category)
-            - id (arXiv ID)
-            - jr (journal reference)
         start: the index of the ranking where the table starts, add +20 to get the next table chunk
         max_results: the total number of articles to retrieve. The default value is 20.
     """
@@ -167,15 +158,6 @@ def search_articles_by_title(
             - relevance (most relevant on the top)
             - lastUpdatedDate (most recently updated on the top)
             - submittedDate (most recently submitted on top)
-        prefix: the prefix used for the search. Possible values:
-            - abs (abstract)
-            - all (all)
-            - ti (title)
-            - au (author)
-            - co (comment)
-            - cat (category)
-            - id (arXiv ID)
-            - jr (journal reference)
         start: the index of the ranking where the table starts, add +20 to get the next table chunk
         max_results: the total number of articles to retrieve. The default value is 20.
     """
