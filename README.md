@@ -68,6 +68,15 @@ Open the toggles for some screenshots of what you get
 </details>
 
 <details>
+<summary>When you ask a question or details about a specific article</summary>
+
+![example of article1](assets/article1.png)
+
+![example of article2](assets/article2.png)
+
+</details>
+
+<details>
 <summary>When you ask something non-scientific, you deserve a pun!</summary>
 
 ![example of question1](assets/pun.png)
