@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/logo_res.jpeg" alt="Askademic" width="100" height="100"></p>
+<p align="center"><img src="assets/logo_res.jpeg" alt="Askademic" width="150" height="150"></p>
 <h1 align="center">
 Askademic
 
@@ -19,7 +19,7 @@ And, it has an eye for things non-scientific... see below.
 
 It works as a CLI tool.
 
-Askademic uses Google Gemini 2.0 as its underlying LLM. We aim to expand it to allow for multiple LLMs in the (near) future, especially open ones, but this early choice has been motivated by some factors:
+Askademic uses Google Gemini 2.0 Flash as its underlying LLM. We aim to expand it to allow for multiple LLMs in the (near) future, especially open ones, but this early choice has been motivated by some factors:
 * it has a free tier - we wrote the agent in such a way to privilege cost-effectiveness over speed, which means for short conversations you should be within the quotas of the free tier
 * it has a very large context window, very useful for questions where extensive searches over many papers are needed
 * it works pretty well for this use cases
