@@ -8,6 +8,9 @@ from askademic.tools import get_article, search_articles_by_title
 
 class ArticleResponse(BaseModel):
     response: str = Field(description="The response to the question")
+    article_title: str = Field(
+        description="The title of the article you used to answer the question."
+    )
     article_link: str = Field(
         description="The article link you used to answer the question."
     )

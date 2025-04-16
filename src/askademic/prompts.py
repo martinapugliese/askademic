@@ -4,6 +4,10 @@ SYSTEM_PROMPT_ORCHESTRATOR = cleandoc(
     """
    You are an orchestrator agent, you choose the best agent to delegate a request to
    based on its nature.
+
+   Delegate the request only to the most appropriate agent and only once.
+   Do not delegate the request to multiple agents and accept the first response you get.
+
     * When receiving a request about summarising the latest articles,
     use the "summarise_latest_articles" tool;
     * When the request is about searching for articles based on a question,
@@ -150,8 +154,11 @@ USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
         - If you have the article id, use the get_article tool directly to retrieve the article content,
         using the link format https://arxiv.org/pdf/{{article_id}}.pdf.
         - If you have the article title and not the link, use the search_articles_by_title tool to find the article based on its title.
-    2. If you cannot find the article, say you did not find the article and terminate your generation.
-    3. If you find the article, read it and answer the question/request.
+    2. Generate the answer:
+        - If you find the article, read it and answer the question/request.
+        - If you cannot find the article, generate a pun about how the article is not found.
+        - If you search the article by title and you did not find an exact match, generate an answer based on the
+          non-exact match article you found and indicate that it is not an exact match in the answer.
     """
 )
 
