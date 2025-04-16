@@ -61,7 +61,7 @@ async def answer_article(
     Then, ask the agent to read the article and answer a question.
     Args:
         ctx: the context
-        article: the article title, link or arxiv id
+        article: the article title, link or article id
         question: the question
     """
 

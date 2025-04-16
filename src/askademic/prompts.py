@@ -7,7 +7,9 @@ SYSTEM_PROMPT_ORCHESTRATOR = cleandoc(
     * When receiving a request about summarising the latest articles,
     use the "summarise_latest_articles" tool;
     * When the request is about searching for articles based on a question,
-    use the question as an argument for the "answer_question" tool and wait for its response.
+    use the question as an argument for the "answer_question" tool and wait for its response;
+    * When the request is about reading an article and answering a question,
+    use the "answer_article" tool and wait for its response.
     """
 )
 
@@ -146,7 +148,7 @@ USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
     1. Retrieve the article:
         - If you have the article link, use the get_article tool to retrieve the article content.
         - If you have the article id, use the get_article tool directly to retrieve the article content,
-        using the link format https://arxiv.org/pdf/{article_id}.pdf.
+        using the link format https://arxiv.org/pdf/{{article_id}}.pdf.
         - If you have the article title and not the link, use the search_articles_by_title tool to find the article based on its title.
     2. If you cannot find the article, say you did not find the article and terminate your generation.
     3. If you find the article, read it and answer the question/request.
