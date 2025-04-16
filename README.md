@@ -1,7 +1,5 @@
 <p align="center"><img src="assets/logo_res.jpeg" alt="Askademic" width="100" height="100"></p>
-
 <h1 align="center">
-
 Askademic
 
 ![example workflow](https://github.com/martinapugliese/askademic/actions/workflows/python-package.yml/badge.svg)
