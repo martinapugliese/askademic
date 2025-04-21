@@ -19,7 +19,7 @@ class ArticleResponse(BaseModel):
 article_agent = Agent(
     GEMINI_2_FLASH_MODEL_ID,
     system_prompt=SYSTEM_PROMPT_ARTICLE,
-    result_type=ArticleResponse,
+    output_type=ArticleResponse,
     tools=[
         Tool(search_articles_by_title, takes_ctx=False),
         Tool(get_article, takes_ctx=False),

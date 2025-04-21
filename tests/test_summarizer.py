@@ -55,7 +55,11 @@ async def test_summary_agent(
     category_future = asyncio.Future()
     category_future.set_result(
         AgentRunResult(
-            data=category, _result_tool_name=None, _state=None, _new_message_index=None
+            output=category,
+            _output_tool_name=None,
+            _state=None,
+            _new_message_index=None,
+            _span_value=None,
         )
     )
     summary_agent._category_agent.run.return_value = category_future
@@ -63,7 +67,11 @@ async def test_summary_agent(
     summary_future = asyncio.Future()
     summary_future.set_result(
         AgentRunResult(
-            data=summary, _result_tool_name=None, _state=None, _new_message_index=None
+            output=summary,
+            _output_tool_name=None,
+            _state=None,
+            _new_message_index=None,
+            _span_value=None,
         )
     )
     summary_agent._summary_agent.run.return_value = summary_future

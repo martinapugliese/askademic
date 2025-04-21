@@ -17,6 +17,6 @@ class AllowResponse(BaseModel):
 allower_agent = Agent(
     GEMINI_2_FLASH_MODEL_ID,
     system_prompt=SYSTEM_PROMPT_ALLOWER_TEMPLATE,
-    result_type=AllowResponse,
+    output_type=AllowResponse,
     model_settings={"max_tokens": 1000, "temperature": 0},
 )

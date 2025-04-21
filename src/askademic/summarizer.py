@@ -45,7 +45,7 @@ class SummaryAgent:
         self._category_agent = Agent(
             GEMINI_2_FLASH_MODEL_ID,
             system_prompt=SYSTEM_PROMPT_CATEGORY,
-            result_type=Category,
+            output_type=Category,
             tools=[Tool(get_categories, takes_ctx=False)],
             model_settings={"max_tokens": 1000, "temperature": 0},
         )
@@ -53,7 +53,7 @@ class SummaryAgent:
         self._summary_agent = Agent(
             GEMINI_2_FLASH_MODEL_ID,
             system_prompt=SYSTEM_PROMPT_SUMMARY,
-            result_type=Summary,
+            output_type=Summary,
             model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
@@ -74,11 +74,11 @@ class SummaryAgent:
         )
 
         # Get the latest published day
-        latest_day = self._identify_latest_day(category.data.category_id)
+        latest_day = self._identify_latest_day(category.output.category_id)
 
         # Get the articles
         articles = self._retrieve_recent_articles(
-            category=category.data.category_id, latest_day=latest_day
+            category=category.output.category_id, latest_day=latest_day
         )
 
         # Create the summary
@@ -87,11 +87,21 @@ class SummaryAgent:
         )
 
         return SummaryResponse(
-            category=category.data,
+            category=category.output,
             latest_published_day=latest_day,
-            summary=summary.data.summary,
-            recent_papers_url=f"https://arxiv.org/list/{category.data.category_id}/new",
+            summary=summary.output.summary,
+            recent_papers_url=f"https://arxiv.org/list/{category.output.category_id}/new",
         )
 
 
 summary_agent = SummaryAgent()
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    request = (
+        "Give me a summary of the latest articles in the field of computer science."
+    )
+    summary = asyncio.run(summary_agent(request))
+    print(summary)

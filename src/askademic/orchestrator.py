@@ -27,7 +27,7 @@ class Context(BaseModel):
 orchestrator_agent = Agent(
     GEMINI_2_FLASH_MODEL_ID,
     system_prompt=SYSTEM_PROMPT_ORCHESTRATOR,
-    result_type=SummaryResponse | QuestionAnswerResponse | ArticleResponse,
+    output_type=SummaryResponse | QuestionAnswerResponse | ArticleResponse,
     model_settings={"max_tokens": 1000, "temperature": 0},
 )
 
