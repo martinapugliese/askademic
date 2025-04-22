@@ -182,6 +182,13 @@ USER_PROMPT_SUMMARY_TEMPLATE = cleandoc(
     Generate a global summary of all that has been published.
     Identify the topics covered in a clear and easy-to-understand way.
     Describe each topic in a few sentences, citing the articles you used to define it.
+    The output should be a JSON object with the following fields:
+    {{
+        "category": "The category of the articles.",
+        "last_published_day": "The latest day of publications available on the API.",
+        "summary": "Global summary of all abstracts, identifying topics.",
+        "recent_papers_url": "arXiv URL to the most recent papers in the chosen category",
+    }}
     """
 )
 
