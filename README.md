@@ -86,6 +86,8 @@ We have several ideas to develop this further, adding new capabilities and featu
 
 Thank you to arXiv for use of its open access interoperability. This [service/ product] was not reviewed or approved by, nor does it necessarily express or reflect the policies or opinions of, arXiv.
 
+Also thanks to GPT4o for the logo!
+
 # Licence
 
 2025 - GNU General Pubic License v3
