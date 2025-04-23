@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 import time
 from datetime import datetime
 from inspect import cleandoc
@@ -9,25 +8,12 @@ from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 from rich.prompt import Prompt
 
-console = Console()
-
-# check this here because if not set the following imports will fail
-if not os.getenv("GEMINI_API_KEY"):
-    console.print(
-        """
-    [bold red]The GEMINI_API_KEY is not set. Please set it in your environment variables.[/bold red]
-    [bold red]See the README for instructions.[/bold red]
-    """
-    )
-    exit()
-
-# also create the logs dir upfront here
-os.makedirs("logs", exist_ok=True)
-
 from askademic.allower import allower_agent
 from askademic.memory import Memory
 from askademic.orchestrator import orchestrator_agent
 from askademic.prompts import USER_PROMPT_ALLOWER_TEMPLATE
+
+console = Console()
 
 today = datetime.now().strftime("%Y-%m-%d")
 
@@ -43,7 +29,8 @@ async def ask_me():
     [bold cyan]Hello, welcome to Askademic![/bold cyan] :smiley:
     [bold cyan]
     I work off of data from arXiv. You can ask me to:
-    - summarize the latest literature (published in the latest available day) in an arXiv category or subcategory,
+    - summarize the latest literature (published in the latest available day)
+    in an arXiv category or subcategory,
     - find answers for specific research questions/topics
     - retrieve a specific paper by title or arXiv URL
 
@@ -61,7 +48,8 @@ async def ask_me():
 
         try:
             user_question = Prompt.ask(
-                "[bold yellow]Ask me a question (CTRL+D or type 'exit' to quit)[/bold yellow] :speech_balloon:"
+                "[bold yellow]Ask a question (CTRL+D or type 'exit' to quit)[/bold yellow]"
+                + ":speech_balloon:"
             )
 
             if user_question.lower() == "exit":
@@ -74,7 +62,7 @@ async def ask_me():
         attempts = 0
         max_attempts = 10
 
-        console.print(f"[bold cyan]Working for you ...[/bold cyan]")
+        console.print("[bold cyan]Working for you ...[/bold cyan]")
 
         while attempts < max_attempts:
 
@@ -85,16 +73,16 @@ async def ask_me():
                     usage_limits=UsageLimits(request_limit=20),  # limit to 20 requests
                     message_history=memory.get_messages()[
                         -2:
-                    ],  # only the last 2 messages to keep the context, with 1 it loses it sometimes
+                    ],  # only the last 2 messages to keep the context, with 1 it may loses it
                 )
 
-                if allower.data.is_scientific:
+                if allower.output.is_scientific:
                     agent_result = await orchestrator_agent.run(
                         user_question,
                         usage_limits=UsageLimits(request_limit=20),  # limit requests
                         message_history=memory.get_messages(),
                     )
-                    for k in agent_result.data.__dict__:
+                    for k in agent_result.output.__dict__:
                         console.print(f"{k}: {getattr(agent_result.data, k)}")
 
                     memory.add_message(
@@ -102,7 +90,7 @@ async def ask_me():
                         agent_result.new_messages(),
                     )
                 else:
-                    pun = allower.data.pun
+                    pun = allower.output.pun
                     console.print(
                         f"""{pun} - Ask me something scientific please! :smiley:
                     """

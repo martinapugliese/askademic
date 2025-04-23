@@ -33,7 +33,7 @@ def identify_latest_day(category: str = "cs.AI") -> str:
 
     search_query = f"cat:{category}"
     url = f"{base_url}search_query={search_query}&start=0&max_results=1"
-    url += f"&sortBy=submittedDate&sortOrder=descending"
+    url += "&sortBy=submittedDate&sortOrder=descending"
 
     logger.info(f"{datetime.now()}: API URL to find latest available day: {url}")
 
@@ -112,7 +112,8 @@ def search_articles_by_abs(
     max_results: int = 20,
 ):
     """
-    Search articles on arXiv according to the query value in the text context of the article abstracts.
+    Search articles on arXiv according to the query value in the text content
+    of the article abstracts.
     Return a markdown table with max_results articles and the following values:
     - pdf: the url to the article pdf
     - updated: the last time the article was updated
@@ -145,7 +146,7 @@ def search_articles_by_title(
     max_results: int = 20,
 ):
     """
-    Search articles on arXiv according to the query value in the text context of the article abstracts.
+    Search articles on arXiv by title.
     Return a markdown table with max_results articles and the following values:
     - pdf: the url to the article pdf
     - updated: the last time the article was updated
@@ -176,7 +177,8 @@ def retrieve_recent_articles(
     latest_day: str = "2022-01-01",
 ):
     """
-    Search articles on arXiv by category, filtering to the ones publichshed on the latest available day.
+    Search articles on arXiv by category, filtering to the ones publishhed
+    on the latest available day.
     Return a markdown table with articles and the following values:
     - pdf: the url to the article pdf
     - updated: the last time the article was updated
@@ -191,7 +193,7 @@ def retrieve_recent_articles(
     search_query = f"cat:{category}"
     # 300 is empirical: there should never be more articles in a day for a category
     url = f"{ARXIV_BASE_URL}search_query={search_query}&start=0&max_results=300"
-    url += f"&sortBy=submittedDate&sortOrder=descending"
+    url += "&sortBy=submittedDate&sortOrder=descending"
     logger.info(f"{datetime.now()}: API URL to retrieve recent articles: {url}")
 
     response = requests.get(url, timeout=360)
@@ -209,7 +211,8 @@ def get_article(url: str, max_attempts: int = 10) -> str:
     Opens an article using its URL (PDF version) and returns its text content.
     Args:
         url: the article arXiv URL
-        max_attempts: the maximum number of attempts to open the article. Default is 10. Do not change this parameter.
+        max_attempts: the maximum number of attempts to open the article. Default is 10.
+        Do not change this parameter.
     """
 
     logger.info(f"{datetime.now()}: API URL to retrieve article: {url}")

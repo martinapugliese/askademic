@@ -95,13 +95,3 @@ class SummaryAgent:
 
 
 summary_agent = SummaryAgent()
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    request = (
-        "Give me a summary of the latest articles in the field of computer science."
-    )
-    summary = asyncio.run(summary_agent(request))
-    print(summary)

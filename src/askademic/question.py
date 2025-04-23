@@ -21,7 +21,7 @@ class QuestionAnswerResponse(BaseModel):
 question_agent = Agent(
     GEMINI_2_FLASH_MODEL_ID,
     system_prompt=SYSTEM_PROMPT_QUESTION,
-    result_type=QuestionAnswerResponse,
+    output_type=QuestionAnswerResponse,
     tools=[
         Tool(search_articles_by_abs, takes_ctx=False),
         Tool(get_article, takes_ctx=False),

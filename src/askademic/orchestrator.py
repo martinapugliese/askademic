@@ -74,7 +74,7 @@ async def answer_article(
         question: the question
     """
     logger.info(
-        f"{datetime.now()}: Calling Article Agent with this question and: {question}  (article: {article})"
+        f"{datetime.now()}: Calling Article Agent with question {question}; (article: {article})"
     )
     prompt = USER_PROMPT_ARTICLE_TEMPLATE.format(question=question, article=article)
     r = await article_agent.run(prompt)
