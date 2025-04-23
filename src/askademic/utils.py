@@ -6,7 +6,7 @@ import pandas as pd
 
 today = datetime.now().strftime("%Y-%m-%d")
 
-logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
+logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 
