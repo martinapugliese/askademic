@@ -18,7 +18,5 @@ if not os.getenv("GEMINI_API_KEY"):
     )
     if not IS_TEST_ENVIRONMENT:
         sys.exit("")
-    else:
-        raise RuntimeError("GEMINI_API_KEY is not set. Exiting during tests.")
 
 os.makedirs("logs", exist_ok=True)
