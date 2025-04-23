@@ -12,7 +12,7 @@ from askademic.utils import list_categories, organise_api_response_as_dataframe
 
 today = datetime.now().strftime("%Y-%m-%d")
 
-logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
+logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 

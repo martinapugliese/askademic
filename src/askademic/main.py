@@ -21,6 +21,9 @@ if not os.getenv("GEMINI_API_KEY"):
     )
     exit()
 
+# also create the logs dir upfront here
+os.makedirs("logs", exist_ok=True)
+
 from askademic.allower import allower_agent
 from askademic.memory import Memory
 from askademic.orchestrator import orchestrator_agent
@@ -28,7 +31,7 @@ from askademic.prompts import USER_PROMPT_ALLOWER_TEMPLATE
 
 today = datetime.now().strftime("%Y-%m-%d")
 
-logging.basicConfig(level=logging.INFO, filename=f"{today}_logs.txt")
+logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 
