@@ -42,15 +42,14 @@ async def ask_me():
             """
     [bold cyan]Hello, welcome to Askademic![/bold cyan] :smiley:
     [bold cyan]
-    You can ask me to:
+    I work off of data from arXiv. You can ask me to:
     - summarize the latest literature (published in the latest available day) in an arXiv category or subcategory,
-    - retrieve answers for specific research questions/topics
+    - find answers for specific research questions/topics
+    - retrieve a specific paper by title or arXiv URL
 
     Ask me a question with either of these requests.
-    For the summary, I will find the best matching arXiv category to your request.
-    For the specific topic, I will look for relevant papers and find the answer for you.
-
-    I will write to a logs file filenamed with today's date.
+    I will do the heavy lifting for you, you can ask follow-up questions too.
+    There will be logs in a "logs" folder, they're filenamed with the date of the day.
     [/bold cyan]
     """
         )
