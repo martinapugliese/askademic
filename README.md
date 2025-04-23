@@ -13,7 +13,7 @@ Askademic is an AI agent that helps you with finding information in research pap
 * answer questions regarding a specific paper you are interested in
 It also allows you to have a conversation, that is, to ask for follow-up questions.
 
-As for everything that uses LLM, check your outputs - it can male mistakes. The tool is designed to provide short answers and suggestions, leaving to the user the effort to dive deeper into the matter.
+As for everything that uses LLM, check your outputs - it can make mistakes. The tool is designed to provide short answers and suggestions, leaving to the user the effort to dive deeper into the matter.
 
 And, it has an eye for things non-scientific... see below.
 
