@@ -1,0 +1,12 @@
+cases:
+- name: Mathematical
+  inputs:
+    request: Who proved Fermat's Last Theorem and when?
+  metadata:
+    focus: mathematics
+  evaluators:
+  - IsInstance: QuestionAnswerResponse
+  - LLMJudge:
+      rubric: Response must say that Andrew Wiles proved the theorem and he published the proof in 1994.
+      model: gemini-2.0-flash
+      include_input: true
