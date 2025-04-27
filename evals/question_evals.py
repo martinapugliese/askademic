@@ -58,9 +58,3 @@ async def make_request(request: Request) -> QuestionAnswerResponse:
 
 
 questions_dataset.evaluate_sync(make_request)
-
-questions_dataset.evaluate_sync(make_request)
-
-questions_dataset.evaluate_sync(make_request)
-
-questions_dataset.evaluate_sync(make_request)
