@@ -107,7 +107,7 @@ def search_articles(
 
 def search_articles_by_abs(
     query: str = "lyapunov exponents",
-    sortby: str = "submittedDate",
+    sortby: str = "relevance",
     start: int = 0,
     max_results: int = 20,
 ):
@@ -141,7 +141,7 @@ def search_articles_by_abs(
 
 def search_articles_by_title(
     query: str = "lyapunov exponents",
-    sortby: str = "submittedDate",
+    sortby: str = "relevance",
     start: int = 0,
     max_results: int = 20,
 ):

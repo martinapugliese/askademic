@@ -1,11 +1,38 @@
-from typing import Literal
-
 from pydantic import BaseModel, Field
-from pydantic_ai import Agent, Tool
+from pydantic_ai import Agent
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts import SYSTEM_PROMPT_QUESTION
+from askademic.prompts import (
+    SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
+    SYSTEM_PROMPT_MANY_ARTICLES,
+    SYSTEM_PROMPT_QUERY,
+    USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE,
+    USER_PROMPT_MANY_ARTICLES_TEMPLATE,
+    USER_PROMPT_QUERY_TEMPLATE,
+)
 from askademic.tools import get_article, search_articles_by_abs
+
+# Extract a list of queries from the question
+# This is used to search for articles that are relevant to the question
+# Select the most relevant articles from the list
+# Use the selected articles to answer the question
+
+
+class QueryResponse(BaseModel):
+    queries: list[str] = Field(description="The list of queries to search for articles")
+
+
+class Article(BaseModel):
+    article_url: str = Field(description="The url to the article")
+    relevance_score: float = Field(
+        description="The relevance score of the article to the question"
+    )
+
+
+class ArticleListResponse(BaseModel):
+    article_list: list[Article] = Field(
+        description="The list of articles needed to answer the question."
+    )
 
 
 class QuestionAnswerResponse(BaseModel):
@@ -13,18 +40,126 @@ class QuestionAnswerResponse(BaseModel):
     article_list: list[str] = Field(
         description="The list of abstract/article urls you used to answer to the question."
     )
-    source: Literal["abstracts", "articles"] = Field(
-        description="Whether you found the answer in the abstracts or in the whole articles."
-    )
 
 
-question_agent = Agent(
-    GEMINI_2_FLASH_MODEL_ID,
-    system_prompt=SYSTEM_PROMPT_QUESTION,
-    output_type=QuestionAnswerResponse,
-    tools=[
-        Tool(search_articles_by_abs, takes_ctx=False),
-        Tool(get_article, takes_ctx=False),
-    ],
-    model_settings={"max_tokens": 1000, "temperature": 0},
-)
+class QuestionAgent:
+    def __init__(
+        self,
+        query_list_limit: int = 10,
+        relevance_score_threshold: float = 0.5,
+        article_list_limit: int = 10,
+    ):
+        """
+        Initialize the QuestionAgent with the query list limit.
+        Args:
+            query_list_limit (int): The maximum number of queries to generate.
+        """
+
+        self._query_list_limit = query_list_limit
+        self._relevance_score_threshold = relevance_score_threshold
+        self._article_list_limit = article_list_limit
+
+        self._query_agent = Agent(
+            GEMINI_2_FLASH_MODEL_ID,
+            system_prompt=SYSTEM_PROMPT_QUERY,
+            output_type=QueryResponse,
+            model_settings={"max_tokens": 1000, "temperature": 0},
+        )
+
+        self._abstract_relevance_agent = Agent(
+            GEMINI_2_FLASH_MODEL_ID,
+            system_prompt=SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
+            output_type=ArticleListResponse,
+            model_settings={"max_tokens": 1000, "temperature": 0},
+        )
+
+        self._many_articles_agent = Agent(
+            GEMINI_2_FLASH_MODEL_ID,
+            system_prompt=SYSTEM_PROMPT_MANY_ARTICLES,
+            output_type=QuestionAnswerResponse,
+            model_settings={"max_tokens": 1000, "temperature": 0},
+        )
+
+    async def _generate_query(
+        self,
+        question: str,
+    ) -> QueryResponse:
+        """
+        Generate a list of queries to search for articles based on the question.
+        Args:
+            question (str): The question to generate queries for.
+        Returns:
+            QueryResponse: The response containing the list of queries.
+        """
+        return await self._query_agent.run(
+            USER_PROMPT_QUERY_TEMPLATE.format(question=question),
+        )
+
+    async def _get_relevant_abstracts(
+        self,
+        question: str,
+        abstracts: str,
+    ) -> ArticleListResponse:
+        """
+        Get the most relevant abstracts to the question.
+        Args:
+            question (str): The question to find relevant abstracts for.
+            abstracts (str): The list of abstracts to search through.
+        Returns:
+            ArticleListResponse: The response containing the list of relevant articles.
+        """
+        return await self._abstract_relevance_agent.run(
+            USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE.format(
+                question=question, abstracts=abstracts
+            ),
+        )
+
+    async def __call__(self, question: str) -> QuestionAnswerResponse:
+
+        query_list = await question_agent._generate_query(question)
+
+        abstract_list = [
+            search_articles_by_abs(query)
+            for query in query_list.output.queries[: self._query_list_limit]
+        ]
+
+        article_link_list = []
+        for abstracts in abstract_list:
+            article_link_list_tmp = await question_agent._get_relevant_abstracts(
+                question=question, abstracts=abstracts
+            )
+            article_link_list += list(article_link_list_tmp.output.article_list)
+
+        # Filter the article list based on the relevance score threshold
+        article_list = [
+            get_article(article.article_url)
+            for article in article_link_list
+            if article.relevance_score >= self._relevance_score_threshold
+        ]
+        article_list = article_list[: self._article_list_limit]
+        print(len(article_list))
+        print(article_list)
+        article_list = "\n".join(article_list)
+
+        # Use the article list to answer the question
+        question_answer = await self._many_articles_agent.run(
+            USER_PROMPT_MANY_ARTICLES_TEMPLATE.format(
+                question=question, articles=article_list
+            ),
+        )
+
+        return question_answer
+
+
+if __name__ == "__main__":
+    # Test the query agent
+    import asyncio
+
+    question = """
+    What is the relation between context length
+    and accuracy for large language models?
+    """
+
+    question_agent = QuestionAgent()
+    response = asyncio.run(question_agent(question))
+    print(response)
