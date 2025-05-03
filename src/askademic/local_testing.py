@@ -42,7 +42,7 @@ async def main():
                     usage_limits=UsageLimits(request_limit=20),  # limit to 10 requests
                 )
 
-                if allower.data.is_scientific:
+                if allower.output.is_scientific:
                     result = await orchestrator_agent.run(
                         question,
                         usage_limits=UsageLimits(
