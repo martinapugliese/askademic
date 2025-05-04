@@ -3,12 +3,13 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
-import pytest_asyncio
-from pydantic_ai.agent import AgentRunResult
+import pytest_asyncio  # noqa: F401
+from pydantic_ai.agent import AgentRunResult  # noqa: F401
+
+from askademic.summarizer import Category, Summary, SummaryAgent, SummaryResponse
 
 os.environ["GEMINI_API_KEY"] = "mocked_gemini_api_key"
 
-from askademic.summarizer import Category, Summary, SummaryAgent, SummaryResponse
 
 testdata = [
     (
@@ -59,7 +60,7 @@ async def test_summary_agent(
             _output_tool_name=None,
             _state=None,
             _new_message_index=None,
-            _span_value=None,
+            _traceparent_value=None,
         )
     )
     summary_agent._category_agent.run.return_value = category_future
@@ -71,7 +72,7 @@ async def test_summary_agent(
             _output_tool_name=None,
             _state=None,
             _new_message_index=None,
-            _span_value=None,
+            _traceparent_value=None,
         )
     )
     summary_agent._summary_agent.run.return_value = summary_future

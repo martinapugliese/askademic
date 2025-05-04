@@ -12,11 +12,6 @@ from askademic.prompts import (
 )
 from askademic.tools import get_article, search_articles_by_abs
 
-# Extract a list of queries from the question
-# This is used to search for articles that are relevant to the question
-# Select the most relevant articles from the list
-# Use the selected articles to answer the question
-
 
 class QueryResponse(BaseModel):
     queries: list[str] = Field(description="The list of queries to search for articles")
@@ -46,7 +41,7 @@ class QuestionAgent:
     def __init__(
         self,
         query_list_limit: int = 10,
-        relevance_score_threshold: float = 0.5,
+        relevance_score_threshold: float = 0.8,
         article_list_limit: int = 10,
     ):
         """
@@ -131,14 +126,13 @@ class QuestionAgent:
             article_link_list += list(article_link_list_tmp.output.article_list)
 
         # Filter the article list based on the relevance score threshold
-        article_list = [
-            get_article(article.article_url)
+        article_link_list = [
+            article.article_url
             for article in article_link_list
             if article.relevance_score >= self._relevance_score_threshold
         ]
-        article_list = article_list[: self._article_list_limit]
-        print(len(article_list))
-        print(article_list)
+        article_link_list = article_link_list[: self._article_list_limit]
+        article_list = [get_article(article) for article in article_link_list]
         article_list = "\n".join(article_list)
 
         # Use the article list to answer the question
@@ -149,6 +143,13 @@ class QuestionAgent:
         )
 
         return question_answer
+
+
+question_agent = QuestionAgent(
+    query_list_limit=10,
+    relevance_score_threshold=0.8,
+    article_list_limit=10,
+)
 
 
 if __name__ == "__main__":

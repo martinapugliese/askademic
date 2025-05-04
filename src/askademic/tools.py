@@ -107,7 +107,6 @@ def search_articles(
 
 def search_articles_by_abs(
     query: str = "lyapunov exponents",
-    sortby: str = "relevance",
     start: int = 0,
     max_results: int = 20,
 ):
@@ -122,17 +121,13 @@ def search_articles_by_abs(
     - summary: a summary of the article's content
     Args:
         query: the query used for the search
-        sortby: how to sort the results. Possible values:
-            - relevance (most relevant on the top)
-            - lastUpdatedDate (most recently updated on the top)
-            - submittedDate (most recently submitted on top)
         start: the index of the ranking where the table starts, add +20 to get the next table chunk
         max_results: the total number of articles to retrieve. The default value is 20.
     """
 
     return search_articles(
         query=query,
-        sortby=sortby,
+        sortby="relevance",
         prefix="abs",
         start=start,
         max_results=max_results,
@@ -141,7 +136,6 @@ def search_articles_by_abs(
 
 def search_articles_by_title(
     query: str = "lyapunov exponents",
-    sortby: str = "relevance",
     start: int = 0,
     max_results: int = 20,
 ):
@@ -155,17 +149,13 @@ def search_articles_by_title(
     - summary: a summary of the article's content
     Args:
         query: the query used for the search
-        sortby: how to sort the results. Possible values:
-            - relevance (most relevant on the top)
-            - lastUpdatedDate (most recently updated on the top)
-            - submittedDate (most recently submitted on top)
         start: the index of the ranking where the table starts, add +20 to get the next table chunk
         max_results: the total number of articles to retrieve. The default value is 20.
     """
 
     return search_articles(
         query=query,
-        sortby=sortby,
+        sortby="relevance",
         prefix="ti",
         start=start,
         max_results=max_results,

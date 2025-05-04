@@ -6,11 +6,7 @@ from pydantic_ai import Agent, RunContext
 
 from askademic.article import ArticleResponse, article_agent
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts import (
-    SYSTEM_PROMPT_ORCHESTRATOR,
-    USER_PROMPT_ARTICLE_TEMPLATE,
-    USER_PROMPT_QUESTION_TEMPLATE,
-)
+from askademic.prompts import SYSTEM_PROMPT_ORCHESTRATOR, USER_PROMPT_ARTICLE_TEMPLATE
 from askademic.question import QuestionAnswerResponse, question_agent
 from askademic.summarizer import SummaryResponse, summary_agent
 
@@ -56,8 +52,7 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
         question: the question
     """
     logger.info(f"{datetime.now()}: Calling QA Agent with this question: {question}")
-    prompt = USER_PROMPT_QUESTION_TEMPLATE.format(question=question)
-    r = await question_agent.run(prompt)
+    r = await question_agent(question=question)
     return r
 
 
