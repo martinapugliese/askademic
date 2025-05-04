@@ -1,18 +1,22 @@
+"""
+Checks category fetched is correct.
+"""
+
 import asyncio
 
-from askademic.prompts import USER_PROMPT_ALLOWER_TEMPLATE
 from askademic.summarizer import summary_agent
 
 
 class SummaryTestCase:
-    def __init__(self, request: str, is_scientic_gt: bool):
+    def __init__(self, request: str, category: str):
         self.request = request
-        self.is_scientic_gt = is_scientic_gt
+        self.category = category
 
 
 eval_cases = [
     SummaryTestCase("What is the latest research on particle physics?", "hep-ex"),
     SummaryTestCase("Can you summarize the latest papers on AI?", "cs.AI"),
+    SummaryTestCase("Tell me all about the recent work in probability?", "stat.TH"),
 ]
 
 
@@ -22,11 +26,9 @@ async def run_evals():
     for case in eval_cases:
 
         print(f"Evaluating case: {case.request}")
-        response = await summary_agent.run(
-            USER_PROMPT_ALLOWER_TEMPLATE.format(question=case.request)
-        )
+        response = await summary_agent(request=case.request)
 
-        if response.output.is_scientific != case.is_scientic_gt:
+        if response.category != case.category:
             print(f"Test failed for question: {case.request}")
             c_failed += 1
         else:

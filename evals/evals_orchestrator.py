@@ -1,3 +1,7 @@
+"""
+Checks delegation to right agent via type of response.
+"""
+
 import asyncio
 
 from askademic.article import ArticleResponse
@@ -38,7 +42,7 @@ async def run_evals():
         print(f"Evaluating case: {case.request}")
         response = await orchestrator_agent.run(case.request)
 
-        if not isinstance(response, case.response_type):
+        if not isinstance(response.output, case.response_type):
             print(f"Test failed for question: {case.request}")
             c_failed += 1
         else:

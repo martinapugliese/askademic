@@ -1,3 +1,7 @@
+"""
+Checks is_scientific is set correctly.
+"""
+
 import asyncio
 
 from askademic.allower import allower_agent
