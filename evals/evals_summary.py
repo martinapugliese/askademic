@@ -14,9 +14,11 @@ class SummaryTestCase:
 
 
 eval_cases = [
-    SummaryTestCase("What is the latest research on particle physics?", "hep-ex"),
+    SummaryTestCase("What is the latest research on quantum field theory?", "hep-th"),
     SummaryTestCase("Can you summarize the latest papers on AI?", "cs.AI"),
-    SummaryTestCase("Tell me all about the recent work in probability?", "stat.TH"),
+    SummaryTestCase(
+        "Tell me all about the recent work in Bayesian statistics?", "stat.TH"
+    ),
 ]
 
 console = Console()
@@ -30,8 +32,10 @@ async def run_evals():
         print(f"Evaluating case: {case.request}")
         response = await summary_agent(request=case.request)
 
-        if response.category != case.category:
+        if response.category.category_id != case.category:
             print(f"Test failed for question: {case.request}")
+            print(f"Got: {response.category.category_id}")
+            print(f"Expected: {case.category}")
             c_failed += 1
         else:
             c_passed += 1
