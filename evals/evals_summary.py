@@ -2,8 +2,6 @@
 Checks category fetched is correct.
 """
 
-import asyncio
-
 from rich.console import Console
 
 from askademic.summarizer import summary_agent
@@ -40,20 +38,9 @@ async def run_evals():
 
     console.print(f"[bold cyan]Total cases: {len(eval_cases)}[/bold cyan]")
     if c_failed > 0:
-        print(
-            f"[bold green]Passed: {c_passed}[/bold green]"
+        console.print(
+            f":check_mark: [bold green]Passed: {c_passed}[/bold green]"
             + ","
-            + f"[bold red]Failed: {c_failed}[/bold red]"
+            + f":x: [bold red]Failed: {c_failed}[/bold red]"
         )
-    console.print(
-        f"[bold green]Passed: {c_passed}[/bold green]",
-        style="bold",
-    )
-
-
-def main():
-    asyncio.run(run_evals())
-
-
-if __name__ == "__main__":
-    main()
+    console.print(f":check_mark: [bold green]Passed: {c_passed}[/bold green]")

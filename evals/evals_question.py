@@ -2,8 +2,6 @@
 Checks response contains substring.
 """
 
-import asyncio
-
 from rich.console import Console
 
 from askademic.prompts import USER_PROMPT_QUESTION_TEMPLATE
@@ -85,20 +83,9 @@ async def run_evals():
     tot = len(eval_cases_single) + len(eval_cases_range)
     console.print(f"[bold cyan]Total cases: {tot}[/bold cyan]")
     if c_failed > 0:
-        print(
-            f"[bold green]Passed: {c_passed}[/bold green]"
+        console.print(
+            f":check_mark: [bold green]Passed: {c_passed}[/bold green]"
             + ","
-            + f"[bold red]Failed: {c_failed}[/bold red]"
+            + f":x: [bold red]Failed: {c_failed}[/bold red]"
         )
-    console.print(
-        f"[bold green]Passed: {c_passed}[/bold green]",
-        style="bold",
-    )
-
-
-def main():
-    asyncio.run(run_evals())
-
-
-if __name__ == "__main__":
-    main()
+    console.print(f":check_mark: [bold green]Passed: {c_passed}[/bold green]")
