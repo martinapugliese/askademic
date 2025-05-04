@@ -128,7 +128,7 @@ def search_articles_by_abs(
 
     return search_articles(
         query=query,
-        sortby="relevance",
+        sortby=sortby,
         prefix="abs",
         start=start,
         max_results=max_results,
