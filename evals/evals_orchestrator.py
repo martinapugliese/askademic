@@ -4,6 +4,8 @@ Checks delegation to right agent via type of response.
 
 import asyncio
 
+from rich.console import Console
+
 from askademic.article import ArticleResponse
 from askademic.orchestrator import orchestrator_agent
 from askademic.question import QuestionAnswerResponse
@@ -33,6 +35,8 @@ eval_cases = [
     ),
 ]
 
+console = Console()
+
 
 async def run_evals():
 
@@ -48,9 +52,17 @@ async def run_evals():
         else:
             c_passed += 1
 
-    print(f"Total cases: {len(eval_cases)}")
-    print(f"Passed: {c_passed}")
-    print(f"Failed: {c_failed}")
+    console.print(f"[bold cyan]Total cases: {len(eval_cases)}[/bold cyan]")
+    if c_failed > 0:
+        print(
+            f"[bold green]Passed: {c_passed}[/bold green]"
+            + ","
+            + f"[bold red]Failed: {c_failed}[/bold red]"
+        )
+    console.print(
+        f"[bold green]Passed: {c_passed}[/bold green]",
+        style="bold",
+    )
 
 
 def main():

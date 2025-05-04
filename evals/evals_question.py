@@ -4,6 +4,8 @@ Checks response contains substring.
 
 import asyncio
 
+from rich.console import Console
+
 from askademic.prompts import USER_PROMPT_QUESTION_TEMPLATE
 from askademic.question import question_agent
 
@@ -39,6 +41,8 @@ eval_cases_range = [
         ["4%", "5%"],
     ),
 ]
+
+console = Console()
 
 
 async def run_evals():
@@ -78,9 +82,18 @@ async def run_evals():
         else:
             c_passed += 1
 
-    print(f"Total cases: {len(eval_cases_single) + len(eval_cases_range)}")
-    print(f"Passed: {c_passed}")
-    print(f"Failed: {c_failed}")
+    tot = len(eval_cases_single) + len(eval_cases_range)
+    console.print(f"[bold cyan]Total cases: {tot}[/bold cyan]")
+    if c_failed > 0:
+        print(
+            f"[bold green]Passed: {c_passed}[/bold green]"
+            + ","
+            + f"[bold red]Failed: {c_failed}[/bold red]"
+        )
+    console.print(
+        f"[bold green]Passed: {c_passed}[/bold green]",
+        style="bold",
+    )
 
 
 def main():
