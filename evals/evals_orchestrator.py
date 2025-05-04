@@ -26,7 +26,8 @@ eval_cases = [
     ),
     OrchestratorTestCase("Can you summarize the latest papers on AI?", SummaryResponse),
     OrchestratorTestCase(
-        "What are the implications of quantum entanglement?", QuestionAnswerResponse
+        "What's the relation between context length and quality in LLM performance?",
+        QuestionAnswerResponse,
     ),
     OrchestratorTestCase(
         "Tell me all about paper 'Attention is all you need'", ArticleResponse
