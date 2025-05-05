@@ -1,5 +1,4 @@
 import asyncio
-import time
 
 from evals_allower import run_evals as run_evals_allower
 from evals_article import run_evals as run_evals_article
@@ -15,16 +14,16 @@ async def main():
     console.print("[bold cyan]:hourglass: Running all evals...[/bold cyan]")
     console.print("\n[bold magenta]Running allower evals...[/bold magenta]")
     await run_evals_allower()
-    time.sleep(10)
+
     console.print("\n[bold magenta]Running orchestrator evals...[/bold magenta]")
     await run_evals_orchestrator()
-    time.sleep(10)
+
     console.print("\n[bold magenta]Running summary evals...[/bold magenta]")
     await run_evals_summary()
-    time.sleep(10)
+
     console.print("\n[bold magenta]Running question evals...[/bold magenta]")
     await run_evals_question()
-    time.sleep(10)
+
     console.print("\n[bold magenta]Running article evals...[/bold magenta]")
     await run_evals_article()
 
