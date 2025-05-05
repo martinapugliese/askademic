@@ -83,7 +83,7 @@ async def ask_me():
                         message_history=memory.get_messages(),
                     )
                     for k in agent_result.output.__dict__:
-                        console.print(f"{k}: {getattr(agent_result.data, k)}")
+                        console.print(f"{k}: {getattr(agent_result.output, k)}")
 
                     memory.add_message(
                         agent_result.usage().total_tokens,

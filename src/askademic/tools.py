@@ -107,7 +107,6 @@ def search_articles(
 
 def search_articles_by_abs(
     query: str = "lyapunov exponents",
-    sortby: str = "relevance",
     start: int = 0,
     max_results: int = 20,
 ):
