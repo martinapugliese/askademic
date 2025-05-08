@@ -77,55 +77,26 @@ class QuestionAgent:
             model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
-    async def _generate_query(
-        self,
-        question: str,
-    ) -> QueryResponse:
-        """
-        Generate a list of queries to search for articles based on the question.
-        Args:
-            question (str): The question to generate queries for.
-        Returns:
-            QueryResponse: The response containing the list of queries.
-        """
-        return await self._query_agent.run(
+    async def __call__(self, question: str) -> QuestionAnswerResponse:
+
+        # Generate Queries
+        query_list = await self._query_agent.run(
             USER_PROMPT_QUERY_TEMPLATE.format(question=question),
         )
 
-    async def _get_relevant_abstracts(
-        self,
-        question: str,
-        abstracts: str,
-    ) -> ArticleListResponse:
-        """
-        Get the most relevant abstracts to the question.
-        Args:
-            question (str): The question to find relevant abstracts for.
-            abstracts (str): The list of abstracts to search through.
-        Returns:
-            ArticleListResponse: The response containing the list of relevant articles.
-        """
-        return await self._abstract_relevance_agent.run(
-            USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE.format(
-                question=question, abstracts=abstracts
-            ),
-        )
-
-    async def __call__(self, question: str) -> QuestionAnswerResponse:
-
-        print("Question:", question)
-        query_list = await question_agent._generate_query(question)
-
+        # Retrieve abstract lists
         abstract_list = [
             self._search_articles_by_abs(query)
             for query in query_list.output.queries[: self._query_list_limit]
         ]
 
-        print("Abstract list:", abstract_list)
+        # Filter relevant abstracts
         article_link_list = []
         for abstracts in abstract_list:
-            article_link_list_tmp = await question_agent._get_relevant_abstracts(
-                question=question, abstracts=abstracts
+            article_link_list_tmp = await self._abstract_relevance_agent.run(
+                USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE.format(
+                    question=question, abstracts=abstracts
+                ),
             )
             article_link_list += list(article_link_list_tmp.output.article_list)
 
@@ -140,14 +111,12 @@ class QuestionAgent:
         article_list = "\n".join(article_list)
 
         # Use the article list to answer the question
-        print("Article list:", article_list)
         question_answer = await self._many_articles_agent.run(
             USER_PROMPT_MANY_ARTICLES_TEMPLATE.format(
                 question=question, articles=article_list
             ),
         )
 
-        print("Question answer:", question_answer)
         return question_answer
 
 
