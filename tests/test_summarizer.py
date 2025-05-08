@@ -1,5 +1,4 @@
 import asyncio
-import os
 from unittest.mock import MagicMock
 
 import pytest
@@ -7,9 +6,6 @@ import pytest_asyncio  # noqa: F401
 from pydantic_ai.agent import AgentRunResult  # noqa: F401
 
 from askademic.summarizer import Category, Summary, SummaryAgent, SummaryResponse
-
-os.environ["GEMINI_API_KEY"] = "mocked_gemini_api_key"
-
 
 testdata = [
     (
@@ -46,9 +42,17 @@ testdata = [
     "agent_request, category, latest_published_day, summary, summary_response", testdata
 )
 async def test_summary_agent(
-    agent_request, category, latest_published_day, summary, summary_response
+    agent_request,
+    category,
+    latest_published_day,
+    summary,
+    summary_response,
+    monkeypatch,
 ):
     """Test the SummaryAgent class."""
+    # Mock the GEMINI_API_KEY environment variable
+    monkeypatch.setenv("GEMINI_API_KEY", "mocked_gemini_api_key")
+
     summary_agent = SummaryAgent()
     summary_agent._category_agent = MagicMock()
     summary_agent._summary_agent = MagicMock()

@@ -1,5 +1,4 @@
 import asyncio
-import os
 from unittest.mock import MagicMock
 
 import pytest
@@ -13,9 +12,6 @@ from askademic.question import (
     QuestionAgent,
     QuestionAnswerResponse,
 )
-
-os.environ["GEMINI_API_KEY"] = "mocked_gemini_api_key"
-
 
 testdata = [
     (
@@ -92,8 +88,13 @@ async def test_question_agent(
     article_list_response,
     get_article_response,
     question_answer_response,
+    monkeypatch,
 ):
     """Test the QuestionAgent class."""
+
+    # Mock the GEMINI_API_KEY environment variable
+    monkeypatch.setenv("GEMINI_API_KEY", "mocked_gemini_api_key")
+
     question_agent = QuestionAgent()
     question_agent._query_agent = MagicMock()
     question_agent._abstract_relevance_agent = MagicMock()
