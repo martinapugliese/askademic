@@ -165,7 +165,9 @@ USER_PROMPT_MANY_ARTICLES_TEMPLATE = cleandoc(
     Answer the question based on the articles. If you cannot find the answer in the articles,
     just say that you cannot find the answer.
     Quote the articles you used to answer the question in the answer, and the
-    part of the article you used to answer the question.
+    part of the article you used to answer the question, e.g.:
+    "According to the article '(https://arxiv.org/pdf/1706.03762)', the attention mechanism
+    is a key component of the transformer architecture."
     Also return the list of article links you used to answer the question.
     The final answer should be in the following JSON format:
     {{

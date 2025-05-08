@@ -53,6 +53,8 @@ class QuestionAgent:
         self._query_list_limit = query_list_limit
         self._relevance_score_threshold = relevance_score_threshold
         self._article_list_limit = article_list_limit
+        self._search_articles_by_abs = search_articles_by_abs
+        self._get_article = get_article
 
         self._query_agent = Agent(
             GEMINI_2_FLASH_MODEL_ID,
@@ -111,13 +113,15 @@ class QuestionAgent:
 
     async def __call__(self, question: str) -> QuestionAnswerResponse:
 
+        print("Question:", question)
         query_list = await question_agent._generate_query(question)
 
         abstract_list = [
-            search_articles_by_abs(query)
+            self._search_articles_by_abs(query)
             for query in query_list.output.queries[: self._query_list_limit]
         ]
 
+        print("Abstract list:", abstract_list)
         article_link_list = []
         for abstracts in abstract_list:
             article_link_list_tmp = await question_agent._get_relevant_abstracts(
@@ -132,23 +136,25 @@ class QuestionAgent:
             if article.relevance_score >= self._relevance_score_threshold
         ]
         article_link_list = article_link_list[: self._article_list_limit]
-        article_list = [get_article(article) for article in article_link_list]
+        article_list = [self._get_article(article) for article in article_link_list]
         article_list = "\n".join(article_list)
 
         # Use the article list to answer the question
+        print("Article list:", article_list)
         question_answer = await self._many_articles_agent.run(
             USER_PROMPT_MANY_ARTICLES_TEMPLATE.format(
                 question=question, articles=article_list
             ),
         )
 
+        print("Question answer:", question_answer)
         return question_answer
 
 
 question_agent = QuestionAgent(
-    query_list_limit=10,
+    query_list_limit=5,
     relevance_score_threshold=0.8,
-    article_list_limit=10,
+    article_list_limit=5,
 )
 
 

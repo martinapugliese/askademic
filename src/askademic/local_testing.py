@@ -13,9 +13,9 @@ nest_asyncio.apply()  # Allows nesting of event loops
 
 question_list = [
     "Hello",
-    "Find the most recent articles about AI",
-    "What are the most recent articles published about reinforcement learning?",
-    "What are the most recent articles published about neutrinos?",
+    # "Find the most recent articles about AI",
+    # "What are the most recent articles published about reinforcement learning?",
+    # "What are the most recent articles published about neutrinos?",
     "What is reinforcement learning?",
     "What is the relation between context length and accuracy for large language models?",
     "How good is AI at playing chess?",
