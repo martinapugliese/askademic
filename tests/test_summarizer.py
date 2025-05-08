@@ -82,3 +82,5 @@ async def test_summary_agent(
 
     response = await summary_agent(agent_request)
     assert response == summary_response
+    assert summary_agent._category_agent.run.called
+    assert summary_agent._summary_agent.run.called
