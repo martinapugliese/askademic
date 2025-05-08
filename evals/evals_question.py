@@ -6,7 +6,6 @@ import time
 
 from rich.console import Console
 
-from askademic.prompts import USER_PROMPT_QUESTION_TEMPLATE
 from askademic.question import question_agent
 
 
@@ -58,9 +57,7 @@ async def run_evals():
         while attempt < MAX_ATTEMPTS:
             try:
                 print(f"Evaluating case: {case.request}")
-                response = await question_agent.run(
-                    USER_PROMPT_QUESTION_TEMPLATE.format(question=case.request)
-                )
+                response = await question_agent(question=case.request)
 
                 if case.answer not in response.output.response:
                     print(f"Test failed for question: {case.request}")
@@ -84,9 +81,7 @@ async def run_evals():
         while attempt < MAX_ATTEMPTS:
             try:
                 print(f"Evaluating case: {case.request}")
-                response = await question_agent.run(
-                    USER_PROMPT_QUESTION_TEMPLATE.format(question=case.request)
-                )
+                response = await question_agent.run(question=case.request)
 
                 if (
                     case.answer[0] not in response.output.response
