@@ -1,11 +1,14 @@
 import asyncio
+import os
 from unittest.mock import MagicMock
 
 import pytest
 import pytest_asyncio  # noqa: F401
 from pydantic_ai.agent import AgentRunResult  # noqa: F401
 
-from askademic.question import (
+os.environ["GEMINI_API_KEY"] = "mock"
+
+from askademic.question import (  # noqa: E402
     Article,
     ArticleListResponse,
     QueryResponse,
@@ -88,12 +91,10 @@ async def test_question_agent(
     article_list_response,
     get_article_response,
     question_answer_response,
-    monkeypatch,
 ):
     """Test the QuestionAgent class."""
 
-    # Mock the GEMINI_API_KEY environment variable
-    monkeypatch.setenv("GEMINI_API_KEY", "mocked_gemini_api_key")
+    assert os.environ["GEMINI_API_KEY"] == "mock"
 
     question_agent = QuestionAgent()
     question_agent._query_agent = MagicMock()
