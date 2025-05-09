@@ -125,17 +125,3 @@ question_agent = QuestionAgent(
     relevance_score_threshold=0.8,
     article_list_limit=5,
 )
-
-
-if __name__ == "__main__":
-    # Test the query agent
-    import asyncio
-
-    question = """
-    What is the relation between context length
-    and accuracy for large language models?
-    """
-
-    question_agent = QuestionAgent()
-    response = asyncio.run(question_agent(question))
-    print(response)
