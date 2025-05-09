@@ -3,12 +3,17 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
-import pytest_asyncio
-from pydantic_ai.agent import AgentRunResult
+import pytest_asyncio  # noqa: F401
+from pydantic_ai.agent import AgentRunResult  # noqa: F401
 
-os.environ["GEMINI_API_KEY"] = "mocked_gemini_api_key"
+os.environ["GEMINI_API_KEY"] = "mock"
 
-from askademic.summarizer import Category, Summary, SummaryAgent, SummaryResponse
+from askademic.summarizer import (  # noqa: E402
+    Category,
+    Summary,
+    SummaryAgent,
+    SummaryResponse,
+)
 
 testdata = [
     (
@@ -45,7 +50,11 @@ testdata = [
     "agent_request, category, latest_published_day, summary, summary_response", testdata
 )
 async def test_summary_agent(
-    agent_request, category, latest_published_day, summary, summary_response
+    agent_request,
+    category,
+    latest_published_day,
+    summary,
+    summary_response,
 ):
     """Test the SummaryAgent class."""
     summary_agent = SummaryAgent()
@@ -59,7 +68,7 @@ async def test_summary_agent(
             _output_tool_name=None,
             _state=None,
             _new_message_index=None,
-            _span_value=None,
+            _traceparent_value=None,
         )
     )
     summary_agent._category_agent.run.return_value = category_future
@@ -71,7 +80,7 @@ async def test_summary_agent(
             _output_tool_name=None,
             _state=None,
             _new_message_index=None,
-            _span_value=None,
+            _traceparent_value=None,
         )
     )
     summary_agent._summary_agent.run.return_value = summary_future
@@ -81,3 +90,5 @@ async def test_summary_agent(
 
     response = await summary_agent(agent_request)
     assert response == summary_response
+    assert summary_agent._category_agent.run.called
+    assert summary_agent._summary_agent.run.called
