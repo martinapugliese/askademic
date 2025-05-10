@@ -8,7 +8,7 @@ from askademic.article import ArticleResponse, article_agent
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
 from askademic.prompts import SYSTEM_PROMPT_ORCHESTRATOR, USER_PROMPT_ARTICLE_TEMPLATE
 from askademic.question import QuestionAnswerResponse, question_agent
-from askademic.summarizer import SummaryResponse, summary_agent
+from askademic.summary import SummaryResponse, summary_agent
 
 today = datetime.now().strftime("%Y-%m-%d")
 

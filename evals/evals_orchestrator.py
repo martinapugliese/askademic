@@ -9,7 +9,7 @@ from rich.console import Console
 from askademic.article import ArticleResponse
 from askademic.orchestrator import orchestrator_agent
 from askademic.question import QuestionAnswerResponse
-from askademic.summarizer import SummaryResponse
+from askademic.summary import SummaryResponse
 
 
 class OrchestratorTestCase:
