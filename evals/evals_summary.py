@@ -6,7 +6,7 @@ import time
 
 from rich.console import Console
 
-from askademic.summarizer import summary_agent
+from askademic.summary import summary_agent
 
 
 class SummaryTestCase:
