@@ -11,7 +11,7 @@ from rich.prompt import Prompt
 from askademic.allower import allower_agent
 from askademic.memory import Memory
 from askademic.orchestrator import orchestrator_agent
-from askademic.prompts import USER_PROMPT_ALLOWER_TEMPLATE
+from askademic.prompts.general import USER_PROMPT_ALLOWER_TEMPLATE
 
 console = Console()
 
