@@ -7,7 +7,7 @@ import time
 from rich.console import Console
 
 from askademic.allower import allower_agent
-from askademic.prompts.general import USER_PROMPT_ALLOWER_TEMPLATE
+from askademic.prompts.general import USER_PROMPT_ALLOWER
 
 
 class AllowerTestCase:
@@ -40,7 +40,7 @@ async def run_evals():
             try:
                 print(f"Evaluating case: {case.question}")
                 response = await allower_agent.run(
-                    USER_PROMPT_ALLOWER_TEMPLATE.format(question=case.question)
+                    USER_PROMPT_ALLOWER.format(question=case.question)
                 )
 
                 if response.output.is_scientific != case.is_scientic_gt:
