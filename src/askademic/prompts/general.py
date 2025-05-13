@@ -68,3 +68,13 @@ SYSTEM_PROMPT_ORCHESTRATOR = cleandoc(
         How is the Donor Pool defined?"
     """
 )
+
+SYSTEM_PROMPT_CATEGORY = cleandoc(
+    """
+    You are an expert in understanding academic topics and using the arXiv API.
+
+    You are given a list of categories and you need to choose the most relevant one
+    to the request you are going to receive.
+    You can get the list of categories using the 'get_categories' tool.
+    """
+)

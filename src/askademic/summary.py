@@ -1,18 +1,23 @@
+import logging
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts.gemini import (
-    SYSTEM_PROMPT_CATEGORY,
-    SYSTEM_PROMPT_SUMMARY,
-    USER_PROMPT_CATEGORY_TEMPLATE,
-    USER_PROMPT_SUMMARY_TEMPLATE,
-)
+from askademic.prompts.claude import USER_PROMPT_CATEGORY
+from askademic.prompts.gemini import SYSTEM_PROMPT_SUMMARY, USER_PROMPT_SUMMARY_TEMPLATE
+from askademic.prompts.general import SYSTEM_PROMPT_CATEGORY
 from askademic.tools import (
     get_categories,
     identify_latest_day,
     retrieve_recent_articles,
 )
+
+today = datetime.now().strftime("%Y-%m-%d")
+
+logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
+logger = logging.getLogger(__name__)
 
 
 class Category(BaseModel):
@@ -70,7 +75,11 @@ class SummaryAgent:
         """
         # Get the category
         category = await self._category_agent.run(
-            USER_PROMPT_CATEGORY_TEMPLATE.format(request=request)
+            USER_PROMPT_CATEGORY.format(request=request)
+        )
+
+        logger.info(
+            f"Category selected: {category.output.category_id} - {category.output.category_name}"
         )
 
         # Get the latest published day
