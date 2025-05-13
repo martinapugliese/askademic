@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts import SYSTEM_PROMPT_ALLOWER_TEMPLATE
+from askademic.prompts.general import SYSTEM_PROMPT_ALLOWER_TEMPLATE
 
 
 class AllowResponse(BaseModel):

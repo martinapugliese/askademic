@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts import (
+from askademic.prompts.gemini import (
     SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
     SYSTEM_PROMPT_MANY_ARTICLES,
     SYSTEM_PROMPT_QUERY,

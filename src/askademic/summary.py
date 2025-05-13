@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts import (
+from askademic.prompts.gemini import (
     SYSTEM_PROMPT_CATEGORY,
     SYSTEM_PROMPT_SUMMARY,
     USER_PROMPT_CATEGORY_TEMPLATE,

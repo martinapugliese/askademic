@@ -9,7 +9,7 @@ import time
 from rich.console import Console
 
 from askademic.article import article_agent
-from askademic.prompts import USER_PROMPT_ARTICLE_TEMPLATE
+from askademic.prompts.gemini import USER_PROMPT_ARTICLE_TEMPLATE
 
 
 class ArticleResponseTestCase:
