@@ -1,5 +1,25 @@
 from inspect import cleandoc
 
+USER_PROMPT_CATEGORY = cleandoc(
+    """
+
+    Find the most relevant arXiv category for this request:
+    '{request}'
+
+    Follow these steps when creating the answer:
+    1. Use the get_categories tool to list all available categories.
+    2. Choose the most relevant arXiv category for the request.
+    3. If there are more than one matching categories,
+       choose the most relevant one - you must choose only one category.
+    4. Return the category ID and name in the following JSON format:
+    {{
+        "category_id": "category_id",
+        "category_name": "category_name"
+    }}
+    5. End the process.
+    """
+)
+
 SYSTEM_PROMPT_SUMMARY = cleandoc(
     """
     You are an expert in understanding academic topics, using the arXiv API
@@ -17,13 +37,22 @@ SYSTEM_PROMPT_SUMMARY = cleandoc(
     """
 )
 
-SYSTEM_PROMPT_CATEGORY = cleandoc(
+USER_PROMPT_SUMMARY_TEMPLATE = cleandoc(
     """
-    You are an expert in understanding academic topics and using the arXiv API.
+    You have this list of abstracts from the latest articles in a specific category:
 
-    You are given a list of categories and you need to choose the most relevant one
-    to the request you are going to receive.
-    You can get the list of categories using the 'get_categories' tool.
+    '{articles}'
+
+    Generate a global summary of all that has been published.
+    Identify the topics covered in a clear and easy-to-understand way.
+    Describe each topic in a few sentences, citing the articles you used to define it.
+    The output should be a JSON object with the following fields:
+    {{
+        "category": "The category of the articles.",
+        "last_published_day": "The latest day of publications available on the API.",
+        "summary": "Global summary of all abstracts, identifying topics.",
+        "recent_papers_url": "arXiv URL to the most recent papers in the chosen category",
+    }}
     """
 )
 
@@ -160,44 +189,5 @@ USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
         - If you search the article by title and you did not find an exact match,
           generate an answer based on the non-exact match article you found
           and indicate that it is not an exact match in the answer.
-    """
-)
-
-USER_PROMPT_SUMMARY_TEMPLATE = cleandoc(
-    """
-    You have this list of abstracts from the latest articles in a specific category:
-
-    '{articles}'
-
-    Generate a global summary of all that has been published.
-    Identify the topics covered in a clear and easy-to-understand way.
-    Describe each topic in a few sentences, citing the articles you used to define it.
-    The output should be a JSON object with the following fields:
-    {{
-        "category": "The category of the articles.",
-        "last_published_day": "The latest day of publications available on the API.",
-        "summary": "Global summary of all abstracts, identifying topics.",
-        "recent_papers_url": "arXiv URL to the most recent papers in the chosen category",
-    }}
-    """
-)
-
-USER_PROMPT_CATEGORY_TEMPLATE = cleandoc(
-    """
-
-    Find the most :
-    '{request}'
-
-    Follow these steps when creating the answer:
-    1. Use the get_categories tool to list all available categories.
-    2. Choose the most relevant arXiv category for the request.
-    3. If there are more than one matching categories,
-       choose the most relevant one - you must choose only one category.
-    4. Return the category ID and name in the following JSON format:
-    {{
-        "category_id": "category_id",
-        "category_name": "category_name"
-    }}
-    5. End the process.
     """
 )
