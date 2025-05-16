@@ -4,9 +4,10 @@ import time
 from datetime import datetime
 from inspect import cleandoc
 
+from prompt_toolkit import PromptSession
+from prompt_toolkit.history import InMemoryHistory
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
-from rich.prompt import Prompt
 
 from askademic.allower import allower_agent
 from askademic.memory import Memory
@@ -14,11 +15,23 @@ from askademic.orchestrator import orchestrator_agent
 from askademic.prompts import USER_PROMPT_ALLOWER_TEMPLATE
 
 console = Console()
+history = InMemoryHistory()
+session = PromptSession(history=history)
 
 today = datetime.now().strftime("%Y-%m-%d")
 
 logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
+
+
+async def ask_user_question():
+    # Display rich prompt (not part of input)
+    console.print(
+        "[bold yellow]Ask a question (type 'help' to display instructions)[/bold yellow]"
+        + " :speech_balloon:",
+        end=" ",
+    )
+    return await session.prompt_async("")
 
 
 async def ask_me():
@@ -37,6 +50,13 @@ async def ask_me():
     Ask me a question with either of these requests.
     I will do the heavy lifting for you, you can ask follow-up questions too.
     There will be logs in a "logs" folder, they're filenamed with the date of the day.
+
+    Instructions:
+    - Type "reset" to reset the memory
+    - Type "history" to see the memory history
+    - Type "exit" or CTRL+D to quit
+    - Type "help" to see this message again
+
     [/bold cyan]
     """
         )
@@ -47,14 +67,36 @@ async def ask_me():
     while True:
 
         try:
-            user_question = Prompt.ask(
-                "[bold yellow]Ask a question (CTRL+D or type 'exit' to quit)[/bold yellow]"
-                + ":speech_balloon:"
-            )
+            user_question = await ask_user_question()
 
             if user_question.lower() == "exit":
                 console.print("[bold cyan]Goodbye![/bold cyan] :wave:")
                 break
+
+            if user_question == "reset":
+                console.print("[bold cyan]Resetting memory...[/bold cyan]")
+                memory.clear_history()
+                continue
+
+            if user_question == "history":
+                console.print("[bold cyan]Memory history:[/bold cyan]")
+                for m in memory.get_messages():
+                    console.print(m)
+                continue
+
+            if user_question == "help":
+                console.print(
+                    cleandoc(
+                        """
+                [bold cyan]Instructions:
+                - Type "reset" to reset the memory
+                - Type "history" to see the memory history
+                - Type "exit" or CTRL+D to quit
+                - Type "help" to see this message again[/bold cyan]
+                """
+                    )
+                )
+                continue
         except EOFError:
             console.print("[bold cyan]Goodbye![/bold cyan] :wave:")
             break
