@@ -90,6 +90,9 @@ class SummaryAgent:
             category=category.output.category_id, latest_day=latest_day
         )
 
+        logger.info(f"Latest published day: {latest_day} - Articles #: {len(articles)}")
+        logger.info(f"Articles: {articles}")
+
         # Create the summary
         summary = await self._summary_agent.run(
             USER_PROMPT_SUMMARY_TEMPLATE.format(articles=articles)

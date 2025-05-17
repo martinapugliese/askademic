@@ -1,16 +1,26 @@
+import logging
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
+from askademic.prompts.claude import (
+    SYSTEM_PROMPT_MANY_ARTICLES,
+    USER_PROMPT_MANY_ARTICLES,
+)
 from askademic.prompts.gemini import (
     SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
-    SYSTEM_PROMPT_MANY_ARTICLES,
     SYSTEM_PROMPT_QUERY,
     USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE,
-    USER_PROMPT_MANY_ARTICLES_TEMPLATE,
     USER_PROMPT_QUERY_TEMPLATE,
 )
 from askademic.tools import get_article, search_articles_by_abs
+
+today = datetime.now().strftime("%Y-%m-%d")
+
+logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
+logger = logging.getLogger(__name__)
 
 
 class QueryResponse(BaseModel):
@@ -100,21 +110,24 @@ class QuestionAgent:
             )
             article_link_list += list(article_link_list_tmp.output.article_list)
 
+        logger.info("article_link_list: %s", article_link_list)
+
         # Filter the article list based on the relevance score threshold
         article_link_list = [
             article.article_url
             for article in article_link_list
             if article.relevance_score >= self._relevance_score_threshold
         ]
+
+        logger.info("article_link_list after filtering: %s", article_link_list)
+
         article_link_list = article_link_list[: self._article_list_limit]
         article_list = [self._get_article(article) for article in article_link_list]
         article_list = "\n".join(article_list)
 
         # Use the article list to answer the question
         question_answer = await self._many_articles_agent.run(
-            USER_PROMPT_MANY_ARTICLES_TEMPLATE.format(
-                question=question, articles=article_list
-            ),
+            USER_PROMPT_MANY_ARTICLES.format(question=question, articles=article_list),
         )
 
         return question_answer
