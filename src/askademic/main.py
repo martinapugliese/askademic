@@ -26,16 +26,6 @@ logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 
-# async def ask_user_question():
-#     # Display rich prompt (not part of input)
-#     console.print(
-#         "[bold yellow]Ask a question (type 'help' to display instructions): [/bold yellow]"
-#         + " :speech_balloon:",
-#         end=" ",
-#     )
-#     return await session.prompt_async("")
-
-
 async def ask_user_question():
     # Build prompt string with Rich markup
     markup_prompt = (
