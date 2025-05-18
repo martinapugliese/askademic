@@ -5,7 +5,7 @@ from datetime import datetime
 from inspect import cleandoc
 
 from prompt_toolkit import PromptSession
-from prompt_toolkit.history import InMemoryHistory
+from prompt_toolkit.history import FileHistory
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 
@@ -15,8 +15,7 @@ from askademic.orchestrator import orchestrator_agent
 from askademic.prompts import USER_PROMPT_ALLOWER_TEMPLATE
 
 console = Console()
-history = InMemoryHistory()
-session = PromptSession(history=history)
+session = PromptSession(history=FileHistory(".cli_history"))
 
 today = datetime.now().strftime("%Y-%m-%d")
 
