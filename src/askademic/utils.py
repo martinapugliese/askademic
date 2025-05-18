@@ -177,13 +177,22 @@ def organise_api_response_as_dataframe(response) -> pd.DataFrame:
         df_articles = pd.DataFrame()
     else:
         articles_list = feedparser.parse(response.content)["entries"]
-        df_articles = pd.DataFrame(articles_list)[
-            ["id", "updated", "published", "title", "summary"]
-        ]
-        df_articles = df_articles.rename(columns={"summary": "abstract"})
-        # change ID to PDF link
-        df_articles["id"] = df_articles["id"].apply(
-            lambda s: s.replace("/abs/", "/pdf/")
-        )
+
+        if len(articles_list) == 0:
+            logger.error(f"{datetime.now()}: No articles found")
+            df_articles = pd.DataFrame()
+        else:
+            logger.info(
+                f"{datetime.now()}: Found {len(articles_list)} articles in the response"
+            )
+
+            df_articles = pd.DataFrame(articles_list)[
+                ["id", "updated", "published", "title", "summary"]
+            ]
+            df_articles = df_articles.rename(columns={"summary": "abstract"})
+            # change ID to PDF link
+            df_articles["id"] = df_articles["id"].apply(
+                lambda s: s.replace("/abs/", "/pdf/")
+            )
 
     return df_articles

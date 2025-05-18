@@ -67,6 +67,7 @@ def search_articles(
     - published: the date when the article was published
     - title: the article title
     - summary: a summary of the article's content
+    If no articles are found, return "No articles found".
     Args:
         query: the query used for the search
         sortby: how to sort the results. Possible values:
@@ -96,6 +97,9 @@ def search_articles(
     response = requests.get(url, timeout=360)
     df_articles = organise_api_response_as_dataframe(response)
 
+    if df_articles.empty:
+        return "No articles found"
+
     markdown = f"""
         ---{query}-{sortby}----
         {df_articles.to_markdown(index=False)}
@@ -119,6 +123,7 @@ def search_articles_by_abs(
     - published: the date when the article was published
     - title: the article title
     - summary: a summary of the article's content
+    If no articles are found, return "No articles found".
     Args:
         query: the query used for the search
         start: the index of the ranking where the table starts, add +20 to get the next table chunk
@@ -147,6 +152,7 @@ def search_articles_by_title(
     - published: the date when the article was published
     - title: the article title
     - summary: a summary of the article's content
+    If no articles are found, return "No articles found".
     Args:
         query: the query used for the search
         start: the index of the ranking where the table starts, add +20 to get the next table chunk
@@ -175,6 +181,7 @@ def retrieve_recent_articles(
     - published: the date when the article was published
     - title: the article title
     - summary: a summary of the article's content
+    If no articles are found, return "No articles found".
     Args:
         category: the category ID used for the search
         latest_day: the day of publications to filter articles by
@@ -188,6 +195,9 @@ def retrieve_recent_articles(
 
     response = requests.get(url, timeout=360)
     df_articles = organise_api_response_as_dataframe(response)
+
+    if df_articles.empty:
+        return "No articles found"
 
     # remove time part from published and filter DF to latest day (string)
     df_articles["published"] = df_articles["published"].apply(lambda s: s.split("T")[0])
