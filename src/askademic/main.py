@@ -3,8 +3,10 @@ import logging
 import time
 from datetime import datetime
 from inspect import cleandoc
+from io import StringIO
 
 from prompt_toolkit import PromptSession
+from prompt_toolkit.formatted_text import ANSI
 from prompt_toolkit.history import FileHistory
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
@@ -24,13 +26,19 @@ logger = logging.getLogger(__name__)
 
 
 async def ask_user_question():
-    # Display rich prompt (not part of input)
-    console.print(
-        "[bold yellow]Ask a question (type 'help' to display instructions)[/bold yellow]"
-        + " :speech_balloon:",
-        end=" ",
+    # Build prompt string with Rich markup
+    markup_prompt = (
+        "[bold yellow]Ask a question (type 'help' for instructions):[/bold yellow] 💬 "
     )
-    return await session.prompt_async("")
+
+    # Capture the ANSI-rendered string in StringIO
+    with StringIO() as buf:
+        rich_console = Console(file=buf, force_terminal=True, color_system="truecolor")
+        rich_console.print(markup_prompt, end="")
+        ansi_prompt = buf.getvalue()
+
+    # Pass ANSI string wrapped in ANSI() to prompt_async
+    return await session.prompt_async(ANSI(ansi_prompt))
 
 
 async def ask_me():
