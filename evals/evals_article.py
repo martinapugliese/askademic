@@ -47,6 +47,13 @@ eval_cases = [
         "The deterministic Kermack-McKendrick model bounds the general stochastic epidemic",
         "https://arxiv.org/pdf/1602.01730",
     ),
+    # not existing paper
+    ArticleResponseTestCase(
+        "Find this paper 'Quark Gluon plasma and AI'",
+        "http://arxiv.org/pdf/0707.0923v1",
+        "Quark-gluon plasma paradox",
+        "http://arxiv.org/pdf/0707.0923v1",
+    ),
 ]
 
 # link found by LLM may have the optional v[x] version number at the end
