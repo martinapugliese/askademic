@@ -224,14 +224,14 @@ def get_article(url: str, max_attempts: int = 10) -> str:
         try:
             res = requests.get(url, timeout=360)
             if not res.ok:
-                article = "Not Found"
+                article = "Not Found1"
             else:
                 bytes_stream = BytesIO(res.content)
                 try:
                     with pymupdf.open(stream=bytes_stream) as doc:
                         article = chr(12).join([page.get_text() for page in doc])
                 except pymupdf.FileDataError:
-                    article = "Not Found"
+                    article = "Not Found2"
                 break
         except requests.exceptions.ConnectionError:
             logger.error(
