@@ -24,3 +24,6 @@ build/
 
 # logs
 *.txt
+
+# cli history
+.cli_history

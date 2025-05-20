@@ -25,4 +25,5 @@ article_agent = Agent(
         Tool(get_article, takes_ctx=False),
     ],
     model_settings={"max_tokens": 1000, "temperature": 0},
+    end_strategy="early",
 )

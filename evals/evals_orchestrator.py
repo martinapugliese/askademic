@@ -32,7 +32,7 @@ eval_cases = [
         QuestionAnswerResponse,
     ),
     OrchestratorTestCase(
-        "Tell me all about paper 'Attention is all you need'", ArticleResponse
+        "Tell me all about the paper 'Attention is all you need'", ArticleResponse
     ),
 ]
 
