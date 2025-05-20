@@ -25,6 +25,7 @@ orchestrator_agent = Agent(
     system_prompt=SYSTEM_PROMPT_ORCHESTRATOR,
     output_type=SummaryResponse | QuestionAnswerResponse | ArticleResponse,
     model_settings={"max_tokens": 1000, "temperature": 0},
+    end_strategy="early",
 )
 
 
