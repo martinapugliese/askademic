@@ -91,7 +91,7 @@ class SummaryAgent:
         )
 
         logger.info(f"Latest published day: {latest_day} - Articles #: {len(articles)}")
-        logger.info(f"Articles: {articles}")
+        # logger.info(f"Articles: {articles}")
 
         # Create the summary
         summary = await self._summary_agent.run(
