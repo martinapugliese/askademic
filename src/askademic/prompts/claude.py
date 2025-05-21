@@ -10,23 +10,6 @@ SYSTEM_PROMPT_CATEGORY = cleandoc(
     """
 )
 
-
-USER_PROMPT_CATEGORY = cleandoc(
-    """
-
-    Find the most relevant arXiv category for this request:
-    '{request}'
-
-    Follow these steps when creating the answer:
-    <instructions>
-    1. Use the get_categories tool to list all available categories.
-    2. Choose the most relevant arXiv category for the request.
-    3. If there are more than one matching categories,
-       choose the most relevant one - you must choose only one category.
-    </instructions>
-    """
-)
-
 SYSTEM_PROMPT_SUMMARY = cleandoc(
     """
     You are an expert in understanding academic topics.

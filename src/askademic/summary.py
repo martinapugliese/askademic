@@ -5,9 +5,8 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts.claude import USER_PROMPT_CATEGORY
 from askademic.prompts.gemini import SYSTEM_PROMPT_SUMMARY, USER_PROMPT_SUMMARY_TEMPLATE
-from askademic.prompts.general import SYSTEM_PROMPT_CATEGORY
+from askademic.prompts.general import SYSTEM_PROMPT_CATEGORY, USER_PROMPT_CATEGORY
 from askademic.tools import (
     get_categories,
     identify_latest_day,
