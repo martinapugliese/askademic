@@ -100,12 +100,6 @@ def search_articles(
     if df_articles.empty:
         return "No articles found"
 
-    markdown = f"""
-        ---{query}-{sortby}----
-        {df_articles.to_markdown(index=False)}
-        ------------------------
-    """
-
     return df_articles
 
 
@@ -162,13 +156,15 @@ def search_articles_by_title(
         max_results: the total number of articles to retrieve. The default value is 20.
     """
 
-    return search_articles(
+    df_articles = search_articles(
         query=query,
         sortby="relevance",
         prefix="ti",
         start=start,
         max_results=max_results,
     )
+    df_articles.rename(columns={"id": "article_link"}, inplace=True)
+    return df_articles[["article_link", "abstract"]].to_json()
 
 
 def retrieve_recent_articles(

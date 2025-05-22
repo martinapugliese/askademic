@@ -194,7 +194,6 @@ SYSTEM_PROMPT_ABSTRACT_RELEVANCE = cleandoc(
     """
 )
 
-
 USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE = cleandoc(
     """
     You are an expert in understanding academic topics and using the arXiv API.
@@ -245,3 +244,56 @@ USER_PROMPT_MANY_ARTICLES_TEMPLATE = cleandoc(
     </instructions>
     """
 )
+
+#######################################
+
+# ############## Article ##############
+
+SYSTEM_PROMPT_ARTICLE = cleandoc(
+    """
+    You are an expert in understanding academic topics and using the arXiv API.
+    Your task is to find an article, read it
+    and answer questions based on its content.
+    You will receive a request to find an article and read it.
+    You can use the 'get_article' tool to retrieve the article content,
+    if you have the arxiv article link.
+    You can also use the 'search_articles_by_title' tool to find articles based on their title.
+    If you have the article id, you can use the 'get_article' tool
+    directly to retrieve the article content,
+    using the link format https://arxiv.org/pdf/{article_id}.pdf.
+
+    It is not necessary to keep searching if you do not find the article you are looking for.
+    You can stop the search and provide an answer based
+    on the articles you have already read, or simply
+    say that you did not find the article you were looking for.
+    """
+)
+
+USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
+    """
+    Answer the following question or request
+    '{question}'
+
+    about this article
+    '{article}'
+
+    Follow these steps when creating the answer:
+    <steps>
+    1. Retrieve the article:
+        - If you have the article link, use the "get_article" tool to retrieve the article content.
+        - If you have the article id, use the "get_article" tool directly
+          to retrieve the article content,
+        using the link format https://arxiv.org/pdf/{{article_id}}.pdf.
+        - If you have the article title and not the link, use the "search_articles_by_title" tool
+          to find the article based on its title.
+    2. Generate the answer:
+        - If you find the article, read it and answer the question/request.
+        - If you cannot find the article, generate a pun about how the article is not found.
+        - If you search the article by title and you did not find an exact match,
+          generate an answer based on the non-exact match article you found
+          and indicate that it is not an exact match in the answer.
+    </steps>
+    """
+)
+
+#######################################

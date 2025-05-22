@@ -6,8 +6,10 @@ from pydantic_ai import Agent, RunContext
 
 from askademic.article import ArticleResponse, article_agent
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts.gemini import USER_PROMPT_ARTICLE_TEMPLATE
-from askademic.prompts.general import SYSTEM_PROMPT_ORCHESTRATOR
+from askademic.prompts.general import (
+    SYSTEM_PROMPT_ORCHESTRATOR,
+    USER_PROMPT_ARTICLE_TEMPLATE,
+)
 from askademic.question import QuestionAnswerResponse, question_agent
 from askademic.summary import SummaryResponse, summary_agent
 
