@@ -5,8 +5,12 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts.gemini import SYSTEM_PROMPT_SUMMARY, USER_PROMPT_SUMMARY_TEMPLATE
-from askademic.prompts.general import SYSTEM_PROMPT_CATEGORY, USER_PROMPT_CATEGORY
+from askademic.prompts.general import (
+    SYSTEM_PROMPT_CATEGORY,
+    SYSTEM_PROMPT_SUMMARY,
+    USER_PROMPT_CATEGORY_TEMPLATE,
+    USER_PROMPT_SUMMARY_TEMPLATE,
+)
 from askademic.tools import (
     get_categories,
     identify_latest_day,
@@ -74,7 +78,7 @@ class SummaryAgent:
         """
         # Get the category
         category = await self._category_agent.run(
-            USER_PROMPT_CATEGORY.format(request=request)
+            USER_PROMPT_CATEGORY_TEMPLATE.format(request=request)
         )
 
         logger.info(

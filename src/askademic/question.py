@@ -5,17 +5,21 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
 from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts.claude import (
-    SYSTEM_PROMPT_MANY_ARTICLES,
-    USER_PROMPT_MANY_ARTICLES,
-)
-from askademic.prompts.gemini import (
+from askademic.prompts.general import (
     SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
+    SYSTEM_PROMPT_MANY_ARTICLES,
     SYSTEM_PROMPT_QUERY,
     USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE,
+    USER_PROMPT_MANY_ARTICLES_TEMPLATE,
     USER_PROMPT_QUERY_TEMPLATE,
 )
 from askademic.tools import get_article, search_articles_by_abs
+
+# from askademic.prompts.claude import (
+#     SYSTEM_PROMPT_MANY_ARTICLES,
+#     USER_PROMPT_MANY_ARTICLES,
+# )
+
 
 today = datetime.now().strftime("%Y-%m-%d")
 
@@ -127,7 +131,9 @@ class QuestionAgent:
 
         # Use the article list to answer the question
         question_answer = await self._many_articles_agent.run(
-            USER_PROMPT_MANY_ARTICLES.format(question=question, articles=article_list),
+            USER_PROMPT_MANY_ARTICLES_TEMPLATE.format(
+                question=question, articles=article_list
+            ),
         )
 
         return question_answer
