@@ -1,6 +1,6 @@
 from inspect import cleandoc
 
-# ############## Allower ###############
+# ############## Allower ##############
 
 SYSTEM_PROMPT_ALLOWER = cleandoc(
     """
@@ -49,47 +49,51 @@ USER_PROMPT_ALLOWER_TEMPLATE = cleandoc(
 #######################################
 
 
-# ############## Orchestrator ###############
+# ############## Orchestrator ##############
 
 SYSTEM_PROMPT_ORCHESTRATOR = cleandoc(
     """
     You are an orchestrator agent, you delegate the request to the best tool
-    based on its content. You have .. TODO
+    based on its content. You have 3 tools to choose from:
+    1. summarise_latest_articles: to summarise papers
+    2. answer_question: to search for a list of articles based on a question
+    3. answer_article: to retrieve a specific article and answer a question about it
 
-    Strictly follow these instructions:
+    Strictly follow these general instructions:
     <general_instructions>
-    1. Delegate the request to the most appropriate agent
-    2. Deledate the request only once
-    3. Do not delegate the request to multiple agents
-    4. Accept the first response you get, stopping there
+        1. Delegate the request to the most appropriate agent
+        2. Delegate the request only once
+        3. Do not delegate the request to multiple agents
+        4. Accept the first response you get, stopping there
     </general_instructions>
 
-    In order to decide the agent to delegate the request to, follow these instructions:
+    In order to decide the agent to delegate the request to, follow these delegation instructions:
     <delegation_instructions>
         * When receiving a request about summarising the latest articles,
-    use the "summarise_latest_articles" tool.
-      Example of requests for this tool:
-        - "Summarise the latest articles in the field of quantum computing."
-        - "What are the latest advancements in machine learning?"
-        - "Find me the most recent articles about reinforcement learning."
-        - "Summarise the latest articles in quantitative finance."
-    * When the request is about searching for articles based on a question,
-       use the question as an argument for the "answer_question" tool and wait for its response.
-       Example of requests for this tool:
-        - "How good is random forest at extrapolating?"
-        - "Is BERT more accurate than RoBERTa in classification tasks?"
-        - "What is the best way to design an experiment in sociology?"
-    * When the request is about a single specific article,
-      use the "answer_article" tool and wait for its response.
-      Example of requests for this tool:
-        - "Tell me more about 1234.5678?"
-        - "What is the article 'Attention is all you need' about?"
-        - "Tell me more about this article http://arxiv.org/pdf/2108.12542v2.
-        How is the Donor Pool defined?"
-
+          use the "summarise_latest_articles" tool.
+          Example of requests for this tool:
+            - "Summarise the latest articles in the field of quantum computing."
+            - "What are the latest advancements in machine learning?"
+            - "Find me the most recent articles about reinforcement learning."
+            - "Summarise the latest articles in quantitative finance."
+        * When the request is about searching for articles based on a question,
+          use the question as an argument for the "answer_question" tool and wait for its response.
+          Example of requests for this tool:
+            - "How good is random forest at extrapolating?"
+            - "Is BERT more accurate than RoBERTa in classification tasks?"
+            - "What is the best way to design an experiment in sociology?"
+        * When the request is about a single specific article,
+          use the "answer_article" tool and wait for its response.
+          Example of requests for this tool:
+            - "Tell me more about 1234.5678?"
+            - "What is the article 'Attention is all you need' about?"
+            - "Tell me more about this article http://arxiv.org/pdf/2108.12542v2.
+               How is the Donor Pool defined?"
     </delegation_instructions>
     """
 )
+
+#######################################
 
 SYSTEM_PROMPT_CATEGORY = cleandoc(
     """
