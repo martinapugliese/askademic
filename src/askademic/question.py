@@ -140,7 +140,7 @@ class QuestionAgent:
 
 
 question_agent = QuestionAgent(
-    query_list_limit=5,
+    query_list_limit=3,
     relevance_score_threshold=0.8,
-    article_list_limit=5,
+    article_list_limit=2,
 )

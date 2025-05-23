@@ -133,16 +133,6 @@ SYSTEM_PROMPT_SUMMARY = cleandoc(
     """
 )
 
-# You will receive a list of abstracts from articles in a specific category.
-# For these articles, read all the abstracts and
-# create a global summary of all that has been published,
-# paying particular attenton at mentioning
-# the topics covered in a clear and easy-to-understand way.
-
-# Be concise and avoid obscure jargon.
-
-# Also return the arXiv URL to the most recent papers in the category.
-
 USER_PROMPT_SUMMARY_TEMPLATE = cleandoc(
     """
     You have this list of abstracts from articles in a specific category:
