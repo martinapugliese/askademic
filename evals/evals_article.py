@@ -9,7 +9,6 @@ import time
 from rich.console import Console
 
 from askademic.article import article_agent
-from askademic.prompts import USER_PROMPT_ARTICLE_TEMPLATE
 
 
 class ArticleResponseTestCase:
@@ -44,21 +43,21 @@ eval_cases = [
     ArticleResponseTestCase(
         "What is paper https://arxiv.org/pdf/1602.01730 about?",
         "https://arxiv.org/pdf/1602.01730",
-        "The deterministic Kermack-McKendrick model bounds the general stochastic epidemic",
+        "THE DETERMINISTIC KERMACK-MCKENDRICK MODEL BOUNDS THE GENERAL STOCHASTIC EPIDEMIC",
         "https://arxiv.org/pdf/1602.01730",
     ),
     # not existing paper
     ArticleResponseTestCase(
         "Find this paper 'Quark Gluon plasma and AI'",
-        "http://arxiv.org/pdf/0707.0923v1",
-        "Quark-gluon plasma paradox",
-        "http://arxiv.org/pdf/0707.0923v1",
+        "http://arxiv.org/pdf/nucl-th/9905005v1",
+        "QUARK-GLUON PLASMA",
+        "http://arxiv.org/pdf/nucl-th/9905005v1",
     ),
 ]
 
 # link found by LLM may have the optional v[x] version number at the end
 # we want to match regardless
-LINK_PATTERN = r"https?://arxiv\.org/pdf/(\d{4}\.\d{5})"
+LINK_PATTERN = r"https?://arxiv\.org/pdf/(?:\w+-\w+/)?(\d{4}\.\d{5}|[\w\-]+)"
 
 console = Console()
 
@@ -74,11 +73,7 @@ async def run_evals():
         while attempt < MAX_ATTEMPTS:
             try:
                 print(f"Evaluating case: {case.request}")
-                response = await article_agent.run(
-                    USER_PROMPT_ARTICLE_TEMPLATE.format(
-                        question=case.request, article=case.article_data
-                    )
-                )
+                response = await article_agent.run(request=case.request)
 
                 match1 = re.match(LINK_PATTERN, case.link)
                 match2 = re.match(LINK_PATTERN, response.output.article_link)
