@@ -100,13 +100,7 @@ def search_articles(
     if df_articles.empty:
         return "No articles found"
 
-    markdown = f"""
-        ---{query}-{sortby}----
-        {df_articles.to_markdown(index=False)}
-        ------------------------
-    """
-
-    return markdown
+    return df_articles
 
 
 def search_articles_by_abs(
@@ -130,13 +124,16 @@ def search_articles_by_abs(
         max_results: the total number of articles to retrieve. The default value is 20.
     """
 
-    return search_articles(
+    df = search_articles(
         query=query,
         sortby="relevance",
         prefix="abs",
         start=start,
         max_results=max_results,
     )
+    # rename id column
+    df.rename(columns={"id": "article_link"}, inplace=True)
+    return df[["article_link", "abstract"]].to_json()
 
 
 def search_articles_by_title(
@@ -159,13 +156,15 @@ def search_articles_by_title(
         max_results: the total number of articles to retrieve. The default value is 20.
     """
 
-    return search_articles(
+    df_articles = search_articles(
         query=query,
         sortby="relevance",
         prefix="ti",
         start=start,
         max_results=max_results,
     )
+    df_articles.rename(columns={"id": "article_link"}, inplace=True)
+    return df_articles[["article_link", "abstract"]].to_json()
 
 
 def retrieve_recent_articles(
@@ -203,7 +202,8 @@ def retrieve_recent_articles(
     df_articles["published"] = df_articles["published"].apply(lambda s: s.split("T")[0])
     df_articles = df_articles[df_articles["published"] == latest_day]
 
-    return df_articles.to_markdown(index=False)
+    # return df_articles['abstract'][:3].to_markdown(index=False)
+    return list(df_articles["abstract"][:].values)
 
 
 def get_article(url: str, max_attempts: int = 10) -> str:
@@ -240,8 +240,8 @@ def get_article(url: str, max_attempts: int = 10) -> str:
             time.sleep(60)
             attempts += 1
 
-    # curtail the article to 100k characters (there can be books, too long)
-    article = article[:100000]
+    # curtail the article to 70k characters (there can be books, too long)
+    article = article[:70000]
 
     article = f"""
         -------{url}------------

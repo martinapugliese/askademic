@@ -6,7 +6,7 @@ import time
 
 from rich.console import Console
 
-from askademic.summarizer import summary_agent
+from askademic.summary import summary_agent
 
 
 class SummaryTestCase:
@@ -58,8 +58,8 @@ async def run_evals():
     console.print(f"[bold cyan]Total cases: {len(eval_cases)}[/bold cyan]")
     if c_failed > 0:
         console.print(
-            f":check_mark: [bold green]Passed: {c_passed}[/bold green]"
+            f":white_check_mark: [bold green]Passed: {c_passed}[/bold green]"
             + ","
             + f":x: [bold red]Failed: {c_failed}[/bold red]"
         )
-    console.print(f":check_mark: [bold green]Passed: {c_passed}[/bold green]")
+    console.print(f":white_check_mark: [bold green]Passed: {c_passed}[/bold green]")

@@ -3,12 +3,11 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
-import pytest_asyncio  # noqa: F401
-from pydantic_ai.agent import AgentRunResult  # noqa: F401
+from pydantic_ai.agent import AgentRunResult
 
 os.environ["GEMINI_API_KEY"] = "mock"
 
-from askademic.summarizer import (  # noqa: E402
+from askademic.summary import (  # noqa: E402
     Category,
     Summary,
     SummaryAgent,
@@ -57,7 +56,7 @@ async def test_summary_agent(
     summary_response,
 ):
     """Test the SummaryAgent class."""
-    summary_agent = SummaryAgent()
+    summary_agent = SummaryAgent("gemini-2.0-flash")
     summary_agent._category_agent = MagicMock()
     summary_agent._summary_agent = MagicMock()
 

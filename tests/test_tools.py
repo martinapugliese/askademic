@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from askademic.tools import get_article, identify_latest_day
 
 
@@ -22,7 +20,8 @@ def test_identify_latest_day(mock_feedparser_parse, mock_requests_get):
 
     assert result == "2025-03-29"
     mock_requests_get.assert_called_once_with(
-        "http://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=1&sortBy=submittedDate&sortOrder=descending",
+        "http://export.arxiv.org/api/query?search_query="
+        + "cat:cs.AI&start=0&max_results=1&sortBy=submittedDate&sortOrder=descending",
         timeout=360,
     )
     mock_feedparser_parse.assert_called_once_with(b"mock content")
@@ -40,7 +39,8 @@ def test_identify_latest_day_error(mock_requests_get):
 
     assert result == "Not Found"
     mock_requests_get.assert_called_once_with(
-        "http://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=1&sortBy=submittedDate&sortOrder=descending",
+        "http://export.arxiv.org/api/query?search_query="
+        + "cat:cs.AI&start=0&max_results=1&sortBy=submittedDate&sortOrder=descending",
         timeout=360,
     )
 
@@ -82,4 +82,4 @@ def test_get_article_is_curtailed():
     # a book
     article = get_article("http://arxiv.org/pdf/1302.6946")
 
-    assert len(article) == 100106  # max len + added wrapping chars
+    assert len(article) == 70106  # max len + added wrapping chars

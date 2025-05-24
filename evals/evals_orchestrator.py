@@ -9,7 +9,7 @@ from rich.console import Console
 from askademic.article import ArticleResponse
 from askademic.orchestrator import orchestrator_agent
 from askademic.question import QuestionAnswerResponse
-from askademic.summarizer import SummaryResponse
+from askademic.summary import SummaryResponse
 
 
 class OrchestratorTestCase:
@@ -46,6 +46,7 @@ async def run_evals():
     c_passed, c_failed = 0, 0
     for case in eval_cases:
 
+        time.sleep(2)
         attempt = 0
         while attempt < MAX_ATTEMPTS:
             try:

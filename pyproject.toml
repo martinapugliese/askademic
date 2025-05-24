@@ -34,6 +34,9 @@ classifiers = [
 packages = ["askademic"]
 package-dir = { "" = "src" }
 
+[tool.setuptools.package-data]
+askademic = ["prompts/*"]
+
 [project.scripts]
 askademic = "askademic.main:main"
 

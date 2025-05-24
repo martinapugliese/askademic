@@ -4,10 +4,24 @@ from datetime import datetime
 import feedparser
 import pandas as pd
 
-today = datetime.now().strftime("%Y-%m-%d")
+from askademic.constants import CLAUDE_HAIKU_3_5_MODEL_ID, GEMINI_2_FLASH_MODEL_ID
 
+today = datetime.now().strftime("%Y-%m-%d")
 logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
+
+
+def choose_model(model_family: str = "gemini") -> str:
+    """
+    Choose the model ID based on the given model family.
+    """
+    if model_family not in ["gemini", "claude"]:
+        raise ValueError(f"Invalid model family '{model_family}'.")
+
+    if model_family == "gemini":
+        return GEMINI_2_FLASH_MODEL_ID
+    elif model_family == "claude":
+        return CLAUDE_HAIKU_3_5_MODEL_ID
 
 
 def list_categories() -> dict:
