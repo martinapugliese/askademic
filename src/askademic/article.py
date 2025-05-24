@@ -131,6 +131,13 @@ class ArticleAgent:
             # If the article type is not title, we assume it's a link or an error
             article_link = article_request.output.article_value
 
+        if "No articles found" == article_link:
+            return ArticleResponse(
+                response="No articles found for the given request.",
+                article_title="",
+                article_link="",
+            )
+
         return await self._answer_question(request=request, article_link=article_link)
 
 
