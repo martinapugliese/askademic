@@ -10,11 +10,13 @@ from prompt_toolkit.formatted_text import ANSI
 from prompt_toolkit.history import FileHistory
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
+from rich.prompt import Prompt
 
-from askademic.allower import allower_agent
+from askademic.allower import allower_agent_base
 from askademic.memory import Memory
-from askademic.orchestrator import orchestrator_agent
+from askademic.orchestrator import orchestrator_agent_base
 from askademic.prompts.general import USER_PROMPT_ALLOWER_TEMPLATE
+from askademic.utils import choose_model
 
 console = Console()
 session = PromptSession(history=FileHistory(".cli_history"))
@@ -25,19 +27,23 @@ logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 
+async def get_llm() -> str:
+    return Prompt.ask(
+        """[bold yellow]Choose your LLM family: type 'gemini' for Gemini (preferred)
+    and 'claude' for Claude (experimental)[/bold yellow]"""
+    )
+
+
 async def ask_user_question():
-    # Build prompt string with Rich markup
     markup_prompt = (
         "[bold yellow]Ask a question (type 'help' for instructions):[/bold yellow] 💬 "
     )
 
-    # Capture the ANSI-rendered string in StringIO
+    # This is to make sure the cursor moves correctly when typing in the terminal
     with StringIO() as buf:
         rich_console = Console(file=buf, force_terminal=True, color_system="truecolor")
         rich_console.print(markup_prompt, end="")
         ansi_prompt = buf.getvalue()
-
-    # Pass ANSI string wrapped in ANSI() to prompt_async
     return await session.prompt_async(ANSI(ansi_prompt))
 
 
@@ -71,9 +77,13 @@ async def ask_me():
 
     memory = Memory(max_request_tokens=1e5)
 
+    # ask user to choose the model family
+    user_model = await get_llm()
+
     while True:
 
         try:
+
             user_question = await ask_user_question()
 
             if user_question.lower() == "exit":
@@ -108,38 +118,39 @@ async def ask_me():
             console.print("[bold cyan]Goodbye![/bold cyan] :wave:")
             break
 
-        attempts = 0
-        max_attempts = 10
-
+        attempts, max_attempts = 0, 10
         console.print("[bold cyan]Working for you ...[/bold cyan]")
-
         while attempts < max_attempts:
-
             try:
 
-                allower = await allower_agent.run(
+                allower_agent = allower_agent_base
+                allower_agent.model = choose_model(user_model)
+                allower_result = await allower_agent.run(
                     USER_PROMPT_ALLOWER_TEMPLATE.format(question=user_question),
                     usage_limits=UsageLimits(request_limit=20),  # limit to 20 requests
                     message_history=memory.get_messages()[
                         -2:
-                    ],  # only the last 2 messages to keep the context, with 1 it may loses it
+                    ],  # only the last 2 messages to keep the context, with 1 it may lose it
                 )
+                logger.info(f"{datetime.now()}: Allower run")
 
-                if allower.output.is_scientific:
-                    agent_result = await orchestrator_agent.run(
+                if allower_result.output.is_scientific:
+                    orchestrator_agent = orchestrator_agent_base
+                    orchestrator_agent.model = choose_model(user_model)
+                    orchestrator_result = await orchestrator_agent.run(
                         user_question,
                         usage_limits=UsageLimits(request_limit=20),  # limit requests
                         message_history=memory.get_messages(),
                     )
-                    for k in agent_result.output.__dict__:
-                        console.print(f"{k}: {getattr(agent_result.output, k)}")
+                    for k in orchestrator_result.output.__dict__:
+                        console.print(f"{k}: {getattr(orchestrator_result.output, k)}")
 
                     memory.add_message(
-                        agent_result.usage().total_tokens,
-                        agent_result.new_messages(),
+                        orchestrator_result.usage().total_tokens,
+                        orchestrator_result.new_messages(),
                     )
                 else:
-                    pun = allower.output.pun
+                    pun = allower_result.output.pun
                     console.print(
                         f"""{pun} - Ask me something scientific please! :smiley:
                     """

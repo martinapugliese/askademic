@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 
 from askademic.article import ArticleResponse, article_agent
-from askademic.constants import GEMINI_2_FLASH_MODEL_ID
 from askademic.prompts.general import (
     SYSTEM_PROMPT_ORCHESTRATOR,
     USER_PROMPT_ARTICLE_TEMPLATE,
@@ -14,7 +13,6 @@ from askademic.question import QuestionAnswerResponse, question_agent
 from askademic.summary import SummaryResponse, summary_agent
 
 today = datetime.now().strftime("%Y-%m-%d")
-
 logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
@@ -23,8 +21,7 @@ class Context(BaseModel):
     pass
 
 
-orchestrator_agent = Agent(
-    GEMINI_2_FLASH_MODEL_ID,
+orchestrator_agent_base = Agent(
     system_prompt=SYSTEM_PROMPT_ORCHESTRATOR,
     output_type=SummaryResponse | QuestionAnswerResponse | ArticleResponse,
     model_settings={"max_tokens": 1000, "temperature": 0},
@@ -32,7 +29,7 @@ orchestrator_agent = Agent(
 )
 
 
-@orchestrator_agent.tool
+@orchestrator_agent_base.tool
 async def summarise_latest_articles(
     ctx: RunContext[Context], request: str
 ) -> list[str]:
@@ -47,7 +44,7 @@ async def summarise_latest_articles(
     return r
 
 
-@orchestrator_agent.tool
+@orchestrator_agent_base.tool
 async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
     """
     Ask an agent to search on arXiv and access articles to answer a question.
@@ -60,7 +57,7 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
     return r
 
 
-@orchestrator_agent.tool
+@orchestrator_agent_base.tool
 async def answer_article(
     ctx: RunContext[Context], article: str, question: str
 ) -> list[str]:
