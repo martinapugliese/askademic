@@ -7,8 +7,12 @@ from pydantic_ai.agent import AgentRunResult
 
 os.environ["GEMINI_API_KEY"] = "mock"
 
-from askademic.summary import Category  # noqa: E402
-from askademic.summary import Summary, SummaryAgent, SummaryResponse  # noqa: E402
+from askademic.summary import (  # noqa: E402
+    Category,
+    Summary,
+    SummaryAgent,
+    SummaryResponse,
+)
 
 testdata = [
     (
