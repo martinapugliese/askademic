@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 async def get_llm() -> str:
     return Prompt.ask(
         """[bold yellow]Choose your LLM family: type 'gemini' for Gemini (preferred)
-    and 'claude' for Claude (experimental)[/bold yellow]"""
+and 'claude' for Claude (experimental)[/bold yellow]"""
     )
 
 
@@ -167,7 +167,6 @@ async def ask_me():
 # this fix is temporary. We should monitor pydantic-ai issues and see when they solve it
 # The workaround is described here: https://github.com/pydantic/pydantic-ai/issues/748
 def main():
-
     asyncio.run(ask_me())
 
 

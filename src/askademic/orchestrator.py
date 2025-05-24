@@ -4,13 +4,13 @@ from datetime import datetime
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 
-from askademic.article import ArticleResponse, article_agent
+from askademic.article import ArticleResponse, article_agent_base
 from askademic.prompts.general import (
     SYSTEM_PROMPT_ORCHESTRATOR,
     USER_PROMPT_ARTICLE_TEMPLATE,
 )
-from askademic.question import QuestionAnswerResponse, question_agent
-from askademic.summary import SummaryResponse, summary_agent
+from askademic.question import QuestionAgent, QuestionAnswerResponse
+from askademic.summary import SummaryAgent, SummaryResponse
 
 today = datetime.now().strftime("%Y-%m-%d")
 logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
@@ -40,6 +40,7 @@ async def summarise_latest_articles(
         request: the request
     """
     logger.info(f"{datetime.now()}: Calling Summary Agent with this request: {request}")
+    summary_agent = SummaryAgent(orchestrator_agent_base.model)
     r = await summary_agent(request=request)
     return r
 
@@ -53,6 +54,12 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
         question: the question
     """
     logger.info(f"{datetime.now()}: Calling QA Agent with this question: {question}")
+    question_agent = QuestionAgent(
+        orchestrator_agent_base.model,
+        query_list_limit=3,
+        relevance_score_threshold=0.8,
+        article_list_limit=2,
+    )
     r = await question_agent(question=question)
     return r
 
@@ -73,5 +80,7 @@ async def answer_article(
         f"{datetime.now()}: Calling Article Agent with question {question}; (article: {article})"
     )
     prompt = USER_PROMPT_ARTICLE_TEMPLATE.format(question=question, article=article)
+    article_agent = article_agent_base
+    article_agent.model = orchestrator_agent_base.model
     r = await article_agent.run(prompt)
     return r

@@ -4,7 +4,6 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
-from askademic.constants import GEMINI_2_FLASH_MODEL_ID
 from askademic.prompts.general import (
     SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
     SYSTEM_PROMPT_MANY_ARTICLES,
@@ -15,14 +14,7 @@ from askademic.prompts.general import (
 )
 from askademic.tools import get_article, search_articles_by_abs
 
-# from askademic.prompts.claude import (
-#     SYSTEM_PROMPT_MANY_ARTICLES,
-#     USER_PROMPT_MANY_ARTICLES,
-# )
-
-
 today = datetime.now().strftime("%Y-%m-%d")
-
 logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
@@ -54,6 +46,7 @@ class QuestionAnswerResponse(BaseModel):
 class QuestionAgent:
     def __init__(
         self,
+        model,
         query_list_limit: int = 10,
         relevance_score_threshold: float = 0.8,
         article_list_limit: int = 10,
@@ -71,21 +64,21 @@ class QuestionAgent:
         self._get_article = get_article
 
         self._query_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_QUERY,
             output_type=QueryResponse,
             model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._abstract_relevance_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
             output_type=ArticleListResponse,
             model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._many_articles_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_MANY_ARTICLES,
             output_type=QuestionAnswerResponse,
             model_settings={"max_tokens": 1000, "temperature": 0},
@@ -139,8 +132,8 @@ class QuestionAgent:
         return question_answer
 
 
-question_agent = QuestionAgent(
-    query_list_limit=3,
-    relevance_score_threshold=0.8,
-    article_list_limit=2,
-)
+# question_agent = QuestionAgent(
+#     query_list_limit=3,
+#     relevance_score_threshold=0.8,
+#     article_list_limit=2,
+# )

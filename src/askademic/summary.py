@@ -4,7 +4,6 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
 
-from askademic.constants import GEMINI_2_FLASH_MODEL_ID
 from askademic.prompts.general import (
     SYSTEM_PROMPT_CATEGORY,
     SYSTEM_PROMPT_SUMMARY,
@@ -18,7 +17,6 @@ from askademic.tools import (
 )
 
 today = datetime.now().strftime("%Y-%m-%d")
-
 logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
@@ -48,10 +46,10 @@ class SummaryResponse(BaseModel):
 
 
 class SummaryAgent:
-    def __init__(self):
+    def __init__(self, model):
 
         self._category_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_CATEGORY,
             output_type=Category,
             tools=[Tool(get_categories, takes_ctx=False)],
@@ -59,7 +57,7 @@ class SummaryAgent:
         )
 
         self._summary_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_SUMMARY,
             output_type=Summary,
             model_settings={"max_tokens": 1000, "temperature": 0},
@@ -109,4 +107,4 @@ class SummaryAgent:
         )
 
 
-summary_agent = SummaryAgent()
+# summary_agent_base = SummaryAgent()
