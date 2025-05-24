@@ -12,13 +12,6 @@ from askademic.prompts import (
 )
 from askademic.tools import get_article, search_articles_by_title
 
-# Article non agent:
-# Get a request
-# Identify if there is the tile, the id or the link
-# If id or link get the article directly
-# if title, first search by title, then get article link in the reponse
-# then get article by link and answer the question
-
 
 class ArticleRequestDiscriminatorResponse(BaseModel):
     article_type: str = Field(
@@ -127,8 +120,6 @@ class ArticleAgent:
         """
         # Discriminate the type of article request
 
-        print(f"Received request: {request}")
-
         article_request = await self._discriminate_article_request(request)
 
         if article_request.output.article_type == "title":
@@ -136,7 +127,6 @@ class ArticleAgent:
             article_title = article_request.output.article_value
             retrieve_article = await self._retrieve_article(article_title)
             article_link = retrieve_article.output.article_link
-            print(f"Retrieved article link: {article_link}")
         else:
             # If the article type is not title, we assume it's a link or an error
             article_link = article_request.output.article_value
@@ -144,14 +134,4 @@ class ArticleAgent:
         return await self._answer_question(request=request, article_link=article_link)
 
 
-article_aget = ArticleAgent()
-
-if __name__ == "__main__":
-    import asyncio
-
-    response = asyncio.run(
-        article_aget.run(
-            request="What is the 'Augmented Synthetic Control' paper about?",
-        )
-    )
-    print(response)
+article_agent = ArticleAgent()
