@@ -1,5 +1,7 @@
 import asyncio
 import logging
+import os
+import sys
 import time
 from datetime import datetime
 from inspect import cleandoc
@@ -86,6 +88,17 @@ async def ask_me():
             console.print(
                 "[bold red]Invalid input! Please type 'gemini' or 'claude'.[/bold red]"
             )
+
+    # check that user has the appropriate API key set
+    key = "GEMINI_API_KEY" if user_model == "gemini" else "ANTHROPIC_API_KEY"
+    if not os.getenv(key):
+        console.print(
+            f"""
+        [bold red]The {key} environment variable is not set.[/bold red]
+        [bold red]See the README for instructions.[/bold red]
+        """
+        )
+        sys.exit()
 
     while True:
 

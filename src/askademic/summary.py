@@ -105,6 +105,3 @@ class SummaryAgent:
             summary=summary.output.summary,
             recent_papers_url=f"https://arxiv.org/list/{category.output.category_id}/new",
         )
-
-
-# summary_agent_base = SummaryAgent()
