@@ -84,26 +84,31 @@ SYSTEM_PROMPT_MANY_ARTICLES = cleandoc(
     """
 )
 
+SYSTEM_PROMPT_REQUEST_DISCRIMINATOR = cleandoc(
+    """
+    You are an expert in understanding academic topics and using the arXiv API.
+    You will receive a request to retrieve an article based on its title, link or arxiv id.
+    Your task is to identify if the correct way to retrieve
+    the article is by its title, link or arxiv id.
+    """
+)
 SYSTEM_PROMPT_ARTICLE = cleandoc(
     """
     You are an expert in understanding academic topics and using the arXiv API.
-    Your task is to find an article, read it
-    and answer questions based on its content.
-    You will receive a request to find an article and read it.
-    You can use the 'get_article' tool to retrieve the article content,
-    if you have the arxiv article link.
-    You can also use the 'search_articles_by_title' tool to find articles based on their title.
-    If you have the article id, you can use the 'get_article' tool
-    directly to retrieve the article content,
-    using the link format https://arxiv.org/pdf/{article_id}.pdf.
-
-    It is not necessary to keep searching if you do not find the article you are looking for.
-    You can stop the search and provide an answer based
-    on the articles you have already read, or simply
-    say that you did not find the article you were looking for.
+    You will receive an article and a request.
+    Your task is to use the article to answer to the request.
     """
 )
 
+SYSTEM_PROMPT_ARTICLE_RETRIEVEL = cleandoc(
+    """
+    You are an expert in understanding academic topics and using the arXiv API.
+    You will receive a request to retrieve an article based on its title in a list
+    of articles.
+    The tile could be not exact, so you should search for the article that
+    better matches the title.
+    """
+)
 SYSTEM_PROMPT_ALLOWER_TEMPLATE = cleandoc(
     """
     You are an experienced reader of academic literature and an expert
@@ -177,30 +182,76 @@ USER_PROMPT_MANY_ARTICLES_TEMPLATE = cleandoc(
     """
 )
 
+USER_PROMPT_REQUEST_DISCRIMINATOR_TEMPLATE = cleandoc(
+    """
+    You have to identify if the article should be retrieved by its title, link or arxiv id.
+    This is the request you received:
+    '{request}'
+
+    - If the request contains an article link return "link" and the article link.
+    - If the request contains an article id return "link" and the the article link in this format:
+    "https://arxiv.org/pdf/{{article_id}}.pdf"
+    - If the request contains an article title, return "title" and the article title.
+
+    If you cannot identify the article by its title, link or id,
+    return "error" and an empty string.
+
+    The requst should be in the following JSON format:
+    {{
+        "type": "title" | "link" | "error",
+        "article": "The article title, link or an emtpy string if the type is error."
+    }}
+    """
+)
 
 USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
     """
-    Answer the following question or request
-    '{question}'
+    You are an expert in understanding academic topics and using the arXiv API.
+    You will receive an article and a request.
+    Your task is to use this article to answer to the request.
 
-    about this article
-
+    The article this:
     '{article}'
 
-    Follow these steps when creating the answer:
-    1. Retrieve the article:
-        - If you have the article link, use the get_article tool to retrieve the article content.
-        - If you have the article id, use the get_article tool directly
-          to retrieve the article content,
-        using the link format https://arxiv.org/pdf/{{article_id}}.pdf.
-        - If you have the article title and not the link, use the search_articles_by_title tool
-          to find the article based on its title.
-    2. Generate the answer:
-        - If you find the article, read it and answer the question/request.
-        - If you cannot find the article, generate a pun about how the article is not found.
-        - If you search the article by title and you did not find an exact match,
-          generate an answer based on the non-exact match article you found
-          and indicate that it is not an exact match in the answer.
+    The request is:
+    '{request}'
+
+    Answer to the request based on the article. If you cannot find the answer in the article,
+    just say that you cannot find the answer and that the requested article has not been found.
+    Quote the article you used to answer to the request in the answer, and the
+    part of the article you used to answer to the request, e.g.:
+    "According to the article '(https://arxiv.org/pdf/1706.03762)', the attention mechanism
+    is a key component of the transformer architecture."
+    Also return the list of article link you used to answer to the request.
+    The final answer should be in the following JSON format:
+    {{
+        "response": "The answer to the request",
+        "article_link": "The article link you used to answer to the request."
+    }}
+    """
+)
+
+USER_PROMPT_ARTICLE_RETRIEVEL_TEMPLATE = cleandoc(
+    """
+    You are an expert in understanding academic topics and using the arXiv API.
+    You will receive a request to retrieve an article based on its title in a list
+    of articles.
+    The tile could be not exact, so you should search for the article that
+    better matches the title.
+
+    The article title is:
+    '{article_title}'
+
+    The articles are:
+    '{articles}'
+
+    Your task is to find the article that better matches the title.
+    Return the article link you found in the following JSON format:
+    {{
+        "article_title": "The title of the article you found.",
+        "article_link": "The article link you found."
+    }}
+    If you cannot find the article, return an empty string.
     """
 )
 
