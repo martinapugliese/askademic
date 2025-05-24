@@ -15,12 +15,13 @@ def choose_model(model_family: str = "gemini") -> str:
     """
     Choose the model ID based on the given model family.
     """
+    if model_family not in ["gemini", "claude"]:
+        raise ValueError(f"Invalid model family '{model_family}'.")
+
     if model_family == "gemini":
         return GEMINI_2_FLASH_MODEL_ID
     elif model_family == "claude":
         return CLAUDE_HAIKU_3_5_MODEL_ID
-    else:
-        raise ValueError(f"Unknown model family: {model_family}")
 
 
 def list_categories() -> dict:

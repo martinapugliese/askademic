@@ -96,7 +96,7 @@ async def test_question_agent(
 
     assert os.environ["GEMINI_API_KEY"] == "mock"
 
-    question_agent = QuestionAgent()
+    question_agent = QuestionAgent("gemini-2.0-flash")
     question_agent._query_agent = MagicMock()
     question_agent._abstract_relevance_agent = MagicMock()
     question_agent._many_articles_agent = MagicMock()

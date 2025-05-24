@@ -56,9 +56,9 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
     logger.info(f"{datetime.now()}: Calling QA Agent with this question: {question}")
     question_agent = QuestionAgent(
         orchestrator_agent_base.model,
-        query_list_limit=3,
+        query_list_limit=5,
         relevance_score_threshold=0.8,
-        article_list_limit=2,
+        article_list_limit=3,
     )
     r = await question_agent(question=question)
     return r

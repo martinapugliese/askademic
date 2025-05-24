@@ -78,7 +78,14 @@ async def ask_me():
     memory = Memory(max_request_tokens=1e5)
 
     # ask user to choose the model family
-    user_model = await get_llm()
+    # keep asking until the user provides a valid input
+    user_model = None
+    while user_model not in ("gemini", "claude"):
+        user_model = (await get_llm()).strip().lower()
+        if user_model not in ("gemini", "claude"):
+            console.print(
+                "[bold red]Invalid input! Please type 'gemini' or 'claude'.[/bold red]"
+            )
 
     while True:
 
