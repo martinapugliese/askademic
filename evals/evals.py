@@ -27,7 +27,7 @@ async def main():
         if model_family == "claude" and os.getenv("ANTHROPIC_API_KEY") is None:
             console.print(
                 """
-                [bold red]ANTHROPIC_API_KEY environment variable is not set. ù
+                [bold red]ANTHROPIC_API_KEY environment variable is not set.
                 Skipping CLAUDE evals.[/bold red]
                 """
             )

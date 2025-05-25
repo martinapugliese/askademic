@@ -83,7 +83,8 @@ async def run_evals(model_family: str):
 
                 # check titles match (case insensitive), links regex match exists and are the same
                 if (
-                    case.title.lower() != response.output.article_title.lower()
+                    case.title.lower().replace("\n", " ")
+                    != response.output.article_title.lower().replace("\n", " ")
                     or match1 is None
                     or match2 is None
                     or match1.group(1) != match2.group(1)
