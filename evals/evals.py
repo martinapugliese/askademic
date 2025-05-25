@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 from evals_allower import run_evals as run_evals_allower
 from evals_article import run_evals as run_evals_article
@@ -13,6 +14,24 @@ console = Console()
 async def main():
 
     for model_family in ["gemini", "claude"]:
+
+        if model_family == "gemini" and os.getenv("GEMINI_API_KEY") is None:
+            console.print(
+                """
+                [bold red]GEMINI_API_KEY environment variable is not set.
+                Skipping evals.[/bold red]
+                """
+            )
+            continue
+
+        if model_family == "claude" and os.getenv("ANTHROPIC_API_KEY") is None:
+            console.print(
+                """
+                [bold red]ANTHROPIC_API_KEY environment variable is not set.
+                Skipping CLAUDE evals.[/bold red]
+                """
+            )
+            continue
 
         console.print(
             f"[bold cyan]:hourglass: Running all evals for {model_family}...[/bold cyan]"

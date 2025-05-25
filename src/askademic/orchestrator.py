@@ -4,11 +4,8 @@ from datetime import datetime
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 
-from askademic.article import ArticleResponse, article_agent_base
-from askademic.prompts.general import (
-    SYSTEM_PROMPT_ORCHESTRATOR,
-    USER_PROMPT_ARTICLE_TEMPLATE,
-)
+from askademic.article import ArticleAgent, ArticleResponse
+from askademic.prompts.general import SYSTEM_PROMPT_ORCHESTRATOR
 from askademic.question import QuestionAgent, QuestionAnswerResponse
 from askademic.summary import SummaryAgent, SummaryResponse
 
@@ -65,22 +62,20 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
 
 
 @orchestrator_agent_base.tool
-async def answer_article(
-    ctx: RunContext[Context], article: str, question: str
-) -> list[str]:
+async def answer_article(ctx: RunContext[Context], question: str) -> list[str]:
     """
     Ask an agent to retrieve an article based on its title, link or arxiv id.
     Then, ask the agent to read the article and answer a question.
     Args:
         ctx: the context
-        article: the article title, link or article id
         question: the question
+    Returns:
+        r: the response from the agent
+    If the response says that the article is not found, the requested article is not available
+    on arXiv.
     """
-    logger.info(
-        f"{datetime.now()}: Calling Article Agent with question {question}; (article: {article})"
-    )
-    prompt = USER_PROMPT_ARTICLE_TEMPLATE.format(question=question, article=article)
-    article_agent = article_agent_base
-    article_agent.model = orchestrator_agent_base.model
-    r = await article_agent.run(prompt)
+    logger.info(f"{datetime.now()}: Calling Article Agent with question {question};)")
+
+    article_agent = ArticleAgent(orchestrator_agent_base.model)
+    r = await article_agent.run(request=question)
     return r

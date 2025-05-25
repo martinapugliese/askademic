@@ -8,8 +8,7 @@ import time
 
 from rich.console import Console
 
-from askademic.article import article_agent_base
-from askademic.prompts.gemini import USER_PROMPT_ARTICLE_TEMPLATE
+from askademic.article import ArticleAgent
 from askademic.utils import choose_model
 
 
@@ -44,22 +43,22 @@ eval_cases = [
     ),
     ArticleResponseTestCase(
         "What is paper https://arxiv.org/pdf/1602.01730 about?",
-        "https://arxiv.org/pdf/1602.01730",
-        "The deterministic Kermack-McKendrick model bounds the general stochastic epidemic",
-        "https://arxiv.org/pdf/1602.01730",
+        "https://arxiv.org/pdf/1602.01730.pdf",
+        "THE DETERMINISTIC KERMACK-MCKENDRICK MODEL BOUNDS THE GENERAL STOCHASTIC EPIDEMIC",
+        "https://arxiv.org/pdf/1602.01730.pdf",
     ),
     # not existing paper
     ArticleResponseTestCase(
         "Find this paper 'Quark Gluon plasma and AI'",
-        "http://arxiv.org/pdf/0707.0923v1",
-        "Quark-gluon plasma paradox",
-        "http://arxiv.org/pdf/0707.0923v1",
+        "http://arxiv.org/pdf/2311.10621v2",
+        "Hadronization of Heavy Quarks",
+        "http://arxiv.org/pdf/2311.10621v2",
     ),
 ]
 
 # link found by LLM may have the optional v[x] version number at the end
 # we want to match regardless
-LINK_PATTERN = r"https?://arxiv\.org/pdf/(\d{4}\.\d{5})"
+LINK_PATTERN = r"https?://arxiv\.org/pdf/(?:\w+-\w+/)?(\d{4}\.\d{5}|[\w\-]+)"
 
 console = Console()
 
@@ -68,8 +67,7 @@ MAX_ATTEMPTS = 5
 
 async def run_evals(model_family: str):
 
-    article_agent = article_agent_base
-    article_agent.model = choose_model(model_family)
+    article_agent = ArticleAgent(model=choose_model(model_family))
 
     c_passed, c_failed = 0, 0
     for case in eval_cases:
@@ -78,18 +76,15 @@ async def run_evals(model_family: str):
         while attempt < MAX_ATTEMPTS:
             try:
                 print(f"Evaluating case: {case.request}")
-                response = await article_agent.run(
-                    USER_PROMPT_ARTICLE_TEMPLATE.format(
-                        question=case.request, article=case.article_data
-                    )
-                )
+                response = await article_agent.run(request=case.request)
 
                 match1 = re.match(LINK_PATTERN, case.link)
                 match2 = re.match(LINK_PATTERN, response.output.article_link)
 
                 # check titles match (case insensitive), links regex match exists and are the same
                 if (
-                    case.title.lower() != response.output.article_title.lower()
+                    case.title.lower().replace("\n", " ")
+                    != response.output.article_title.lower().replace("\n", " ")
                     or match1 is None
                     or match2 is None
                     or match1.group(1) != match2.group(1)

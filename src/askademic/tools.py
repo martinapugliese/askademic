@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 from datetime import datetime
@@ -67,7 +68,7 @@ def search_articles(
     - published: the date when the article was published
     - title: the article title
     - summary: a summary of the article's content
-    If no articles are found, return "No articles found".
+    If no articles are found, return None.
     Args:
         query: the query used for the search
         sortby: how to sort the results. Possible values:
@@ -98,7 +99,7 @@ def search_articles(
     df_articles = organise_api_response_as_dataframe(response)
 
     if df_articles.empty:
-        return "No articles found"
+        return None
 
     return df_articles
 
@@ -132,6 +133,10 @@ def search_articles_by_abs(
         max_results=max_results,
     )
     # rename id column
+
+    if df is None:
+        return json.dumps({"id": "None", "artilce_link": "No articles found"})
+
     df.rename(columns={"id": "article_link"}, inplace=True)
     return df[["article_link", "abstract"]].to_json()
 
@@ -163,6 +168,10 @@ def search_articles_by_title(
         start=start,
         max_results=max_results,
     )
+
+    if df_articles is None:
+        return json.dumps({"id": "None", "artilce_link": "No articles found"})
+
     df_articles.rename(columns={"id": "article_link"}, inplace=True)
     return df_articles[["article_link", "abstract"]].to_json()
 
@@ -224,14 +233,15 @@ def get_article(url: str, max_attempts: int = 10) -> str:
         try:
             res = requests.get(url, timeout=360)
             if not res.ok:
-                article = "Not Found1"
+                article = "Article Not Found"
+                break
             else:
                 bytes_stream = BytesIO(res.content)
                 try:
                     with pymupdf.open(stream=bytes_stream) as doc:
                         article = chr(12).join([page.get_text() for page in doc])
                 except pymupdf.FileDataError:
-                    article = "Not Found2"
+                    article = "Article Not Found"
                 break
         except requests.exceptions.ConnectionError:
             logger.error(

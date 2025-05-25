@@ -114,6 +114,7 @@ class QuestionAgent:
             article.article_url
             for article in article_link_list
             if article.relevance_score >= self._relevance_score_threshold
+            and article.article_url != "No articles found"
         ]
 
         logger.info("article_link_list after filtering: %s", article_link_list)
