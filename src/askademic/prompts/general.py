@@ -279,12 +279,6 @@ USER_PROMPT_REQUEST_DISCRIMINATOR_TEMPLATE = cleandoc(
 
     If you cannot identify the article by its title, link or id,
     return "error" and an empty string.
-
-    The requst should be in the following JSON format:
-    {{
-        "type": "title" | "link" | "error",
-        "article": "The article title, link or an emtpy string if the type is error."
-    }}
     </instructions>
     """
 )
@@ -309,11 +303,6 @@ USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
     "According to the article '(https://arxiv.org/pdf/1706.03762)', the attention mechanism
     is a key component of the transformer architecture."
     Also return the list of article link you used to answer to the request.
-    The final answer should be in the following JSON format:
-    {{
-        "response": "The answer to the request",
-        "article_link": "The article link you used to answer to the request."
-    }}
     </instructions>
     """
 )
@@ -334,11 +323,6 @@ USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE = cleandoc(
 
     <instructions>
     Your task is to find the article that better matches the title.
-    Return the article link you found in the following JSON format:
-    {{
-        "article_title": "The title of the article you found.",
-        "article_link": "The article link you found."
-    }}
     If you cannot find the article, return an empty string.
     </instructions>
     """

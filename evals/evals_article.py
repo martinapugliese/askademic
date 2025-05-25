@@ -50,9 +50,9 @@ eval_cases = [
     # not existing paper
     ArticleResponseTestCase(
         "Find this paper 'Quark Gluon plasma and AI'",
-        "http://arxiv.org/pdf/2412.19393v1",
-        "Hydrodynamic Description of the Quark-Gluon Plasma",
-        "http://arxiv.org/pdf/2412.19393v1",
+        "http://arxiv.org/pdf/2311.10621v2",
+        "Hadronization of Heavy Quarks",
+        "http://arxiv.org/pdf/2311.10621v2",
     ),
 ]
 
