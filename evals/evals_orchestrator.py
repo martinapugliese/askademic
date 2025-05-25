@@ -7,9 +7,10 @@ import time
 from rich.console import Console
 
 from askademic.article import ArticleResponse
-from askademic.orchestrator import orchestrator_agent
+from askademic.orchestrator import orchestrator_agent_base
 from askademic.question import QuestionAnswerResponse
-from askademic.summarizer import SummaryResponse
+from askademic.summary import SummaryResponse
+from askademic.utils import choose_model
 
 
 class OrchestratorTestCase:
@@ -41,17 +42,21 @@ console = Console()
 MAX_ATTEMPTS = 5
 
 
-async def run_evals():
+async def run_evals(model_family: str):
+
+    orchestrator_agent = orchestrator_agent_base
+    orchestrator_agent.model = choose_model(model_family)
 
     c_passed, c_failed = 0, 0
     for case in eval_cases:
 
+        time.sleep(2)
         attempt = 0
         while attempt < MAX_ATTEMPTS:
             try:
                 print(f"Evaluating case: {case.request}")
-                response = await orchestrator_agent.run(case.request)
 
+                response = await orchestrator_agent.run(case.request)
                 if not isinstance(response.output, case.response_type):
                     print(f"Test failed for question: {case.request}")
                     c_failed += 1

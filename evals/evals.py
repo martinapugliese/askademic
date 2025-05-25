@@ -11,21 +11,26 @@ console = Console()
 
 
 async def main():
-    console.print("[bold cyan]:hourglass: Running all evals...[/bold cyan]")
-    console.print("\n[bold magenta]Running allower evals...[/bold magenta]")
-    await run_evals_allower()
 
-    console.print("\n[bold magenta]Running orchestrator evals...[/bold magenta]")
-    await run_evals_orchestrator()
+    for model_family in ["gemini", "claude"]:
 
-    console.print("\n[bold magenta]Running summary evals...[/bold magenta]")
-    await run_evals_summary()
+        console.print(
+            f"[bold cyan]:hourglass: Running all evals for {model_family}...[/bold cyan]"
+        )
 
-    console.print("\n[bold magenta]Running question evals...[/bold magenta]")
-    await run_evals_question()
+        await run_evals_allower(model_family)
 
-    console.print("\n[bold magenta]Running article evals...[/bold magenta]")
-    await run_evals_article()
+        console.print("\n[bold magenta]Running orchestrator evals...[/bold magenta]")
+        await run_evals_orchestrator(model_family)
+
+        console.print("\n[bold magenta]Running summary evals...[/bold magenta]")
+        await run_evals_summary(model_family)
+
+        console.print("\n[bold magenta]Running question evals...[/bold magenta]")
+        await run_evals_question(model_family)
+
+        console.print("\n[bold magenta]Running article evals...[/bold magenta]")
+        await run_evals_article(model_family)
 
 
 if __name__ == "__main__":

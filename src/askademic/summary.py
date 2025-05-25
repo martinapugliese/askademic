@@ -1,8 +1,10 @@
+import logging
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
 
-from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts import (
+from askademic.prompts.general import (
     SYSTEM_PROMPT_CATEGORY,
     SYSTEM_PROMPT_SUMMARY,
     USER_PROMPT_CATEGORY_TEMPLATE,
@@ -13,6 +15,10 @@ from askademic.tools import (
     identify_latest_day,
     retrieve_recent_articles,
 )
+
+today = datetime.now().strftime("%Y-%m-%d")
+logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
+logger = logging.getLogger(__name__)
 
 
 class Category(BaseModel):
@@ -40,10 +46,10 @@ class SummaryResponse(BaseModel):
 
 
 class SummaryAgent:
-    def __init__(self):
+    def __init__(self, model):
 
         self._category_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_CATEGORY,
             output_type=Category,
             tools=[Tool(get_categories, takes_ctx=False)],
@@ -51,7 +57,7 @@ class SummaryAgent:
         )
 
         self._summary_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_SUMMARY,
             output_type=Summary,
             model_settings={"max_tokens": 1000, "temperature": 0},
@@ -73,6 +79,10 @@ class SummaryAgent:
             USER_PROMPT_CATEGORY_TEMPLATE.format(request=request)
         )
 
+        logger.info(
+            f"Category selected: {category.output.category_id} - {category.output.category_name}"
+        )
+
         # Get the latest published day
         latest_day = self._identify_latest_day(category.output.category_id)
 
@@ -80,6 +90,9 @@ class SummaryAgent:
         articles = self._retrieve_recent_articles(
             category=category.output.category_id, latest_day=latest_day
         )
+
+        logger.info(f"Latest published day: {latest_day} - Articles #: {len(articles)}")
+        # logger.info(f"Articles: {articles}")
 
         # Create the summary
         summary = await self._summary_agent.run(
@@ -92,6 +105,3 @@ class SummaryAgent:
             summary=summary.output.summary,
             recent_papers_url=f"https://arxiv.org/list/{category.output.category_id}/new",
         )
-
-
-summary_agent = SummaryAgent()
