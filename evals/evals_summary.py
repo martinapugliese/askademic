@@ -6,7 +6,8 @@ import time
 
 from rich.console import Console
 
-from askademic.summary import summary_agent
+from askademic.summary import SummaryAgent
+from askademic.utils import choose_model
 
 
 class SummaryTestCase:
@@ -28,7 +29,9 @@ console = Console()
 MAX_ATTEMPTS = 5
 
 
-async def run_evals():
+async def run_evals(model_family: str):
+
+    summary_agent = SummaryAgent(choose_model(model_family))
 
     c_passed, c_failed = 0, 0
     for case in eval_cases:
@@ -37,8 +40,8 @@ async def run_evals():
         while attempt < MAX_ATTEMPTS:
             try:
                 print(f"Evaluating case: {case.request}")
-                response = await summary_agent(case.request)
 
+                response = await summary_agent(case.request)
                 if response.category.category_id != case.category:
                     print(f"Test failed for question: {case.request}")
                     print(f"Got: {response.category.category_id}")

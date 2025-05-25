@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "askademic"
-version = "1.0.1-b"
+version = "2.0.0"
 dependencies = [
   "pydantic==2.10.6",
   "pydantic-ai==0.2.4",

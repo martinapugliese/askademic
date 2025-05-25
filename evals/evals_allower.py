@@ -6,8 +6,9 @@ import time
 
 from rich.console import Console
 
-from askademic.allower import allower_agent
+from askademic.allower import allower_agent_base
 from askademic.prompts.general import USER_PROMPT_ALLOWER_TEMPLATE
+from askademic.utils import choose_model
 
 
 class AllowerTestCase:
@@ -30,7 +31,10 @@ console = Console()
 MAX_ATTEMPTS = 5
 
 
-async def run_evals():
+async def run_evals(model_family: str):
+
+    allower_agent = allower_agent_base
+    allower_agent.model = choose_model(model_family)
 
     c_passed, c_failed = 0, 0
     for case in eval_cases:
@@ -38,6 +42,7 @@ async def run_evals():
         attempt = 0
         while attempt < MAX_ATTEMPTS:
             try:
+
                 print(f"Evaluating case: {case.question}")
                 response = await allower_agent.run(
                     USER_PROMPT_ALLOWER_TEMPLATE.format(question=case.question)

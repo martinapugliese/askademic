@@ -31,8 +31,9 @@ logger = logging.getLogger(__name__)
 
 async def get_llm() -> str:
     return Prompt.ask(
-        """[bold yellow]Choose your LLM family: type 'gemini' for Gemini (preferred)
-and 'claude' for Claude (experimental)[/bold yellow]"""
+        "[bold yellow]Choose your LLM family: "
+        + "['gemini' (preferred) / 'claude'(experimental)][/bold yellow]"
+        ""
     )
 
 
@@ -41,7 +42,7 @@ async def ask_user_question():
         "[bold yellow]Ask a question (type 'help' for instructions):[/bold yellow] 💬 "
     )
 
-    # This is to make sure the cursor moves correctly when typing in the terminal
+    # This is to make sure the terminal cursor moves correctly
     with StringIO() as buf:
         rich_console = Console(file=buf, force_terminal=True, color_system="truecolor")
         rich_console.print(markup_prompt, end="")
@@ -79,8 +80,7 @@ async def ask_me():
 
     memory = Memory(max_request_tokens=1e5)
 
-    # ask user to choose the model family
-    # keep asking until the user provides a valid input
+    # ask user to choose the model family (gemini by default)
     user_model = None
     while user_model not in ("gemini", "claude"):
         user_model = (await get_llm()).strip().lower()
