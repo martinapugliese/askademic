@@ -69,6 +69,10 @@ async def answer_article(ctx: RunContext[Context], question: str) -> list[str]:
     Args:
         ctx: the context
         question: the question
+    Returns:
+        r: the response from the agent
+    If the response says that the article is not found, the requested article is not available
+    on arXiv.
     """
     logger.info(f"{datetime.now()}: Calling Article Agent with question {question};)")
 

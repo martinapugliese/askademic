@@ -271,6 +271,7 @@ USER_PROMPT_REQUEST_DISCRIMINATOR_TEMPLATE = cleandoc(
     This is the request you received:
     '{request}'
 
+    <instructions>
     - If the request contains an article link return "link" and the article link.
     - If the request contains an article id return "link" and the the article link in this format:
     "https://arxiv.org/pdf/{{article_id}}.pdf"
@@ -284,6 +285,7 @@ USER_PROMPT_REQUEST_DISCRIMINATOR_TEMPLATE = cleandoc(
         "type": "title" | "link" | "error",
         "article": "The article title, link or an emtpy string if the type is error."
     }}
+    </instructions>
     """
 )
 
@@ -299,6 +301,7 @@ USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
     The request is:
     '{request}'
 
+    <instructions>
     Answer to the request based on the article. If you cannot find the answer in the article,
     just say that you cannot find the answer and that the requested article has not been found.
     Quote the article you used to answer to the request in the answer, and the
@@ -311,6 +314,7 @@ USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
         "response": "The answer to the request",
         "article_link": "The article link you used to answer to the request."
     }}
+    </instructions>
     """
 )
 
@@ -328,6 +332,7 @@ USER_PROMPT_ARTICLE_RETRIEVEL_TEMPLATE = cleandoc(
     The articles are:
     '{articles}'
 
+    <instructions>
     Your task is to find the article that better matches the title.
     Return the article link you found in the following JSON format:
     {{
@@ -335,6 +340,7 @@ USER_PROMPT_ARTICLE_RETRIEVEL_TEMPLATE = cleandoc(
         "article_link": "The article link you found."
     }}
     If you cannot find the article, return an empty string.
+    </instructions>
     """
 )
 
