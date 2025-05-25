@@ -9,7 +9,7 @@ from pydantic_ai.agent import AgentRunResult  # noqa: F401
 os.environ["GEMINI_API_KEY"] = "mock"
 
 from askademic.article import (  # noqa: E402
-    USER_PROMPT_ARTICLE_RETRIEVEL_TEMPLATE,
+    USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE,
     USER_PROMPT_ARTICLE_TEMPLATE,
     USER_PROMPT_REQUEST_DISCRIMINATOR_TEMPLATE,
     ArticleAgent,
@@ -131,7 +131,7 @@ async def test_article_agent(
             request_discriminator_response.article_value
         )
         article_agent._article_retrieval_agent.run.assert_called_once_with(
-            USER_PROMPT_ARTICLE_RETRIEVEL_TEMPLATE.format(
+            USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE.format(
                 article_title=request_discriminator_response.article_value,
                 articles="Mocked search articles by title response.",
             )

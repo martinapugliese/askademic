@@ -255,7 +255,7 @@ SYSTEM_PROMPT_ARTICLE = cleandoc(
     """
 )
 
-SYSTEM_PROMPT_ARTICLE_RETRIEVEL = cleandoc(
+SYSTEM_PROMPT_ARTICLE_RETRIEVAL = cleandoc(
     """
     You are an expert in understanding academic topics and using the arXiv API.
     You will receive a request to retrieve an article based on its title in a list
@@ -295,7 +295,7 @@ USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
     You will receive an article and a request.
     Your task is to use this article to answer to the request.
 
-    The article this:
+    The article is this:
     '{article}'
 
     The request is:
@@ -318,7 +318,7 @@ USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
     """
 )
 
-USER_PROMPT_ARTICLE_RETRIEVEL_TEMPLATE = cleandoc(
+USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE = cleandoc(
     """
     You are an expert in understanding academic topics and using the arXiv API.
     You will receive a request to retrieve an article based on its title in a list

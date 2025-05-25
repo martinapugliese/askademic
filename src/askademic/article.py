@@ -6,9 +6,9 @@ from pydantic_ai import Agent
 
 from askademic.prompts.general import (
     SYSTEM_PROMPT_ARTICLE,
-    SYSTEM_PROMPT_ARTICLE_RETRIEVEL,
+    SYSTEM_PROMPT_ARTICLE_RETRIEVAL,
     SYSTEM_PROMPT_REQUEST_DISCRIMINATOR,
-    USER_PROMPT_ARTICLE_RETRIEVEL_TEMPLATE,
+    USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE,
     USER_PROMPT_ARTICLE_TEMPLATE,
     USER_PROMPT_REQUEST_DISCRIMINATOR_TEMPLATE,
 )
@@ -65,7 +65,7 @@ class ArticleAgent:
 
         self._article_retrieval_agent = Agent(
             model=model,
-            system_prompt=SYSTEM_PROMPT_ARTICLE_RETRIEVEL,
+            system_prompt=SYSTEM_PROMPT_ARTICLE_RETRIEVAL,
             output_type=ArticleRetrievalResponse,
             model_settings={"max_tokens": 1000, "temperature": 0},
         )
@@ -111,7 +111,7 @@ class ArticleAgent:
         articles = self._search_articles_by_title(article_title)
 
         return await self._article_retrieval_agent.run(
-            USER_PROMPT_ARTICLE_RETRIEVEL_TEMPLATE.format(
+            USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE.format(
                 article_title=article_title, articles=articles
             )
         )
