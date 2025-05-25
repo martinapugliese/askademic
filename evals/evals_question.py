@@ -6,7 +6,8 @@ import time
 
 from rich.console import Console
 
-from askademic.question import question_agent
+from askademic.question import QuestionAgent
+from askademic.utils import choose_model
 
 
 class QuestionAnswerTestCaseSingle:
@@ -46,9 +47,16 @@ console = Console()
 MAX_ATTEMPTS = 5
 
 
-async def run_evals():
+async def run_evals(model_family: str):
 
     c_passed, c_failed = 0, 0
+
+    question_agent = QuestionAgent(
+        choose_model(model_family),
+        query_list_limit=5,
+        relevance_score_threshold=0.8,
+        article_list_limit=3,
+    )
 
     # single-answer ones
     for case in eval_cases_single:
@@ -105,8 +113,8 @@ async def run_evals():
     console.print(f"[bold cyan]Total cases: {tot}[/bold cyan]")
     if c_failed > 0:
         console.print(
-            f":check_mark: [bold green]Passed: {c_passed}[/bold green]"
+            f":white_check_mark: [bold green]Passed: {c_passed}[/bold green]"
             + ","
             + f":x: [bold red]Failed: {c_failed}[/bold red]"
         )
-    console.print(f":check_mark: [bold green]Passed: {c_passed}[/bold green]")
+    console.print(f":white_check_mark: [bold green]Passed: {c_passed}[/bold green]")

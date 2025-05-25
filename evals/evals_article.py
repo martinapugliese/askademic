@@ -8,7 +8,8 @@ import time
 
 from rich.console import Console
 
-from askademic.article import article_agent
+from askademic.article import ArticleAgent
+from askademic.utils import choose_model
 
 
 class ArticleResponseTestCase:
@@ -42,16 +43,16 @@ eval_cases = [
     ),
     ArticleResponseTestCase(
         "What is paper https://arxiv.org/pdf/1602.01730 about?",
-        "https://arxiv.org/pdf/1602.01730",
+        "https://arxiv.org/pdf/1602.01730.pdf",
         "THE DETERMINISTIC KERMACK-MCKENDRICK MODEL BOUNDS THE GENERAL STOCHASTIC EPIDEMIC",
-        "https://arxiv.org/pdf/1602.01730",
+        "https://arxiv.org/pdf/1602.01730.pdf",
     ),
     # not existing paper
     ArticleResponseTestCase(
         "Find this paper 'Quark Gluon plasma and AI'",
-        "http://arxiv.org/pdf/nucl-th/9905005v1",
-        "QUARK-GLUON PLASMA",
-        "http://arxiv.org/pdf/nucl-th/9905005v1",
+        "http://arxiv.org/pdf/2311.10621v2",
+        "Hadronization of Heavy Quarks",
+        "http://arxiv.org/pdf/2311.10621v2",
     ),
 ]
 
@@ -64,7 +65,9 @@ console = Console()
 MAX_ATTEMPTS = 5
 
 
-async def run_evals():
+async def run_evals(model_family: str):
+
+    article_agent = ArticleAgent(model=choose_model(model_family))
 
     c_passed, c_failed = 0, 0
     for case in eval_cases:
@@ -106,8 +109,8 @@ async def run_evals():
     console.print(f"[bold cyan]Total cases: {len(eval_cases)}[/bold cyan]")
     if c_failed > 0:
         console.print(
-            f":check_mark: [bold green]Passed: {c_passed}[/bold green]"
+            f":white_check_mark: [bold green]Passed: {c_passed}[/bold green]"
             + ","
             + f":x: [bold red]Failed: {c_failed}[/bold red]"
         )
-    console.print(f":check_mark: [bold green]Passed: {c_passed}[/bold green]")
+    console.print(f":white_check_mark: [bold green]Passed: {c_passed}[/bold green]")

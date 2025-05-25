@@ -20,15 +20,20 @@ You can also ask follow-up questions. And, it has an eye for things non-scientif
 
 As for everything that uses LLM, **check your outputs** - it can make mistakes.
 
-It uses Google Gemini 2.0 Flash. We aim to expand it to allow for multiple LLMs in the (near) future, especially open ones, but this early choice has been motivated by these factors:
-* it has a free tier - we privilege cost-effectiveness over speed, which means for short conversations you should be within the quotas of the free tier
-* it has a very large context window, very useful for questions where extensive searches over many papers are needed
+As its underlying LLM, you can choose to run it either with:
+* Gemini (it will use 2.0 Flash) [preferred and default option]
+* Claude (it will use Haiku 3.5) [experimental]
 
-Askademic is built on [PydanticAI](https://ai.pydantic.dev/).
+Gemini is preferred because:
+* it has a free tier - we privilege cost-effectiveness over speed, which means for short conversations you should be within the quotas of the free tier
+* it has a very large context window - this allows to manage the input when many papers are retrieved much more comfortably (note: it is known that )
+Claude is experimental because of rate limits and input context limitations. You may see errors for limits exceeded/too many requests etc. There are mechanisms whereby askademic retries, but let us know if something really is off, we're working on improving this.
+
+Support for other LLM families will be coming.
 
 # Requirements
 
-Works with Python 3.11 and above. Not yet published on PyPI while we iron out some things to improve.
+Works with Python 3.11 and above.
 
 # Installation & setup
 
@@ -69,15 +74,21 @@ Run it with command `askademic` from the terminal.
 
 # Roadmap and issues
 
-Please try it and give us feedback! If you find quirks or something that is not great, you are more than welcome to open an issue in this repo, please describe the issue clearly, ideally with screenshots.
+Please try it and give us feedback! If you find quirks or something that is not great, or if you just would like to see other features, please open an issue! Describe it clearly. You can see what we're working on in the [kanban board](https://github.com/users/martinapugliese/projects/1/views/1).
 
-We have several ideas to develop this further, adding new capabilities and features, so stay tuned!
+# Evals
+
+At the moment, we run them manually every time we ship a PR. They're a handful of simple checks and are run as
+```
+python evals.py
+```
+from within the `evals/` folder. If you have suggestions we'd love to hear.
 
 # Acknowledgments
 
-Thank you to arXiv for use of its open access interoperability. This [service/ product] was not reviewed or approved by, nor does it necessarily express or reflect the policies or opinions of, arXiv.
-
-Logo: GPT4o
+* Thank you to [arXiv](https://arxiv.org/) for use of its open access interoperability. This [service/ product] was not reviewed or approved by, nor does it necessarily express or reflect the policies or opinions of, arXiv.
+* Logo: GPT4o
+* Askademic is built on [PydanticAI](https://ai.pydantic.dev/).
 
 # Licence
 

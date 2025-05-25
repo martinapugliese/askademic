@@ -1,8 +1,10 @@
+import logging
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
-from askademic.constants import GEMINI_2_FLASH_MODEL_ID
-from askademic.prompts import (
+from askademic.prompts.general import (
     SYSTEM_PROMPT_ARTICLE,
     SYSTEM_PROMPT_ARTICLE_RETRIEVEL,
     SYSTEM_PROMPT_REQUEST_DISCRIMINATOR,
@@ -11,6 +13,10 @@ from askademic.prompts import (
     USER_PROMPT_REQUEST_DISCRIMINATOR_TEMPLATE,
 )
 from askademic.tools import get_article, search_articles_by_title
+
+today = datetime.now().strftime("%Y-%m-%d")
+logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
+logger = logging.getLogger(__name__)
 
 
 class ArticleRequestDiscriminatorResponse(BaseModel):
@@ -38,27 +44,27 @@ class ArticleRetrievalResponse(BaseModel):
 
 
 class ArticleAgent:
-    def __init__(self):
+    def __init__(self, model: str):
 
         self._get_article = get_article
         self._search_articles_by_title = search_articles_by_title
 
         self._article_request_discriminator_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_REQUEST_DISCRIMINATOR,
             output_type=ArticleRequestDiscriminatorResponse,
             model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._article_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_ARTICLE,
             output_type=ArticleResponse,
             model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._article_retrieval_agent = Agent(
-            GEMINI_2_FLASH_MODEL_ID,
+            model=model,
             system_prompt=SYSTEM_PROMPT_ARTICLE_RETRIEVEL,
             output_type=ArticleRetrievalResponse,
             model_settings={"max_tokens": 1000, "temperature": 0},
@@ -122,6 +128,10 @@ class ArticleAgent:
 
         article_request = await self._discriminate_article_request(request)
 
+        logger.info(
+            f"{datetime.now()}: Discriminated article request: {article_request}"
+        )
+
         if article_request.output.article_type == "title":
             # Search for the article by title
             article_title = article_request.output.article_value
@@ -131,14 +141,13 @@ class ArticleAgent:
             # If the article type is not title, we assume it's a link or an error
             article_link = article_request.output.article_value
 
+        logger.info(f"{datetime.now()}: Article link retrieved: {article_link}")
+
         if "No articles found" == article_link:
             return ArticleResponse(
-                response="No articles found for the given request.",
+                response="No articles found, the requested article is probably not in ArXiv.",
                 article_title="",
                 article_link="",
             )
 
         return await self._answer_question(request=request, article_link=article_link)
-
-
-article_agent = ArticleAgent()

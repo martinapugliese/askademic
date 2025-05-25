@@ -65,7 +65,9 @@ async def test_article_agent(
 ):
 
     # Mock the agents
-    article_agent = ArticleAgent()
+    article_agent = ArticleAgent(
+        model="gemini-2.0-flash",
+    )
     article_agent._get_article = MagicMock(
         return_value="Mocked article text for testing purposes."
     )
