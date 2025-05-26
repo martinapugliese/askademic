@@ -36,7 +36,7 @@ async def summarise_latest_articles(
         ctx: the context
         request: the request
     """
-    logger.info(f"{datetime.now()}: Calling Summary Agent with this request: {request}")
+    logger.info(f"{datetime.now()}: Calling Summary Agent with request: {request}")
     summary_agent = SummaryAgent(orchestrator_agent_base.model)
     r = await summary_agent(request=request)
     return r
@@ -50,7 +50,7 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
         ctx: the context
         question: the question
     """
-    logger.info(f"{datetime.now()}: Calling QA Agent with this question: {question}")
+    logger.info(f"{datetime.now()}: Calling QA Agent with question: {question}")
     question_agent = QuestionAgent(
         orchestrator_agent_base.model,
         query_list_limit=5,
