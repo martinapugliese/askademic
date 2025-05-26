@@ -31,6 +31,10 @@ Claude is experimental because of rate limits and input context limitations. You
 
 Support for other LLM families will be coming.
 
+## Important note about the paper-reading feature
+
+The agent reads the paper via pulling the whole text from arXiv, there isn't an API endpoint giving whole text so this is done via the site. This feature is meant to be used lightly, that is, not reading too many papers at short turnarounds, because this would violates arXiv's terms of use.
+
 # Requirements
 
 Works with Python 3.11 and above.
