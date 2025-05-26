@@ -84,22 +84,6 @@ class ArticleAgent:
             USER_PROMPT_REQUEST_DISCRIMINATOR_TEMPLATE.format(request=request)
         )
 
-    async def _answer_question(
-        self, request: str, article_link: str
-    ) -> ArticleResponse:
-        """
-        Retrieve an article by its link and answer a question about it.
-        Args:
-            request: the question to answer
-            article_link: the link to the article
-        Returns:
-            ArticleResponse: the response with the article content
-        """
-        article = self._get_article(article_link)
-        return await self._article_agent.run(
-            USER_PROMPT_ARTICLE_TEMPLATE.format(request=request, article=article)
-        )
-
     async def _retrieve_article(self, article_title: str) -> ArticleRetrievalResponse:
         """
         Retrieve an article link by its title.
@@ -114,6 +98,22 @@ class ArticleAgent:
             USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE.format(
                 article_title=article_title, articles=articles
             )
+        )
+
+    async def _answer_question(
+        self, request: str, article_link: str
+    ) -> ArticleResponse:
+        """
+        Retrieve an article by its link and answer a question about it.
+        Args:
+            request: the question to answer
+            article_link: the link to the article
+        Returns:
+            ArticleResponse: the response with the article content
+        """
+        article = self._get_article(article_link)
+        return await self._article_agent.run(
+            USER_PROMPT_ARTICLE_TEMPLATE.format(request=request, article=article)
         )
 
     async def run(self, request: str) -> ArticleResponse:
