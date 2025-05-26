@@ -1,5 +1,6 @@
 import json
 import logging
+import random
 import time
 from datetime import datetime
 from io import BytesIO
@@ -8,7 +9,7 @@ import feedparser
 import pymupdf
 import requests
 
-from askademic.constants import ARXIV_BASE_URL
+from askademic.constants import ARXIV_BASE_URL, USER_AGENTS
 from askademic.utils import list_categories, organise_api_response_as_dataframe
 
 today = datetime.now().strftime("%Y-%m-%d")
@@ -231,7 +232,9 @@ def get_article(url: str, max_attempts: int = 10) -> str:
 
     while attempts < max_attempts:
         try:
-            res = requests.get(url, timeout=360)
+            # Randomly choose a user agent from
+            headers = {"User-Agent": random.choice(USER_AGENTS)}
+            res = requests.get(url, headers=headers, timeout=360)
             if not res.ok:
                 article = "Article Not Found"
                 break
@@ -247,7 +250,7 @@ def get_article(url: str, max_attempts: int = 10) -> str:
             logger.error(
                 f"{datetime.now()}: ConnectionError exception occurred, retrying in 60 seconds..."
             )
-            time.sleep(60)
+            time.sleep(20)
             attempts += 1
 
     # curtail the article to 70k characters (there can be books, too long)

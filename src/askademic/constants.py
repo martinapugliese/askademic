@@ -5,3 +5,10 @@ MISTRAL_LARGE_MODEL_ID = "mistral:mistral-large-latest"
 
 # ARXIV URLS
 ARXIV_BASE_URL = "http://export.arxiv.org/api/query?"
+
+# User-agents for requests (to rotate)
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3)",
+    "Mozilla/5.0 (X11; Linux x86_64)",
+]
