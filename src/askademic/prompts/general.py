@@ -179,15 +179,12 @@ USER_PROMPT_QUERY_TEMPLATE = cleandoc(
 SYSTEM_PROMPT_ABSTRACT_RELEVANCE = cleandoc(
     """
     You are an expert in understanding academic topics and reading scientific articles.
-    You will receive a list of abstracts and a question.
-    Your task is to find the most relevant abstracts to the question.
     """
 )
 
 USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE = cleandoc(
     """
-    You are an expert in understanding academic topics and using the arXiv API.
-    You will receive a list of abstracts and a question.
+    You will receive a list of abstracts of scientific articles and a question.
     Your task is to find the most relevant abstracts to the question.
     The question is:
     '{question}'
@@ -241,27 +238,10 @@ USER_PROMPT_MANY_ARTICLES_TEMPLATE = cleandoc(
 
 SYSTEM_PROMPT_REQUEST_DISCRIMINATOR = cleandoc(
     """
-    You are an expert in understanding academic topics and using the arXiv API.
+    You are an expert of arXiv.
     You will receive a request to retrieve an article based on its title, link or arxiv id.
     Your task is to identify if the correct way to retrieve
     the article is by its title, link or arxiv id.
-    """
-)
-SYSTEM_PROMPT_ARTICLE = cleandoc(
-    """
-    You are an expert in understanding academic topics and using the arXiv API.
-    You will receive an article and a request.
-    Your task is to use the article to answer to the request.
-    """
-)
-
-SYSTEM_PROMPT_ARTICLE_RETRIEVAL = cleandoc(
-    """
-    You are an expert in understanding academic topics and using the arXiv API.
-    You will receive a request to retrieve an article based on its title in a list
-    of articles.
-    The tile could be not exact, so you should search for the article that
-    better matches the title.
     """
 )
 
@@ -272,48 +252,26 @@ USER_PROMPT_REQUEST_DISCRIMINATOR_TEMPLATE = cleandoc(
     '{request}'
 
     <instructions>
-    - If the request contains an article link return "link" and the article link.
-    - If the request contains an article id return "link" and the the article link in this format:
-    "https://arxiv.org/pdf/{{article_id}}.pdf"
-    - If the request contains an article title, return "title" and the article title.
-
-    If you cannot identify the article by its title, link or id,
-    return "error" and an empty string.
+        - If the request contains an article link return "link" and the article link.
+        - If the request contains an article id return "link"
+          and the the article link in this format: "https://arxiv.org/pdf/{{article_id}}.pdf".
+        - If the request contains an article title, return "title" and the article title.
+        - If you cannot identify the article by its title, link or id,
+          return "error" and an empty string.
     </instructions>
     """
 )
 
-USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
+SYSTEM_PROMPT_ARTICLE_RETRIEVAL = cleandoc(
     """
-    You are an expert in understanding academic topics and using the arXiv API.
-    You will receive an article and a request.
-    Your task is to use this article to answer to the request.
-
-    The article is this:
-    '{article}'
-
-    The request is:
-    '{request}'
-
-    <instructions>
-    Answer to the request based on the article. If you cannot find the answer in the article,
-    just say that you cannot find the answer and that the requested article has not been found.
-    Quote the article you used to answer to the request in the answer, and the
-    part of the article you used to answer to the request, e.g.:
-    "According to the article '(https://arxiv.org/pdf/1706.03762)', the attention mechanism
-    is a key component of the transformer architecture."
-    Also return the list of article link you used to answer to the request.
-    </instructions>
+    You are an expert in arXiv and in retrieving articles from it, based on their title.
     """
 )
 
 USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE = cleandoc(
     """
-    You are an expert in understanding academic topics and using the arXiv API.
     You will receive a request to retrieve an article based on its title in a list
-    of articles.
-    The tile could be not exact, so you should search for the article that
-    better matches the title.
+    of articles. You must retrieve the article that better matches the title.
 
     The article title is:
     '{article_title}'
@@ -322,8 +280,41 @@ USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE = cleandoc(
     '{articles}'
 
     <instructions>
-    Your task is to find the article that better matches the title.
-    If you cannot find the article, return an empty string.
+        - Your task is to find the article that better matches the title.
+        - It is possible that the title you're given is not exact,
+          so you should search for the article that better matches the title.
+        - If you cannot find the article, return an empty string.
+    </instructions>
+    """
+)
+
+SYSTEM_PROMPT_ARTICLE = cleandoc(
+    """
+    You are an expert in understanding academic topics, reading scientific articles,
+    distilling information from them and answering questions.
+    """
+)
+
+USER_PROMPT_ARTICLE_TEMPLATE = cleandoc(
+    """
+    You will receive an article and a request.
+    Your task is to use the article to answer the request.
+
+    The article is:
+    '{article}'
+
+    The request is:
+    '{request}'
+
+    <instructions>
+        - Answer to the request based on the article
+        - If you cannot find the answer in the article, say so
+          and specify that the requested article has not been found.
+        - Quote the article you used to answer the request, and the
+          part of the article you used to answer to the request, e.g.:
+          "According to the article '(https://arxiv.org/pdf/1706.03762)', the attention mechanism
+          is a key component of the transformer architecture."
+        - Also return the list of article link you used to answer the request.
     </instructions>
     """
 )

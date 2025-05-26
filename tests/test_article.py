@@ -3,7 +3,6 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
-import pytest_asyncio  # noqa: F401
 from pydantic_ai.agent import AgentRunResult  # noqa: F401
 
 os.environ["GEMINI_API_KEY"] = "mock"
