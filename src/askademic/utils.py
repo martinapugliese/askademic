@@ -1,10 +1,15 @@
 import logging
 from datetime import datetime
 
+import boto3
 import feedparser
 import pandas as pd
 
-from askademic.constants import CLAUDE_HAIKU_3_5_MODEL_ID, GEMINI_2_FLASH_MODEL_ID
+from askademic.constants import (
+    CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID,
+    CLAUDE_HAIKU_3_5_MODEL_ID,
+    GEMINI_2_FLASH_MODEL_ID,
+)
 
 today = datetime.now().strftime("%Y-%m-%d")
 logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
@@ -15,13 +20,20 @@ def choose_model(model_family: str = "gemini") -> str:
     """
     Choose the model ID based on the given model family.
     """
-    if model_family not in ["gemini", "claude"]:
+    if model_family not in ["gemini", "claude", "claude-aws-bedrock"]:
         raise ValueError(f"Invalid model family '{model_family}'.")
 
     if model_family == "gemini":
         return GEMINI_2_FLASH_MODEL_ID
     elif model_family == "claude":
         return CLAUDE_HAIKU_3_5_MODEL_ID
+    elif model_family == "claude-aws-bedrock":
+        region = boto3.session.Session().region_name
+        if not region:
+            return CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID.format(region="us")
+        else:
+            region = region.split("-")[0]
+            return CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID.format(region=region)
 
 
 def list_categories() -> dict:

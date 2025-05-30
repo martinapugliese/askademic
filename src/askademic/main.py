@@ -7,6 +7,7 @@ from datetime import datetime
 from inspect import cleandoc
 from io import StringIO
 
+import boto3
 from prompt_toolkit import PromptSession
 from prompt_toolkit.formatted_text import ANSI
 from prompt_toolkit.history import FileHistory
@@ -32,7 +33,8 @@ logger = logging.getLogger(__name__)
 async def get_llm() -> str:
     return Prompt.ask(
         "[bold yellow]Choose your LLM family: "
-        + "['gemini' (preferred) / 'claude'(experimental)][/bold yellow]"
+        + "['gemini' (preferred) / 'claude'(experimental) / "
+        + "'claude-aws-bedrock' (experimental)][/bold yellow]"
         ""
     )
 
@@ -48,6 +50,40 @@ async def ask_user_question():
         rich_console.print(markup_prompt, end="")
         ansi_prompt = buf.getvalue()
     return await session.prompt_async(ANSI(ansi_prompt))
+
+
+async def check_environment_variables(user_model: str):
+
+    if user_model == "gemini":
+        if not os.getenv("GEMINI_API_KEY"):
+            console.print(
+                "[bold red]The GEMINI_API_KEY environment variable is not set.[/bold red]"
+            )
+            sys.exit()
+    elif user_model in "claude":
+        if not os.getenv("ANTHROPIC_API_KEY"):
+            console.print(
+                "[bold red]The ANTHROPIC_API_KEY environment variable is not set.[/bold red]"
+            )
+            sys.exit()
+    elif user_model == "claude-aws-bedrock":
+        try:
+            _ = boto3.client("sts").get_caller_identity()
+        except boto3.exceptions.ClientError:
+            console.print(
+                "[bold red]The AWS credentials are not set or invalid.[/bold red]"
+            )
+            console.print(
+                "[bold red]Please set the AWS_ACCESS_KEY_ID "
+                + "and AWS_SECRET_ACCESS_KEY environment variables.[/bold red]"
+            )
+            sys.exit()
+    else:
+        console.print(
+            "[bold red]Invalid model family selected. "
+            + "Please choose 'gemini', 'claude', or 'claude-aws-bedrock'.[/bold red]"
+        )
+        sys.exit()
 
 
 async def ask_me():
@@ -82,23 +118,15 @@ async def ask_me():
 
     # ask user to choose the model family (gemini by default)
     user_model = None
-    while user_model not in ("gemini", "claude"):
+    while user_model not in ("gemini", "claude", "claude-aws-bedrock"):
         user_model = (await get_llm()).strip().lower()
-        if user_model not in ("gemini", "claude"):
+        if user_model not in ("gemini", "claude", "claude-aws-bedrock"):
             console.print(
-                "[bold red]Invalid input! Please type 'gemini' or 'claude'.[/bold red]"
+                "[bold red]Invalid input! Please type 'gemini',"
+                + "'claude', 'claude-aws-bedrock'.[/bold red]"
             )
 
-    # check that user has the appropriate API key set
-    key = "GEMINI_API_KEY" if user_model == "gemini" else "ANTHROPIC_API_KEY"
-    if not os.getenv(key):
-        console.print(
-            f"""
-        [bold red]The {key} environment variable is not set.[/bold red]
-        [bold red]See the README for instructions.[/bold red]
-        """
-        )
-        sys.exit()
+    await check_environment_variables(user_model)
 
     while True:
 
