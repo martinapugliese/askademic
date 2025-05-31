@@ -22,17 +22,23 @@ logger = logging.getLogger(__name__)
 
 
 class Category(BaseModel):
+    """The Arixv category of the topic better matching the request."""
+
     category_id: str = Field(description="The category ID of the topic requested.")
     category_name: str = Field(description="The category name of the topic requested.")
 
 
 class Summary(BaseModel):
+    """The summary of the articles requested."""
+
     summary: str = Field(
         description="Global summary of all abstracts, identifying topics."
     )
 
 
 class SummaryResponse(BaseModel):
+    """The response of the summary agent."""
+
     category: Category = Field(description="The category of the articles.")
     latest_published_day: str = Field(
         description="The latest day of publications available on the API."
