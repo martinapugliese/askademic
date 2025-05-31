@@ -20,6 +20,11 @@ logger = logging.getLogger(__name__)
 
 
 class ArticleRequestDiscriminatorResponse(BaseModel):
+    """
+    The response to the article request discriminator agent.
+    It contains the type of article request and the value of the article.
+    """
+
     article_type: str = Field(
         description="The type of article request: 'title', 'link', or 'error'."
     )
@@ -29,6 +34,11 @@ class ArticleRequestDiscriminatorResponse(BaseModel):
 
 
 class ArticleResponse(BaseModel):
+    """
+    The response to the article agent.
+    It contains the response to the request, the article title and the article link.
+    """
+
     response: str = Field(description="The response to the request")
     article_title: str = Field(
         description="The title of the article you used to answer the request."
@@ -39,6 +49,11 @@ class ArticleResponse(BaseModel):
 
 
 class ArticleRetrievalResponse(BaseModel):
+    """
+    The response to the article retrieval agent.
+    It contains the article link and title.
+    """
+
     article_link: str = Field(description="The article link you found.")
     article_title: str = Field(description="The title of the article you found.")
 

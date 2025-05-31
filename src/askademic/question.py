@@ -20,10 +20,14 @@ logger = logging.getLogger(__name__)
 
 
 class QueryResponse(BaseModel):
+    """The list of queries that are relevant for the request."""
+
     queries: list[str] = Field(description="The list of queries to search for articles")
 
 
 class Article(BaseModel):
+    """An article that is relevant for the request."""
+
     article_url: str = Field(description="The url to the article")
     relevance_score: float = Field(
         description="The relevance score of the article to the question"
@@ -31,12 +35,16 @@ class Article(BaseModel):
 
 
 class ArticleListResponse(BaseModel):
+    """The list of articles that are relevant for the request."""
+
     article_list: list[Article] = Field(
         description="The list of articles needed to answer the question."
     )
 
 
 class QuestionAnswerResponse(BaseModel):
+    """The response to the question based on the articles."""
+
     response: str = Field(description="The response to the question")
     article_list: list[str] = Field(
         description="The list of abstract/article urls you used to answer to the question."
