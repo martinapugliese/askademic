@@ -18,9 +18,15 @@ class Context(BaseModel):
     pass
 
 
+class OrchestratorResponse(BaseModel):
+    """The response of the orchestrator agent."""
+
+    BaseModel: SummaryResponse | QuestionAnswerResponse | ArticleResponse
+
+
 orchestrator_agent_base = Agent(
     system_prompt=SYSTEM_PROMPT_ORCHESTRATOR,
-    output_type=SummaryResponse | QuestionAnswerResponse | ArticleResponse,
+    output_type=OrchestratorResponse,
     model_settings={"max_tokens": 1000, "temperature": 0},
     end_strategy="early",
 )
@@ -39,6 +45,8 @@ async def summarise_latest_articles(
     logger.info(f"{datetime.now()}: Calling Summary Agent with request: {request}")
     summary_agent = SummaryAgent(orchestrator_agent_base.model)
     r = await summary_agent(request=request)
+    logger.info(f"{datetime.now()}: got reponse {r};)")
+
     return r
 
 
