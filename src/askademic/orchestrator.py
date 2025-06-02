@@ -45,7 +45,6 @@ async def summarise_latest_articles(
     logger.info(f"{datetime.now()}: Calling Summary Agent with request: {request}")
     summary_agent = SummaryAgent(orchestrator_agent_base.model)
     r = await summary_agent(request=request)
-    logger.info(f"{datetime.now()}: got reponse {r};)")
 
     return r
 
