@@ -190,7 +190,7 @@ async def ask_me():
                         usage_limits=UsageLimits(request_limit=20),  # limit requests
                         message_history=memory.get_messages(),
                     )
-                    for k in orchestrator_result.output.__dict__:
+                    for k in orchestrator_result.output.response.__dict__:
                         console.print(f"{k}: {getattr(orchestrator_result.output, k)}")
 
                     memory.add_message(

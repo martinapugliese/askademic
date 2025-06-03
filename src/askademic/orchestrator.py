@@ -19,9 +19,12 @@ class Context(BaseModel):
 
 
 class OrchestratorResponse(BaseModel):
-    """The response of the orchestrator agent."""
+    """
+    The response of the orchestrator agent.
+    It can be a summary of the latest articles, an answer to a question, or an article response.
+    """
 
-    BaseModel: SummaryResponse | QuestionAnswerResponse | ArticleResponse
+    response: SummaryResponse | QuestionAnswerResponse | ArticleResponse
 
 
 orchestrator_agent_base = Agent(
@@ -86,3 +89,17 @@ async def answer_article(ctx: RunContext[Context], question: str) -> list[str]:
     article_agent = ArticleAgent(orchestrator_agent_base.model)
     r = await article_agent.run(request=question)
     return r
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    from askademic.utils import choose_model
+
+    model = choose_model("claude-aws-bedrock")
+    orchestrator_agent_base.model = model
+
+    response = asyncio.run(
+        orchestrator_agent_base.run("Can you summarize the latest papers on AI?")
+    )
+    print(response)

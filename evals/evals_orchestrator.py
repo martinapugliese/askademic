@@ -57,7 +57,7 @@ async def run_evals(model_family: str):
                 print(f"Evaluating case: {case.request}")
 
                 response = await orchestrator_agent.run(case.request)
-                if not isinstance(response.output, case.response_type):
+                if not isinstance(response.output.response, case.response_type):
                     print(f"Test failed for question: {case.request}")
                     c_failed += 1
                 else:
