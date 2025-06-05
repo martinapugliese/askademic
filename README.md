@@ -29,7 +29,7 @@ Gemini is preferred because:
 * it has a very large context window - this allows to manage the input when many papers are retrieved much more comfortably (note: it is known that )
 Claude is experimental because of rate limits and input context limitations. You may see errors for limits exceeded/too many requests etc. There are mechanisms whereby askademic retries, but let us know if something really is off, we're working on improving this.
 
-Support for other LLM families will be coming.
+Support for other LLM families ~will~ might be coming soon.
 
 ## Important note about the paper-reading feature
 
@@ -44,7 +44,9 @@ Works with Python 3.11 and above.
 1. Clone this repo
 2. `cd` into it and pip install it as `pip install .` Alternatively, you can `pip install` from the GitHub link. Or, use `uv` with `uv tool install --python python3.11 .` — this lets you choose the exact Python version for your environment, which is useful for testing or compatibility.
 3. Then, you need a Gemini API key. Head to [Google AI Studio](https://aistudio.google.com/app/apikey) to generate it
-4. Set the env var for it, you can use `export GEMINI_API_KEY=your-api-key` - this will only persist your API key to the session. To persist it globally you need to add it to your bash/ZSH profile.
+4. Set the environment variables needed by copying the .env-template file to a .env file and filling in, the necessary ones are the `LLM_FAMILY` and the related API key. `LOGFIRE_TOKEN` is only needed if you want to use [Pydantic Logfire](https://logfire.pydantic.dev/docs/) for observability.
+
+**Note**: the first time you run it after you've set up the .env file it will take a few seconds to boot up everything. Thereafter it should be faster.
 
 # Run it
 
