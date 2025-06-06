@@ -50,6 +50,7 @@ def choose_model(model_family: str = "gemini") -> Tuple[Model, ModelSettings]:
         model_settings = BedrockModelSettings(
             temperature=0,
             max_tokens=1000,
+            top_k=1,
             bedrock_performance_configuration={"latency": "optimized"},
         )
         model = BedrockConverseModel(model_name=model_name)
