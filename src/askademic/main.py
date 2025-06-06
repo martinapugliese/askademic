@@ -172,7 +172,9 @@ async def ask_me():
             try:
 
                 allower_agent = allower_agent_base
-                allower_agent.model = choose_model(user_model)
+                model, model_settings = choose_model(user_model)
+                allower_agent.model = model
+                allower_agent.model_settings = model_settings
                 allower_result = await allower_agent.run(
                     USER_PROMPT_ALLOWER_TEMPLATE.format(question=user_question),
                     usage_limits=UsageLimits(request_limit=20),  # limit to 20 requests
@@ -184,14 +186,18 @@ async def ask_me():
 
                 if allower_result.output.is_scientific:
                     orchestrator_agent = orchestrator_agent_base
-                    orchestrator_agent.model = choose_model(user_model)
+                    model, model_settings = choose_model(user_model)
+                    orchestrator_agent.model = model
+                    orchestrator_agent.model_settings = model_settings
                     orchestrator_result = await orchestrator_agent.run(
                         user_question,
                         usage_limits=UsageLimits(request_limit=20),  # limit requests
                         message_history=memory.get_messages(),
                     )
                     for k in orchestrator_result.output.response.__dict__:
-                        console.print(f"{k}: {getattr(orchestrator_result.output, k)}")
+                        console.print(
+                            f"{k}: {getattr(orchestrator_result.output.response, k)}"
+                        )
 
                     memory.add_message(
                         orchestrator_result.usage().total_tokens,

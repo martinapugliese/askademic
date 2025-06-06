@@ -30,7 +30,6 @@ class OrchestratorResponse(BaseModel):
 orchestrator_agent_base = Agent(
     system_prompt=SYSTEM_PROMPT_ORCHESTRATOR,
     output_type=OrchestratorResponse,
-    model_settings={"max_tokens": 1000, "temperature": 0},
     end_strategy="early",
 )
 
@@ -63,6 +62,7 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
     logger.info(f"{datetime.now()}: Calling QA Agent with question: {question}")
     question_agent = QuestionAgent(
         orchestrator_agent_base.model,
+        orchestrator_agent_base.model_settings,
         query_list_limit=5,
         relevance_score_threshold=0.8,
         article_list_limit=3,
@@ -86,7 +86,10 @@ async def answer_article(ctx: RunContext[Context], question: str) -> list[str]:
     """
     logger.info(f"{datetime.now()}: Calling Article Agent with question {question};)")
 
-    article_agent = ArticleAgent(orchestrator_agent_base.model)
+    article_agent = ArticleAgent(
+        orchestrator_agent_base.model,
+        orchestrator_agent_base.model_settings,
+    )
     r = await article_agent.run(request=question)
     return r
 
@@ -96,8 +99,9 @@ if __name__ == "__main__":
 
     from askademic.utils import choose_model
 
-    model = choose_model("claude-aws-bedrock")
+    model, model_settings = choose_model("claude-aws-bedrock")
     orchestrator_agent_base.model = model
+    orchestrator_agent_base.model_settings = model_settings
 
     response = asyncio.run(
         orchestrator_agent_base.run("Can you summarize the latest papers on AI?")

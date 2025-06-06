@@ -3,6 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
+from pydantic_ai.models import Model
+from pydantic_ai.settings import ModelSettings
 
 from askademic.prompts.general import (
     SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
@@ -54,7 +56,8 @@ class QuestionAnswerResponse(BaseModel):
 class QuestionAgent:
     def __init__(
         self,
-        model,
+        model: Model,
+        model_settings: ModelSettings = None,
         query_list_limit: int = 10,
         relevance_score_threshold: float = 0.8,
         article_list_limit: int = 10,
@@ -73,23 +76,23 @@ class QuestionAgent:
 
         self._query_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_QUERY,
             output_type=QueryResponse,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._abstract_relevance_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
             output_type=ArticleListResponse,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._many_articles_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_MANY_ARTICLES,
             output_type=QuestionAnswerResponse,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
     async def __call__(self, question: str) -> QuestionAnswerResponse:

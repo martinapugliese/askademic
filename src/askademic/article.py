@@ -3,6 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
+from pydantic_ai.models import Model
+from pydantic_ai.settings import ModelSettings
 
 from askademic.prompts.general import (
     SYSTEM_PROMPT_ARTICLE,
@@ -59,30 +61,30 @@ class ArticleRetrievalResponse(BaseModel):
 
 
 class ArticleAgent:
-    def __init__(self, model: str):
+    def __init__(self, model: Model, model_settings: ModelSettings = None):
 
         self._get_article = get_article
         self._search_articles_by_title = search_articles_by_title
 
         self._article_request_discriminator_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_REQUEST_DISCRIMINATOR,
             output_type=ArticleRequestDiscriminatorResponse,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._article_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_ARTICLE,
             output_type=ArticleResponse,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._article_retrieval_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_ARTICLE_RETRIEVAL,
             output_type=ArticleRetrievalResponse,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
     async def _discriminate_article_request(
