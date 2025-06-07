@@ -1,27 +1,60 @@
 import logging
 from datetime import datetime
+from typing import Tuple
 
+import boto3
 import feedparser
 import pandas as pd
+from pydantic_ai.models import Model
+from pydantic_ai.models.anthropic import AnthropicModel
+from pydantic_ai.models.bedrock import BedrockConverseModel, BedrockModelSettings
+from pydantic_ai.models.gemini import GeminiModel
+from pydantic_ai.settings import ModelSettings
 
-from askademic.constants import CLAUDE_HAIKU_3_5_MODEL_ID, GEMINI_2_FLASH_MODEL_ID
+from askademic.constants import (
+    CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID,
+    CLAUDE_HAIKU_3_5_MODEL_ID,
+    GEMINI_2_FLASH_MODEL_ID,
+)
 
 today = datetime.now().strftime("%Y-%m-%d")
 logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 
-def choose_model(model_family: str = "gemini") -> str:
+def choose_model(model_family: str = "gemini") -> Tuple[Model, ModelSettings]:
     """
     Choose the model ID based on the given model family.
     """
-    if model_family not in ["gemini", "claude"]:
+    if model_family not in ["gemini", "claude", "claude-aws-bedrock"]:
         raise ValueError(f"Invalid model family '{model_family}'.")
 
     if model_family == "gemini":
-        return GEMINI_2_FLASH_MODEL_ID
+        model_name = GEMINI_2_FLASH_MODEL_ID
+        model = GeminiModel(model_name=model_name)
+        model_settings = ModelSettings(max_tokens=1000, temperature=0)
+        return model, model_settings
     elif model_family == "claude":
-        return CLAUDE_HAIKU_3_5_MODEL_ID
+        model_name = CLAUDE_HAIKU_3_5_MODEL_ID
+        model = AnthropicModel(model_name=model_name)
+        model_settings = ModelSettings(max_tokens=1000, temperature=0)
+        return model, model_settings
+    elif model_family == "claude-aws-bedrock":
+        region = boto3.session.Session().region_name
+        if not region:
+            model_name = CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID.format(region="us")
+        else:
+            region = region.split("-")[0]
+            model_name = CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID.format(region=region)
+
+        model_settings = BedrockModelSettings(
+            temperature=0,
+            max_tokens=1000,
+            top_k=1,
+            bedrock_performance_configuration={"latency": "optimized"},
+        )
+        model = BedrockConverseModel(model_name=model_name)
+        return model, model_settings
 
 
 def list_categories() -> dict:

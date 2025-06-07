@@ -19,6 +19,10 @@ logger = logging.getLogger(__name__)
 
 
 def get_categories() -> dict:
+    """
+    Get all categories available on arXiv with their IDs.
+    Returns a dictionary with category names as keys and their IDs as values.
+    """
 
     # these are from page "https://arxiv.org/category_taxonomy"
     # alternative would be to scrape the page but it's not a good idea as you risk getting banned

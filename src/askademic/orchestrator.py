@@ -18,10 +18,18 @@ class Context(BaseModel):
     pass
 
 
+class OrchestratorResponse(BaseModel):
+    """
+    The response of the orchestrator agent.
+    It can be a summary of the latest articles, an answer to a question, or an article response.
+    """
+
+    response: SummaryResponse | QuestionAnswerResponse | ArticleResponse
+
+
 orchestrator_agent_base = Agent(
     system_prompt=SYSTEM_PROMPT_ORCHESTRATOR,
-    output_type=SummaryResponse | QuestionAnswerResponse | ArticleResponse,
-    model_settings={"max_tokens": 1000, "temperature": 0},
+    output_type=OrchestratorResponse,
     end_strategy="early",
 )
 
@@ -39,6 +47,7 @@ async def summarise_latest_articles(
     logger.info(f"{datetime.now()}: Calling Summary Agent with request: {request}")
     summary_agent = SummaryAgent(orchestrator_agent_base.model)
     r = await summary_agent(request=request)
+
     return r
 
 
@@ -53,6 +62,7 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
     logger.info(f"{datetime.now()}: Calling QA Agent with question: {question}")
     question_agent = QuestionAgent(
         orchestrator_agent_base.model,
+        orchestrator_agent_base.model_settings,
         query_list_limit=5,
         relevance_score_threshold=0.8,
         article_list_limit=3,
@@ -76,6 +86,24 @@ async def answer_article(ctx: RunContext[Context], question: str) -> list[str]:
     """
     logger.info(f"{datetime.now()}: Calling Article Agent with question {question};)")
 
-    article_agent = ArticleAgent(orchestrator_agent_base.model)
+    article_agent = ArticleAgent(
+        orchestrator_agent_base.model,
+        orchestrator_agent_base.model_settings,
+    )
     r = await article_agent.run(request=question)
     return r
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    from askademic.utils import choose_model
+
+    model, model_settings = choose_model("claude-aws-bedrock")
+    orchestrator_agent_base.model = model
+    orchestrator_agent_base.model_settings = model_settings
+
+    response = asyncio.run(
+        orchestrator_agent_base.run("Can you summarize the latest papers on AI?")
+    )
+    print(response)

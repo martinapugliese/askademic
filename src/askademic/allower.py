@@ -17,5 +17,4 @@ class AllowResponse(BaseModel):
 allower_agent_base = Agent(
     system_prompt=SYSTEM_PROMPT_ALLOWER,
     output_type=AllowResponse,
-    model_settings={"max_tokens": 1000, "temperature": 0},
 )

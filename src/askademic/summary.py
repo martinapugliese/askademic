@@ -3,6 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
+from pydantic_ai.models import Model
+from pydantic_ai.settings import ModelSettings
 
 from askademic.prompts.general import (
     SYSTEM_PROMPT_CATEGORY,
@@ -22,17 +24,23 @@ logger = logging.getLogger(__name__)
 
 
 class Category(BaseModel):
+    """The Arixv category of the topic better matching the request."""
+
     category_id: str = Field(description="The category ID of the topic requested.")
     category_name: str = Field(description="The category name of the topic requested.")
 
 
 class Summary(BaseModel):
+    """The summary of the articles requested."""
+
     summary: str = Field(
         description="Global summary of all abstracts, identifying topics."
     )
 
 
 class SummaryResponse(BaseModel):
+    """The response of the summary agent."""
+
     category: Category = Field(description="The category of the articles.")
     latest_published_day: str = Field(
         description="The latest day of publications available on the API."
@@ -46,21 +54,21 @@ class SummaryResponse(BaseModel):
 
 
 class SummaryAgent:
-    def __init__(self, model):
+    def __init__(self, model: Model, model_settings: ModelSettings = None):
 
         self._category_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_CATEGORY,
             output_type=Category,
             tools=[Tool(get_categories, takes_ctx=False)],
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._summary_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_SUMMARY,
             output_type=Summary,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._identify_latest_day = identify_latest_day
