@@ -7,14 +7,16 @@ from datetime import datetime
 from inspect import cleandoc
 from io import StringIO
 
+import logfire
+from dotenv import load_dotenv
 from prompt_toolkit import PromptSession
 from prompt_toolkit.formatted_text import ANSI
 from prompt_toolkit.history import FileHistory
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
-from rich.prompt import Prompt
 
 from askademic.allower import allower_agent_base
+from askademic.constants import INSTRUCTIONS
 from askademic.memory import Memory
 from askademic.orchestrator import orchestrator_agent_base
 from askademic.prompts.general import USER_PROMPT_ALLOWER_TEMPLATE
@@ -27,14 +29,6 @@ today = datetime.now().strftime("%Y-%m-%d")
 
 logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
-
-
-async def get_llm() -> str:
-    return Prompt.ask(
-        "[bold yellow]Choose your LLM family: "
-        + "['gemini' (preferred) / 'claude'(experimental)][/bold yellow]"
-        ""
-    )
 
 
 async def ask_user_question():
@@ -52,9 +46,24 @@ async def ask_user_question():
 
 async def ask_me():
 
+    # load environment variables from .env file
+    if not os.path.exists(".env"):
+        console.print(
+            """
+        [bold red]No .env file found.
+        Please create one with the required environment variables.[/bold red]"""
+        )
+        sys.exit()
+    load_dotenv()
+
+    logfire_token = os.getenv("LOGFIRE_TOKEN", None)
+    llm_family = os.getenv("LLM_FAMILY", "gemini")
+
+    print(llm_family)
+
     console.print(
         cleandoc(
-            """
+            f"""
     [bold cyan]Hello, welcome to Askademic![/bold cyan] :smiley:
     [bold cyan]
     I work off of data from arXiv. You can ask me to:
@@ -67,11 +76,7 @@ async def ask_me():
     I will do the heavy lifting for you, you can ask follow-up questions too.
     There will be logs in a "logs" folder, they're filenamed with the date of the day.
 
-    Instructions:
-    - Type "reset" to reset the memory
-    - Type "history" to see the memory history
-    - Type "exit" or CTRL+D to quit
-    - Type "help" to see this message again
+    {INSTRUCTIONS}
 
     [/bold cyan]
     """
@@ -81,16 +86,15 @@ async def ask_me():
     memory = Memory(max_request_tokens=1e5)
 
     # ask user to choose the model family (gemini by default)
-    user_model = None
-    while user_model not in ("gemini", "claude"):
-        user_model = (await get_llm()).strip().lower()
-        if user_model not in ("gemini", "claude"):
-            console.print(
-                "[bold red]Invalid input! Please type 'gemini' or 'claude'.[/bold red]"
-            )
+    if llm_family not in ("gemini", "claude"):
+        console.print(
+            """[bold red]Please configure the LLM family
+        to be either "gemini" or "claude"):[/bold red]"""
+        )
+        return
 
     # check that user has the appropriate API key set
-    key = "GEMINI_API_KEY" if user_model == "gemini" else "ANTHROPIC_API_KEY"
+    key = "GEMINI_API_KEY" if llm_family == "gemini" else "ANTHROPIC_API_KEY"
     if not os.getenv(key):
         console.print(
             f"""
@@ -124,12 +128,10 @@ async def ask_me():
             if user_question == "help":
                 console.print(
                     cleandoc(
-                        """
-                [bold cyan]Instructions:
-                - Type "reset" to reset the memory
-                - Type "history" to see the memory history
-                - Type "exit" or CTRL+D to quit
-                - Type "help" to see this message again[/bold cyan]
+                        f"""
+                [bold cyan]
+                {INSTRUCTIONS}
+                [/bold cyan]
                 """
                     )
                 )
@@ -143,8 +145,13 @@ async def ask_me():
         while attempts < max_attempts:
             try:
 
+                # instrument the calls, do not send to stdout, just to logfire project
+                if logfire_token:
+                    logfire.configure(token=logfire_token, console=False)
+                    logfire.instrument_pydantic_ai()
+
                 allower_agent = allower_agent_base
-                allower_agent.model = choose_model(user_model)
+                allower_agent.model = choose_model(llm_family)
                 allower_result = await allower_agent.run(
                     USER_PROMPT_ALLOWER_TEMPLATE.format(question=user_question),
                     usage_limits=UsageLimits(request_limit=20),  # limit to 20 requests
@@ -156,7 +163,7 @@ async def ask_me():
 
                 if allower_result.output.is_scientific:
                     orchestrator_agent = orchestrator_agent_base
-                    orchestrator_agent.model = choose_model(user_model)
+                    orchestrator_agent.model = choose_model(llm_family)
                     orchestrator_result = await orchestrator_agent.run(
                         user_question,
                         usage_limits=UsageLimits(request_limit=20),  # limit requests

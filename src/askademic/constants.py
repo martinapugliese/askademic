@@ -1,3 +1,13 @@
+# User instructions
+INSTRUCTIONS = """
+Instructions:
+- Type "llm" to choose the LLM family (default is 'gemini')
+- Type "reset" to reset the memory
+- Type "history" to see the memory history
+- Type "exit" or CTRL+D to quit
+- Type "help" to see instructions again
+"""
+
 # LLM model IDs
 GEMINI_2_FLASH_MODEL_ID = "gemini-2.0-flash"
 CLAUDE_HAIKU_3_5_MODEL_ID = "anthropic:claude-3-5-haiku-latest"
