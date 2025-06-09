@@ -14,7 +14,7 @@ console = Console()
 
 async def main():
 
-    for model_family in ["claude", "claude-aws-bedrock"]:
+    for model_family in ["gemini", "claude", "claude-aws-bedrock"]:
 
         if model_family == "gemini" and os.getenv("GEMINI_API_KEY") is None:
             console.print(

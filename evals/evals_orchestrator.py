@@ -45,7 +45,9 @@ MAX_ATTEMPTS = 5
 async def run_evals(model_family: str):
 
     orchestrator_agent = orchestrator_agent_base
-    orchestrator_agent.model = choose_model(model_family)
+    model, model_settings = choose_model(model_family)
+    orchestrator_agent.model = model
+    orchestrator_agent.model_settings = model_settings
 
     c_passed, c_failed = 0, 0
     for case in eval_cases:

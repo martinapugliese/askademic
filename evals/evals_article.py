@@ -67,7 +67,8 @@ MAX_ATTEMPTS = 5
 
 async def run_evals(model_family: str):
 
-    article_agent = ArticleAgent(model=choose_model(model_family))
+    model, model_settings = choose_model(model_family)
+    article_agent = ArticleAgent(model=model, model_settings=model_settings)
 
     c_passed, c_failed = 0, 0
     for case in eval_cases:
