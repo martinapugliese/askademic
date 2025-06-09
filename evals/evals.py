@@ -2,6 +2,7 @@ import asyncio
 import os
 
 import boto3
+from dotenv import load_dotenv
 from evals_allower import run_evals as run_evals_allower
 from evals_article import run_evals as run_evals_article
 from evals_orchestrator import run_evals as run_evals_orchestrator
@@ -13,6 +14,8 @@ console = Console()
 
 
 async def main():
+
+    load_dotenv()
 
     for model_family in ["gemini", "claude", "claude-aws-bedrock"]:
 
@@ -43,10 +46,6 @@ async def main():
                     Skipping CLAUDE AWS Bedrock evals.[/bold red]"""
                 )
                 continue
-
-        console.print(
-            f"[bold cyan]:hourglass: Running all evals for {model_family}...[/bold cyan]"
-        )
 
         console.print("\n[bold magenta]Running allower evals...[/bold magenta]")
         await run_evals_allower(model_family)
