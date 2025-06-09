@@ -63,7 +63,6 @@ async def run_evals(model_family: str):
                     case.request,
                     usage_limits=UsageLimits(request_limit=20),  # limit requests
                 )
-
                 if not isinstance(response.output.response, case.response_type):
                     print(f"Test failed for question: {case.request}")
                     c_failed += 1
