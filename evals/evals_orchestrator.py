@@ -4,6 +4,7 @@ Checks delegation to right agent via type of response.
 
 import time
 
+from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 
 from askademic.article import ArticleResponse
@@ -58,7 +59,11 @@ async def run_evals(model_family: str):
             try:
                 print(f"Evaluating case: {case.request}")
 
-                response = await orchestrator_agent.run(case.request)
+                response = await orchestrator_agent.run(
+                    case.request,
+                    usage_limits=UsageLimits(request_limit=20),  # limit requests
+                )
+
                 if not isinstance(response.output.response, case.response_type):
                     print(f"Test failed for question: {case.request}")
                     c_failed += 1
