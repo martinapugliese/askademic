@@ -48,6 +48,7 @@ async def main():
             f"[bold cyan]:hourglass: Running all evals for {model_family}...[/bold cyan]"
         )
 
+        console.print("\n[bold magenta]Running allower evals...[/bold magenta]")
         await run_evals_allower(model_family)
 
         console.print("\n[bold magenta]Running orchestrator evals...[/bold magenta]")
