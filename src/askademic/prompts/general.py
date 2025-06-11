@@ -90,6 +90,17 @@ SYSTEM_PROMPT_ORCHESTRATOR = cleandoc(
             - "Tell me more about this article http://arxiv.org/pdf/2108.12542v2.
                How is the Donor Pool defined?"
     </delegation_instructions>
+
+    <output_format>
+    The output must be a JSON object with the following structure:
+    {{
+        "response": {{
+            "type": "summary" | "question_answer" | "article",
+            "data": <the response data>
+        }}
+    }}
+    where the response data is the response of the delegated agent.
+    </output_format>
     """
 )
 

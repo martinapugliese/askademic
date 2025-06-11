@@ -11,6 +11,7 @@ Instructions:
 # LLM model IDs
 GEMINI_2_FLASH_MODEL_ID = "gemini-2.0-flash"
 CLAUDE_HAIKU_3_5_MODEL_ID = "anthropic:claude-3-5-haiku-latest"
+CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID = "{region}.anthropic.claude-3-5-haiku-20241022-v1:0"
 MISTRAL_LARGE_MODEL_ID = "mistral:mistral-large-latest"
 
 # ARXIV URLS

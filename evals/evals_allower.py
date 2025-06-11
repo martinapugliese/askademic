@@ -34,7 +34,9 @@ MAX_ATTEMPTS = 5
 async def run_evals(model_family: str):
 
     allower_agent = allower_agent_base
-    allower_agent.model = choose_model(model_family)
+    model, model_settings = choose_model(model_family)
+    allower_agent.model = model
+    allower_agent.model_settings = model_settings
 
     c_passed, c_failed = 0, 0
     for case in eval_cases:

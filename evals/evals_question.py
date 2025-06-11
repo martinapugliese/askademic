@@ -50,9 +50,11 @@ MAX_ATTEMPTS = 5
 async def run_evals(model_family: str):
 
     c_passed, c_failed = 0, 0
+    model, model_settings = choose_model(model_family)
 
     question_agent = QuestionAgent(
-        choose_model(model_family),
+        model=model,
+        model_settings=model_settings,
         query_list_limit=5,
         relevance_score_threshold=0.8,
         article_list_limit=3,

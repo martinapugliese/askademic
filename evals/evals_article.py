@@ -50,8 +50,8 @@ eval_cases = [
     # not existing paper
     ArticleResponseTestCase(
         "Find this paper 'Quark Gluon plasma and AI'",
-        "http://arxiv.org/pdf/2311.10621v2",
-        "Hadronization of Heavy Quarks",
+        "http://arxiv.org/pdf/2412.19393v1",
+        "Hydrodynamic Description of the Quark-Gluon Plasma ",
         "http://arxiv.org/pdf/2311.10621v2",
     ),
 ]
@@ -67,7 +67,8 @@ MAX_ATTEMPTS = 5
 
 async def run_evals(model_family: str):
 
-    article_agent = ArticleAgent(model=choose_model(model_family))
+    model, model_settings = choose_model(model_family)
+    article_agent = ArticleAgent(model=model, model_settings=model_settings)
 
     c_passed, c_failed = 0, 0
     for case in eval_cases:

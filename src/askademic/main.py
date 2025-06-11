@@ -7,6 +7,7 @@ from datetime import datetime
 from inspect import cleandoc
 from io import StringIO
 
+import boto3
 import logfire
 from dotenv import load_dotenv
 from prompt_toolkit import PromptSession
@@ -44,6 +45,40 @@ async def ask_user_question():
     return await session.prompt_async(ANSI(ansi_prompt))
 
 
+async def check_environment_variables(user_model: str):
+
+    if user_model == "gemini":
+        if not os.getenv("GEMINI_API_KEY"):
+            console.print(
+                "[bold red]The GEMINI_API_KEY environment variable is not set.[/bold red]"
+            )
+            sys.exit()
+    elif user_model in "claude":
+        if not os.getenv("ANTHROPIC_API_KEY"):
+            console.print(
+                "[bold red]The ANTHROPIC_API_KEY environment variable is not set.[/bold red]"
+            )
+            sys.exit()
+    elif user_model == "claude-aws-bedrock":
+        try:
+            _ = boto3.client("sts").get_caller_identity()
+        except boto3.exceptions.ClientError:
+            console.print(
+                "[bold red]The AWS credentials are not set or invalid.[/bold red]"
+            )
+            console.print(
+                "[bold red]Please set the AWS_ACCESS_KEY_ID "
+                + "and AWS_SECRET_ACCESS_KEY environment variables.[/bold red]"
+            )
+            sys.exit()
+    else:
+        console.print(
+            "[bold red]Invalid model family selected. "
+            + "Please choose 'gemini', 'claude', or 'claude-aws-bedrock'.[/bold red]"
+        )
+        sys.exit()
+
+
 async def ask_me():
 
     # load environment variables from .env file
@@ -54,12 +89,11 @@ async def ask_me():
         Please create one with the required environment variables.[/bold red]"""
         )
         sys.exit()
+
     load_dotenv()
 
     logfire_token = os.getenv("LOGFIRE_TOKEN", None)
-    llm_family = os.getenv("LLM_FAMILY", "gemini")
-
-    print(llm_family)
+    user_model = os.getenv("LLM_FAMILY", "gemini")
 
     console.print(
         cleandoc(
@@ -86,23 +120,14 @@ async def ask_me():
     memory = Memory(max_request_tokens=1e5)
 
     # ask user to choose the model family (gemini by default)
-    if llm_family not in ("gemini", "claude"):
+    while user_model not in ("gemini", "claude", "claude-aws-bedrock"):
         console.print(
             """[bold red]Please configure the LLM family
-        to be either "gemini" or "claude"):[/bold red]"""
+        to be either "gemini" or "claude", or "claude-aws-bedrock"):[/bold red]"""
         )
         return
 
-    # check that user has the appropriate API key set
-    key = "GEMINI_API_KEY" if llm_family == "gemini" else "ANTHROPIC_API_KEY"
-    if not os.getenv(key):
-        console.print(
-            f"""
-        [bold red]The {key} environment variable is not set.[/bold red]
-        [bold red]See the README for instructions.[/bold red]
-        """
-        )
-        sys.exit()
+    await check_environment_variables(user_model)
 
     while True:
 
@@ -151,7 +176,9 @@ async def ask_me():
                     logfire.instrument_pydantic_ai()
 
                 allower_agent = allower_agent_base
-                allower_agent.model = choose_model(llm_family)
+                model, model_settings = choose_model(user_model)
+                allower_agent.model = model
+                allower_agent.model_settings = model_settings
                 allower_result = await allower_agent.run(
                     USER_PROMPT_ALLOWER_TEMPLATE.format(question=user_question),
                     usage_limits=UsageLimits(request_limit=20),  # limit to 20 requests
@@ -163,14 +190,18 @@ async def ask_me():
 
                 if allower_result.output.is_scientific:
                     orchestrator_agent = orchestrator_agent_base
-                    orchestrator_agent.model = choose_model(llm_family)
+                    model, model_settings = choose_model(user_model)
+                    orchestrator_agent.model = model
+                    orchestrator_agent.model_settings = model_settings
                     orchestrator_result = await orchestrator_agent.run(
                         user_question,
                         usage_limits=UsageLimits(request_limit=20),  # limit requests
                         message_history=memory.get_messages(),
                     )
-                    for k in orchestrator_result.output.__dict__:
-                        console.print(f"{k}: {getattr(orchestrator_result.output, k)}")
+                    for k in orchestrator_result.output.response.__dict__:
+                        console.print(
+                            f"{k}: {getattr(orchestrator_result.output.response, k)}"
+                        )
 
                     memory.add_message(
                         orchestrator_result.usage().total_tokens,

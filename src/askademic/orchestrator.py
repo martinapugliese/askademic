@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
 
 from askademic.article import ArticleAgent, ArticleResponse
@@ -18,10 +18,25 @@ class Context(BaseModel):
     pass
 
 
+class OrchestratorResponse(BaseModel):
+    """
+    The response of the orchestrator agent.
+    It can be a summary of the latest articles, an answer to a question, or an article response.
+    """
+
+    type: str = Field(
+        description="The type of the response. Can be 'summary', 'question_answer', or 'article'."
+    )
+    response: SummaryResponse | QuestionAnswerResponse | ArticleResponse = Field(
+        description="The response to the request. It can be a summary of the latest articles,"
+        + "an answer to a question, or an article response."
+    )
+
+
 orchestrator_agent_base = Agent(
     system_prompt=SYSTEM_PROMPT_ORCHESTRATOR,
-    output_type=SummaryResponse | QuestionAnswerResponse | ArticleResponse,
-    model_settings={"max_tokens": 1000, "temperature": 0},
+    output_type=OrchestratorResponse,
+    retries=10,
     end_strategy="early",
 )
 
@@ -39,6 +54,7 @@ async def summarise_latest_articles(
     logger.info(f"{datetime.now()}: Calling Summary Agent with request: {request}")
     summary_agent = SummaryAgent(orchestrator_agent_base.model)
     r = await summary_agent(request=request)
+
     return r
 
 
@@ -53,9 +69,10 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
     logger.info(f"{datetime.now()}: Calling QA Agent with question: {question}")
     question_agent = QuestionAgent(
         orchestrator_agent_base.model,
-        query_list_limit=5,
+        orchestrator_agent_base.model_settings,
+        query_list_limit=3,
         relevance_score_threshold=0.8,
-        article_list_limit=3,
+        article_list_limit=2,
     )
     r = await question_agent(question=question)
     return r
@@ -76,6 +93,24 @@ async def answer_article(ctx: RunContext[Context], question: str) -> list[str]:
     """
     logger.info(f"{datetime.now()}: Calling Article Agent with question {question};)")
 
-    article_agent = ArticleAgent(orchestrator_agent_base.model)
+    article_agent = ArticleAgent(
+        orchestrator_agent_base.model,
+        orchestrator_agent_base.model_settings,
+    )
     r = await article_agent.run(request=question)
     return r
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    from askademic.utils import choose_model
+
+    model, model_settings = choose_model("claude-aws-bedrock")
+    orchestrator_agent_base.model = model
+    orchestrator_agent_base.model_settings = model_settings
+
+    response = asyncio.run(
+        orchestrator_agent_base.run("Can you summarize the latest papers on AI?")
+    )
+    print(response)

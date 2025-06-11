@@ -3,6 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
+from pydantic_ai.models import Model
+from pydantic_ai.settings import ModelSettings
 
 from askademic.prompts.general import (
     SYSTEM_PROMPT_ARTICLE,
@@ -20,6 +22,11 @@ logger = logging.getLogger(__name__)
 
 
 class ArticleRequestDiscriminatorResponse(BaseModel):
+    """
+    The response to the article request discriminator agent.
+    It contains the type of article request and the value of the article.
+    """
+
     article_type: str = Field(
         description="The type of article request: 'title', 'link', or 'error'."
     )
@@ -29,6 +36,11 @@ class ArticleRequestDiscriminatorResponse(BaseModel):
 
 
 class ArticleResponse(BaseModel):
+    """
+    The response to the article agent.
+    It contains the response to the request, the article title and the article link.
+    """
+
     response: str = Field(description="The response to the request")
     article_title: str = Field(
         description="The title of the article you used to answer the request."
@@ -39,35 +51,40 @@ class ArticleResponse(BaseModel):
 
 
 class ArticleRetrievalResponse(BaseModel):
+    """
+    The response to the article retrieval agent.
+    It contains the article link and title.
+    """
+
     article_link: str = Field(description="The article link you found.")
     article_title: str = Field(description="The title of the article you found.")
 
 
 class ArticleAgent:
-    def __init__(self, model: str):
+    def __init__(self, model: Model, model_settings: ModelSettings = None):
 
         self._get_article = get_article
         self._search_articles_by_title = search_articles_by_title
 
         self._article_request_discriminator_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_REQUEST_DISCRIMINATOR,
             output_type=ArticleRequestDiscriminatorResponse,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._article_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_ARTICLE,
             output_type=ArticleResponse,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
         self._article_retrieval_agent = Agent(
             model=model,
+            model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_ARTICLE_RETRIEVAL,
             output_type=ArticleRetrievalResponse,
-            model_settings={"max_tokens": 1000, "temperature": 0},
         )
 
     async def _discriminate_article_request(
