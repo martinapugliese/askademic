@@ -15,6 +15,7 @@ from askademic.constants import (
     CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID,
     CLAUDE_HAIKU_3_5_MODEL_ID,
     GEMINI_2_FLASH_MODEL_ID,
+    NOVA_PRO_BEDORCK_MODEL_ID,
 )
 
 today = datetime.now().strftime("%Y-%m-%d")
@@ -26,7 +27,12 @@ def choose_model(model_family: str = "gemini") -> Tuple[Model, ModelSettings]:
     """
     Choose the model ID based on the given model family.
     """
-    if model_family not in ["gemini", "claude", "claude-aws-bedrock"]:
+    if model_family not in [
+        "gemini",
+        "claude",
+        "claude-aws-bedrock",
+        "nova-pro-aws-bedrock",
+    ]:
         raise ValueError(f"Invalid model family '{model_family}'.")
 
     if model_family == "gemini":
@@ -39,13 +45,20 @@ def choose_model(model_family: str = "gemini") -> Tuple[Model, ModelSettings]:
         model = AnthropicModel(model_name=model_name)
         model_settings = ModelSettings(max_tokens=1000, temperature=0)
         return model, model_settings
-    elif model_family == "claude-aws-bedrock":
+    elif model_family in ("claude-aws-bedrock", "nova-pro-aws-bedrock"):
+
+        model_id = (
+            CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID
+            if model_family == "claude-aws-bedrock"
+            else NOVA_PRO_BEDORCK_MODEL_ID
+        )
+
         region = boto3.session.Session().region_name
         if not region:
-            model_name = CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID.format(region="us")
+            model_name = model_id.format(region="us")
         else:
             region = region.split("-")[0]
-            model_name = CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID.format(region=region)
+            model_name = model_id.format(region=region)
 
         model_settings = BedrockModelSettings(
             temperature=0,
