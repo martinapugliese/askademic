@@ -121,10 +121,16 @@ async def ask_me():
     memory = Memory(max_request_tokens=1e5)
 
     # ask user to choose the model family (gemini by default)
-    while user_model not in ("gemini", "claude", "claude-aws-bedrock"):
+    while user_model not in (
+        "gemini",
+        "claude",
+        "claude-aws-bedrock",
+        "nova-pro-aws-bedrock",
+    ):
         console.print(
             """[bold red]Please configure the LLM family
-        to be either "gemini" or "claude", or "claude-aws-bedrock"):[/bold red]"""
+        to be either "gemini" or "claude", "claude-aws-bedrock"
+         or "nova-pro-aws-bedrock"):[/bold red]"""
         )
         return
 

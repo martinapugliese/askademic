@@ -15,7 +15,7 @@ from askademic.constants import (
     CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID,
     CLAUDE_HAIKU_3_5_MODEL_ID,
     GEMINI_2_FLASH_MODEL_ID,
-    NOVA_PRO_BEDORCK_MODEL_ID,
+    NOVA_PRO_BEDROCK_MODEL_ID,
 )
 
 today = datetime.now().strftime("%Y-%m-%d")
@@ -50,7 +50,7 @@ def choose_model(model_family: str = "gemini") -> Tuple[Model, ModelSettings]:
         model_id = (
             CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID
             if model_family == "claude-aws-bedrock"
-            else NOVA_PRO_BEDORCK_MODEL_ID
+            else NOVA_PRO_BEDROCK_MODEL_ID
         )
 
         region = boto3.session.Session().region_name
