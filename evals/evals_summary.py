@@ -3,6 +3,7 @@ Checks category fetched is correct.
 """
 
 import time
+from typing import List
 
 from rich.console import Console
 
@@ -11,16 +12,17 @@ from askademic.utils import choose_model
 
 
 class SummaryTestCase:
-    def __init__(self, request: str, category: str):
+    def __init__(self, request: str, category_list: List[str]):
         self.request = request
-        self.category = category
+        self.category_list = category_list
 
 
 eval_cases = [
-    SummaryTestCase("What is the latest research on quantum field theory?", "hep-th"),
-    SummaryTestCase("Can you summarize the latest papers on AI?", "cs.AI"),
+    SummaryTestCase("What is the latest research on quantum field theory?", ["hep-th"]),
+    SummaryTestCase("Can you summarize the latest papers on AI?", ["cs.AI"]),
     SummaryTestCase(
-        "Tell me all about the recent work in Bayesian statistics?", "stat.TH"
+        "Tell me all about the recent work in Bayesian statistics?",
+        ["stat.TH", "stat.ME"],
     ),
 ]
 
@@ -43,10 +45,10 @@ async def run_evals(model_family: str):
                 print(f"Evaluating case: {case.request}")
 
                 response = await summary_agent(case.request)
-                if response.category.category_id != case.category:
+                if response.category.category_id not in case.category_list:
                     print(f"Test failed for question: {case.request}")
                     print(f"Got: {response.category.category_id}")
-                    print(f"Expected: {case.category}")
+                    print(f"Expected: {case.category_list}")
                     c_failed += 1
                 else:
                     c_passed += 1

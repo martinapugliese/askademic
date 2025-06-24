@@ -1,7 +1,6 @@
 # User instructions
 INSTRUCTIONS = """
 Instructions:
-- Type "llm" to choose the LLM family (default is 'gemini')
 - Type "reset" to reset the memory
 - Type "history" to see the memory history
 - Type "exit" or CTRL+D to quit

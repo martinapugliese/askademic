@@ -202,7 +202,7 @@ def retrieve_recent_articles(
 
     search_query = f"cat:{category}"
     # 300 is empirical: there should never be more articles in a day for a category
-    url = f"{ARXIV_BASE_URL}search_query={search_query}&start=0&max_results=300"
+    url = f"{ARXIV_BASE_URL}search_query={search_query}&start=0&max_results=100"
     url += "&sortBy=submittedDate&sortOrder=descending"
     logger.info(f"{datetime.now()}: API URL to retrieve recent articles: {url}")
 
