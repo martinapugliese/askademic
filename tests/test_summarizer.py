@@ -56,7 +56,9 @@ async def test_summary_agent(
     summary_response,
 ):
     """Test the SummaryAgent class."""
-    summary_agent = SummaryAgent("gemini-2.0-flash")
+    model = MagicMock()
+    model.model_name = "gemini-2.0-flash"
+    summary_agent = SummaryAgent(model)
     summary_agent._category_agent = MagicMock()
     summary_agent._summary_agent = MagicMock()
 
