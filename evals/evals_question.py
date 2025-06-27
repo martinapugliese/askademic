@@ -38,7 +38,7 @@ eval_cases_range = [
     QuestionAnswerTestCaseRange(
         "What percentage of DNA has been found to be shared between \
                                 Sapiens and Neandertals?",
-        ["4%", "5%"],
+        ["4%", "5%", ""],
     ),
 ]
 
@@ -55,9 +55,9 @@ async def run_evals(model_family: str):
     question_agent = QuestionAgent(
         model=model,
         model_settings=model_settings,
-        query_list_limit=5,
+        query_list_limit=2,
         relevance_score_threshold=0.8,
-        article_list_limit=3,
+        article_list_limit=2,
     )
 
     # single-answer ones

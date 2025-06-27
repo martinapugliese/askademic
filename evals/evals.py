@@ -17,7 +17,12 @@ async def main():
 
     load_dotenv()
 
-    for model_family in ["gemini", "claude", "claude-aws-bedrock"]:
+    for model_family in [
+        "gemini",
+        "claude",
+        "claude-aws-bedrock",
+        "nova-pro-aws-bedrock",
+    ]:
 
         if model_family == "gemini" and os.getenv("GEMINI_API_KEY") is None:
             console.print(
