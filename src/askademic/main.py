@@ -2,7 +2,6 @@ import asyncio
 import logging
 import os
 import sys
-import time
 from datetime import datetime
 from inspect import cleandoc
 from io import StringIO
@@ -167,6 +166,7 @@ async def ask_me():
 
         attempts, max_attempts = 0, 10
         console.print("[bold cyan]Working for you ...[/bold cyan]")
+        backoff_time = 1
         while attempts < max_attempts:
             try:
 
@@ -216,8 +216,13 @@ async def ask_me():
 
                 break
             except Exception as e:
-                logger.error(f"An error has occurred: {e}, retrying in 60 seconds...")
-                time.sleep(60)
+                backoff_time = min(
+                    backoff_time * 2, 60
+                )  # Exponential backoff, max 60 seconds
+                logger.error(
+                    f"An error has occurred: {e}, retrying in {backoff_time} seconds..."
+                )
+                await asyncio.sleep(backoff_time)
                 attempts += 1
 
 
