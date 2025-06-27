@@ -92,7 +92,6 @@ async def ask_me():
         sys.exit()
 
     load_dotenv()
-
     logfire_token = os.getenv("LOGFIRE_TOKEN", None)
     user_model = os.getenv("LLM_FAMILY", "gemini")
 
