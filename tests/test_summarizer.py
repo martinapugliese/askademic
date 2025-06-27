@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from pydantic_ai.agent import AgentRunResult
+from pydantic_ai.models.gemini import GeminiModel
 
 os.environ["GEMINI_API_KEY"] = "mock"
 
@@ -56,8 +57,7 @@ async def test_summary_agent(
     summary_response,
 ):
     """Test the SummaryAgent class."""
-    model = MagicMock()
-    model.model_name = "gemini-2.0-flash"
+    model = GeminiModel(model_name="gemini-2.0-flash")
     summary_agent = SummaryAgent(model)
     summary_agent._category_agent = MagicMock()
     summary_agent._summary_agent = MagicMock()
