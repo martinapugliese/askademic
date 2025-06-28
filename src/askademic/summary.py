@@ -71,6 +71,11 @@ class SummaryAgent:
             output_type=Summary,
         )
 
+        if "nova" in model.model_name:
+            self._max_results = 100
+        else:
+            self._max_results = 300
+
         self._identify_latest_day = identify_latest_day
         self._retrieve_recent_articles = retrieve_recent_articles
 
@@ -96,7 +101,9 @@ class SummaryAgent:
 
         # Get the articles
         articles = self._retrieve_recent_articles(
-            category=category.output.category_id, latest_day=latest_day
+            category=category.output.category_id,
+            latest_day=latest_day,
+            max_results=self._max_results,
         )
 
         logger.info(f"Latest published day: {latest_day} - Articles #: {len(articles)}")

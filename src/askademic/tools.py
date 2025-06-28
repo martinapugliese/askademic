@@ -184,6 +184,7 @@ def search_articles_by_title(
 def retrieve_recent_articles(
     category: str = "cs.AI",
     latest_day: str = "2022-01-01",
+    max_results: int = 300,
 ):
     """
     Search articles on arXiv by category, filtering to the ones publishhed
@@ -198,13 +199,16 @@ def retrieve_recent_articles(
     Args:
         category: the category ID used for the search
         latest_day: the day of publications to filter articles by
+        max_results: the total number of articles to retrieve. Do not change this parameter.
     """
 
     search_query = f"cat:{category}"
     # 300 is empirical: there should never be more articles in a day for a category
-    url = f"{ARXIV_BASE_URL}search_query={search_query}&start=0&max_results=300"
+    url = (
+        f"{ARXIV_BASE_URL}search_query={search_query}&start=0&max_results={max_results}"
+    )
     url += "&sortBy=submittedDate&sortOrder=descending"
-    logger.info(f"{datetime.now()}: API URL to retrieve recent articles: {url}")
+    logger.info(f"{datetime.now()}: API URL to retrieve recent articles: {max_results}")
 
     response = requests.get(url, timeout=360)
     df_articles = organise_api_response_as_dataframe(response)

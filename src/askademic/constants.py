@@ -1,7 +1,6 @@
 # User instructions
 INSTRUCTIONS = """
 Instructions:
-- Type "llm" to choose the LLM family (default is 'gemini')
 - Type "reset" to reset the memory
 - Type "history" to see the memory history
 - Type "exit" or CTRL+D to quit
@@ -12,6 +11,7 @@ Instructions:
 GEMINI_2_FLASH_MODEL_ID = "gemini-2.0-flash"
 CLAUDE_HAIKU_3_5_MODEL_ID = "anthropic:claude-3-5-haiku-latest"
 CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID = "{region}.anthropic.claude-3-5-haiku-20241022-v1:0"
+NOVA_PRO_BEDROCK_MODEL_ID = "{region}.amazon.nova-pro-v1:0"
 MISTRAL_LARGE_MODEL_ID = "mistral:mistral-large-latest"
 
 # ARXIV URLS

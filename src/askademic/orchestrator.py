@@ -36,7 +36,7 @@ class OrchestratorResponse(BaseModel):
 orchestrator_agent_base = Agent(
     system_prompt=SYSTEM_PROMPT_ORCHESTRATOR,
     output_type=OrchestratorResponse,
-    retries=10,
+    retries=20,
     end_strategy="early",
 )
 
@@ -70,7 +70,7 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
     question_agent = QuestionAgent(
         orchestrator_agent_base.model,
         orchestrator_agent_base.model_settings,
-        query_list_limit=3,
+        query_list_limit=2,
         relevance_score_threshold=0.8,
         article_list_limit=2,
     )
