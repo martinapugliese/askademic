@@ -37,6 +37,8 @@ Support for other LLM families ~will~ might be coming soon.
 
 The agent reads the paper via pulling the whole text from arXiv, there isn't an API endpoint giving whole text so this is done via the site. This feature is meant to be used lightly, that is, not reading too many papers at short turnarounds, because this would violates arXiv's terms of use.
 
+To minimize API load, Askademic includes a caching system that saves previously fetched papers for 7 days. This helps reduce the number of requests to arXiv and improves response times for papers you've already accessed.
+
 # Requirements
 
 Works with Python 3.11 and above.

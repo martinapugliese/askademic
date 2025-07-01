@@ -1,9 +1,12 @@
+import hashlib
 import json
 import logging
+import os
 import random
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import BytesIO
+from pathlib import Path
 
 import feedparser
 import pymupdf
@@ -224,14 +227,79 @@ def retrieve_recent_articles(
     return list(df_articles["abstract"][:].values)
 
 
-def get_article(url: str, max_attempts: int = 10) -> str:
+def get_cache_path() -> Path:
+    """Create and return the cache directory path"""
+    cache_dir = Path(os.path.expanduser("~/.askademic/cache"))
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir
+
+
+def get_cache_key(url: str) -> str:
+    """Generate a unique cache key from the URL"""
+    return hashlib.md5(url.encode()).hexdigest()
+
+
+def get_article_from_cache(url: str) -> tuple[bool, str]:
+    """Attempt to retrieve article from cache
+    
+    Returns:
+        tuple: (hit, content) where hit is True if cache hit, False otherwise
+    """
+    cache_path = get_cache_path() / f"{get_cache_key(url)}.json"
+    
+    if not cache_path.exists():
+        return False, ""
+        
+    try:
+        with open(cache_path, "r") as f:
+            cache_data = json.load(f)
+            
+        # Check if cache is expired (7 days)
+        timestamp = datetime.fromisoformat(cache_data["timestamp"])
+        if datetime.now() - timestamp > timedelta(days=7):
+            return False, ""
+            
+        logger.info(f"{datetime.now()}: Cache hit for {url}")
+        return True, cache_data["content"]
+    except (json.JSONDecodeError, KeyError, ValueError):
+        # Invalid cache file
+        return False, ""
+
+
+def save_article_to_cache(url: str, content: str) -> None:
+    """Save article content to cache"""
+    cache_path = get_cache_path() / f"{get_cache_key(url)}.json"
+    
+    cache_data = {
+        "url": url,
+        "timestamp": datetime.now().isoformat(),
+        "content": content
+    }
+    
+    try:
+        with open(cache_path, "w") as f:
+            json.dump(cache_data, f)
+        logger.info(f"{datetime.now()}: Saved to cache: {url}")
+    except Exception as e:
+        logger.error(f"{datetime.now()}: Failed to save to cache: {e}")
+
+
+def get_article(url: str, max_attempts: int = 10, use_cache: bool = True) -> str:
     """
     Opens an article using its URL (PDF version) and returns its text content.
+    With caching functionality to avoid repeated downloads.
+    
     Args:
         url: the article arXiv URL
         max_attempts: the maximum number of attempts to open the article. Default is 10.
-        Do not change this parameter.
+        use_cache: whether to use cached article if available. Default is True.
     """
+    
+    # Try to get from cache first if enabled
+    if use_cache:
+        cache_hit, cached_content = get_article_from_cache(url)
+        if cache_hit:
+            return cached_content
 
     logger.info(f"{datetime.now()}: API URL to retrieve article: {url}")
 
@@ -264,10 +332,14 @@ def get_article(url: str, max_attempts: int = 10) -> str:
     # curtail the article to 70k characters (there can be books, too long)
     article = article[:70000]
 
-    article = f"""
+    formatted_article = f"""
         -------{url}------------
         {article}
         ------END----------------
     """
+    
+    # Save to cache if retrieval was successful and not "Article Not Found"
+    if article != "Article Not Found" and use_cache:
+        save_article_to_cache(url, formatted_article)
 
-    return article
+    return formatted_article

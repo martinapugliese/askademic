@@ -136,12 +136,12 @@ async def test_article_agent(
             )
         )
         article_agent._get_article.assert_called_once_with(
-            retrieval_response.article_link
+            retrieval_response.article_link, use_cache=True
         )
 
     else:
         article_agent._get_article.assert_called_once_with(
-            request_discriminator_response.article_value
+            request_discriminator_response.article_value, use_cache=True
         )
 
     article_agent._article_agent.run.assert_called_once_with(
