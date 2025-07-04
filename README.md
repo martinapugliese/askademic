@@ -31,11 +31,11 @@ Gemini is preferred because:
 * it has a very large context window - this allows to manage the input when many papers are retrieved much more comfortably (note: it is known that )
 Claude is experimental because of rate limits and input context limitations. You may see errors for limits exceeded/too many requests etc. There are mechanisms whereby askademic retries, but let us know if something really is off, we're working on improving this.
 
-Support for other LLM families ~will~ might be coming soon.
-
 ## Important note about the paper-reading feature
 
 The agent reads the paper via pulling the whole text from arXiv, there isn't an API endpoint giving whole text so this is done via the site. This feature is meant to be used lightly, that is, not reading too many papers at short turnarounds, because this would violates arXiv's terms of use.
+
+To minimize API load, Askademic includes a caching system that saves previously fetched papers for 7 days. This helps reduce the number of requests to arXiv and improves response times for papers you've already accessed.
 
 # Requirements
 

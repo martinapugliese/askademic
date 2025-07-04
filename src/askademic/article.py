@@ -61,9 +61,10 @@ class ArticleRetrievalResponse(BaseModel):
 
 
 class ArticleAgent:
-    def __init__(self, model: Model, model_settings: ModelSettings = None):
+    def __init__(self, model: Model, model_settings: ModelSettings = None, use_cache: bool = True):
 
         self._get_article = get_article
+        self.use_cache = use_cache
         self._search_articles_by_title = search_articles_by_title
 
         self._article_request_discriminator_agent = Agent(
@@ -128,7 +129,7 @@ class ArticleAgent:
         Returns:
             ArticleResponse: the response with the article content
         """
-        article = self._get_article(article_link)
+        article = self._get_article(article_link, use_cache=self.use_cache)
         return await self._article_agent.run(
             USER_PROMPT_ARTICLE_TEMPLATE.format(request=request, article=article)
         )

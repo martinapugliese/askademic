@@ -96,6 +96,7 @@ async def answer_article(ctx: RunContext[Context], question: str) -> list[str]:
     article_agent = ArticleAgent(
         orchestrator_agent_base.model,
         orchestrator_agent_base.model_settings,
+        use_cache=True  # Enable caching by default
     )
     r = await article_agent.run(request=question)
     return r
