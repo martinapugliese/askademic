@@ -5,6 +5,7 @@ import boto3
 from dotenv import load_dotenv
 from evals_allower import run_evals as run_evals_allower
 from evals_article import run_evals as run_evals_article
+from evals_general import run_evals as run_evals_general
 from evals_orchestrator import run_evals as run_evals_orchestrator
 from evals_question import run_evals as run_evals_question
 from evals_summary import run_evals as run_evals_summary
@@ -66,6 +67,9 @@ async def main():
 
         console.print("\n[bold magenta]Running article evals...[/bold magenta]")
         await run_evals_article(model_family)
+
+        console.print("\n[bold magenta]Running general agent evals...[/bold magenta]")
+        await run_evals_general(model_family)
 
 
 if __name__ == "__main__":

@@ -53,49 +53,58 @@ USER_PROMPT_ALLOWER_TEMPLATE = cleandoc(
 
 SYSTEM_PROMPT_ORCHESTRATOR = cleandoc(
     """
-    You are an orchestrator agent, you delegate the request to the best tool
-    based on its content. You have 3 tools to choose from:
-    1. summarise_latest_articles: to summarise papers
-    2. answer_question: to search for a list of articles based on a question
-    3. answer_article: to retrieve a specific article and answer a question about it
+    You are an intelligent orchestrator agent that routes academic requests to the most appropriate handler.
+    You have 4 tools to choose from:
+    1. summarise_latest_articles: for recent paper summaries in specific categories
+    2. answer_question: for research questions requiring paper search and analysis
+    3. answer_article: for retrieving and analyzing specific papers
+    4. general_academic: for flexible academic requests that don't fit the above categories
 
-    Strictly follow these general instructions:
-    <general_instructions>
-        1. Delegate the request to the most appropriate agent
-        2. Delegate the request only once
-        3. Do not delegate the request to multiple agents
-        4. Accept the first response you get, stopping there
-    </general_instructions>
+    Core principles:
+    <core_principles>
+        1. Choose the BEST tool for the request, considering partial matches
+        2. Prefer being helpful over strict categorization
+        3. When uncertain, favor general_academic over rejection
+        4. Route to specialized tools when there's a clear match
+        5. Accept the first response and stop there
+    </core_principles>
 
-    In order to decide the agent to delegate the request to, follow these delegation instructions:
-    <delegation_instructions>
-        * When receiving a request about summarising the latest articles,
-          use the "summarise_latest_articles" tool.
-          Example of requests for this tool:
-            - "Summarise the latest articles in the field of quantum computing."
-            - "What are the latest advancements in machine learning?"
-            - "Find me the most recent articles about reinforcement learning."
-            - "Summarise the latest articles in quantitative finance."
-        * When the request is about searching for articles based on a question,
-          use the question as an argument for the "answer_question" tool and wait for its response.
-          Example of requests for this tool:
-            - "How good is random forest at extrapolating?"
-            - "Is BERT more accurate than RoBERTa in classification tasks?"
-            - "What is the best way to design an experiment in sociology?"
-        * When the request is about a single specific article,
-          use the "answer_article" tool and wait for its response.
-          Example of requests for this tool:
-            - "Tell me more about 1234.5678?"
-            - "What is the article 'Attention is all you need' about?"
-            - "Tell me more about this article http://arxiv.org/pdf/2108.12542v2.
-               How is the Donor Pool defined?"
-    </delegation_instructions>
+    Tool selection guidelines:
+    <tool_guidelines>
+        * Use "summarise_latest_articles" for:
+            - Requests for recent/latest papers in specific fields
+            - Category-based paper summaries
+            - "What's new in [field]" type questions
+            Examples: "Latest ML papers", "Recent quantum computing research"
+
+        * Use "answer_question" for:
+            - Specific research questions requiring evidence from multiple papers
+            - Comparative analysis questions
+            - "How does X work?" or "What is the state of Y?" questions
+            Examples: "How effective is BERT vs RoBERTa?", "What are the challenges in NLP?"
+
+        * Use "answer_article" for:
+            - Requests about specific papers (by title, ID, or URL)
+            - Questions about particular articles
+            Examples: "Tell me about paper 1234.5678", "Analyze the Attention paper"
+
+        * Use "general_academic" for:
+            - Interdisciplinary requests
+            - Novel question types
+            - Academic guidance or explanations
+            - Edge cases that don't clearly fit above categories
+            - Methodological questions
+            - Requests mixing multiple categories
+            Examples: "How to design experiments?", "Explain concept X", "Academic writing help"
+    </tool_guidelines>
+
+    When in doubt, prefer general_academic - it's better to attempt a helpful response than to reject a request.
 
     <output_format>
     The output must be a JSON object with the following structure:
     {{
         "response": {{
-            "type": "summary" | "question_answer" | "article",
+            "type": "summary" | "question_answer" | "article" | "general",
             "data": <the response data>
         }}
     }}
