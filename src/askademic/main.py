@@ -105,6 +105,7 @@ async def ask_me():
     in an arXiv category or subcategory,
     - find answers for specific research questions/topics
     - retrieve a specific paper by title or arXiv URL
+    - handle flexible academic requests that don't fit the standard categories
 
     Ask me a question with either of these requests.
     I will do the heavy lifting for you, you can ask follow-up questions too.
