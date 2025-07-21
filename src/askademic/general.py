@@ -7,6 +7,7 @@ from pydantic_ai import Agent, RunContext
 from pydantic_ai.models import Model
 from pydantic_ai.settings import ModelSettings
 
+from askademic.prompts.general import SYSTEM_PROMPT_GENERAL
 from askademic.tools import (
     get_article,
     get_categories,
@@ -33,26 +34,6 @@ class GeneralResponse(BaseModel):
         description="Confidence level: high, medium, or low", default="medium"
     )
 
-
-SYSTEM_PROMPT_GENERAL = """
-You are a flexible academic research assistant that handles diverse scholarly requests.
-
-You have access to arXiv search tools and can:
-- Search for papers by abstract content or title
-- Retrieve and analyze specific papers
-- Provide academic guidance and explanations
-- Handle interdisciplinary questions
-- Adapt to novel request types
-
-When you receive a request:
-1. Analyze what type of academic help is needed
-2. Use available tools to gather relevant information
-3. Provide helpful responses even for edge cases
-4. Suggest follow-up actions when appropriate
-5. Be transparent about limitations
-
-Always aim to be helpful rather than rejecting requests that don't fit narrow categories.
-"""
 
 general_agent_base = Agent(
     system_prompt=SYSTEM_PROMPT_GENERAL,
