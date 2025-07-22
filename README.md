@@ -15,6 +15,7 @@ Askademic is an AI agent, working as a CLI tool, that helps you with finding inf
 * summarise the latest papers in a category
 * answer questions, searching first for relevant papers
 * retrieve info about a specific paper, by link or title
+* handle flexible academic requests that don't fit the standard categories
 
 You can also ask follow-up questions. And, it has an eye for things non-scientific... see below.
 

@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
 
 from askademic.article import ArticleAgent, ArticleResponse
+from askademic.general import GeneralAgent, GeneralResponse
 from askademic.prompts.general import SYSTEM_PROMPT_ORCHESTRATOR
 from askademic.question import QuestionAgent, QuestionAnswerResponse
 from askademic.summary import SummaryAgent, SummaryResponse
@@ -21,15 +22,17 @@ class Context(BaseModel):
 class OrchestratorResponse(BaseModel):
     """
     The response of the orchestrator agent.
-    It can be a summary of the latest articles, an answer to a question, or an article response.
+    It can be a summary, question answer, article response, or general academic response.
     """
 
     type: str = Field(
-        description="The type of the response. Can be 'summary', 'question_answer', or 'article'."
+        description="The type of the response. Can be 'summary', 'question_answer', 'article', or 'general'."
     )
-    response: SummaryResponse | QuestionAnswerResponse | ArticleResponse = Field(
-        description="The response to the request. It can be a summary of the latest articles,"
-        + "an answer to a question, or an article response."
+    response: (
+        SummaryResponse | QuestionAnswerResponse | ArticleResponse | GeneralResponse
+    ) = Field(
+        description="The response to the request. It can be a summary of the latest articles, "
+        + "an answer to a question, an article response, or a general academic response."
     )
 
 
@@ -99,6 +102,30 @@ async def answer_article(ctx: RunContext[Context], question: str) -> list[str]:
         use_cache=True  # Enable caching by default
     )
     r = await article_agent.run(request=question)
+    return r
+
+
+@orchestrator_agent_base.tool
+async def general_academic(ctx: RunContext[Context], request: str) -> list[str]:
+    """
+    Handle flexible academic requests that don't fit the standard categories.
+    This includes interdisciplinary questions, methodological guidance, concept explanations,
+    and novel request types. Use this tool when other tools don't clearly match the request.
+    Args:
+        ctx: the context
+        request: the academic request or question
+    Returns:
+        r: the response from the general academic agent
+    """
+    logger.info(
+        f"{datetime.now()}: Calling General Academic Agent with request: {request[:100]}..."
+    )
+
+    general_agent = GeneralAgent(
+        orchestrator_agent_base.model,
+        orchestrator_agent_base.model_settings,
+    )
+    r = await general_agent(request=request)
     return r
 
 

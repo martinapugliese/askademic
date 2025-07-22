@@ -8,6 +8,7 @@ from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 
 from askademic.article import ArticleResponse
+from askademic.general import GeneralResponse
 from askademic.orchestrator import orchestrator_agent_base
 from askademic.question import QuestionAnswerResponse
 from askademic.summary import SummaryResponse
@@ -18,23 +19,45 @@ class OrchestratorTestCase:
     def __init__(
         self,
         request: str,
-        response_type: SummaryResponse | QuestionAnswerResponse | ArticleResponse,
+        response_type: (
+            SummaryResponse | QuestionAnswerResponse | ArticleResponse | GeneralResponse
+        ),
     ):
         self.request = request
         self.response_type = response_type
 
 
 eval_cases = [
+    # Summary routing tests
     OrchestratorTestCase(
         "What is the latest research on quantum computing?", SummaryResponse
     ),
     OrchestratorTestCase("Can you summarize the latest papers on AI?", SummaryResponse),
+    # Question answering routing tests
     OrchestratorTestCase(
         "What's the relation between context length and quality in LLM performance?",
         QuestionAnswerResponse,
     ),
+    # Article routing tests
     OrchestratorTestCase(
         "Tell me all about the paper 'Attention is all you need'", ArticleResponse
+    ),
+    # General academic routing tests - these should route to general_academic
+    OrchestratorTestCase(
+        "How do I design a good research methodology?", GeneralResponse
+    ),
+    OrchestratorTestCase(
+        "What are the key principles of academic writing?", GeneralResponse
+    ),
+    OrchestratorTestCase(
+        "Explain the concept of statistical significance", GeneralResponse
+    ),
+    OrchestratorTestCase(
+        "What's the difference between quantitative and qualitative research?",
+        GeneralResponse,
+    ),
+    OrchestratorTestCase(
+        "How should I structure a literature review?", GeneralResponse
     ),
 ]
 
