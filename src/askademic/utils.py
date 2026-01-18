@@ -8,8 +8,8 @@ import pandas as pd
 from pydantic_ai.settings import ModelSettings
 
 from askademic.constants import (
-    CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID,
-    CLAUDE_HAIKU_3_5_MODEL_ID,
+    CLAUDE_HAIKU_4_5_BEDROCK_MODEL_ID,
+    CLAUDE_HAIKU_4_5_MODEL_ID,
     GEMINI_2_FLASH_MODEL_ID,
     NOVA_PRO_BEDROCK_MODEL_ID,
 )
@@ -37,10 +37,10 @@ def choose_model(model_family: str = "gemini") -> Tuple[str, ModelSettings]:
         return GEMINI_2_FLASH_MODEL_ID, model_settings
     elif model_family == "claude":
         model_settings = ModelSettings(max_tokens=1000, temperature=0)
-        return CLAUDE_HAIKU_3_5_MODEL_ID, model_settings
+        return CLAUDE_HAIKU_4_5_MODEL_ID, model_settings
     elif model_family in ("claude-aws-bedrock", "nova-pro-aws-bedrock"):
         model_id = (
-            CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID
+            CLAUDE_HAIKU_4_5_BEDROCK_MODEL_ID
             if model_family == "claude-aws-bedrock"
             else NOVA_PRO_BEDROCK_MODEL_ID
         )

@@ -58,7 +58,7 @@ pre-commit run --all-files      # Run pre-commit hooks
 
 ### Model Support
 - **Gemini 2.0 Flash** (default, preferred for cost and context window)
-- **Claude 3.5 Haiku** (experimental, rate limited)
+- **Claude 4.5 Haiku** (experimental, rate limited)
 - **Claude via AWS Bedrock** (experimental)
 - **Nova Pro via AWS Bedrock** (experimental)
 

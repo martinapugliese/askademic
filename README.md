@@ -23,8 +23,8 @@ As for everything that uses LLM, **check your outputs** - it can make mistakes.
 
 As its underlying LLM, you can choose to run it either with:
 * Gemini (it will use 2.0 Flash) [preferred and default option]
-* Claude (it will use Haiku 3.5) [experimental]
-* Claude via AWS Bedrock (it will use Haiku 3.5) [experimental]
+* Claude (it will use Haiku 4.5) [experimental]
+* Claude via AWS Bedrock (it will use Haiku 4.5) [experimental]
 * Nova Pro via AWS Bedrock [experimental]
 
 Gemini is preferred because:
