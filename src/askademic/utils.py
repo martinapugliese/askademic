@@ -11,7 +11,7 @@ from askademic.constants import (
     CLAUDE_HAIKU_4_5_BEDROCK_MODEL_ID,
     CLAUDE_HAIKU_4_5_MODEL_ID,
     GEMINI_2_FLASH_MODEL_ID,
-    NOVA_PRO_BEDROCK_MODEL_ID,
+    NOVA_LITE_BEDROCK_MODEL_ID,
 )
 
 today = datetime.now().strftime("%Y-%m-%d")
@@ -28,7 +28,7 @@ def choose_model(model_family: str = "gemini") -> Tuple[str, ModelSettings]:
         "gemini",
         "claude",
         "claude-aws-bedrock",
-        "nova-pro-aws-bedrock",
+        "nova-lite-aws-bedrock",
     ]:
         raise ValueError(f"Invalid model family '{model_family}'.")
 
@@ -38,11 +38,11 @@ def choose_model(model_family: str = "gemini") -> Tuple[str, ModelSettings]:
     elif model_family == "claude":
         model_settings = ModelSettings(max_tokens=1000, temperature=0)
         return CLAUDE_HAIKU_4_5_MODEL_ID, model_settings
-    elif model_family in ("claude-aws-bedrock", "nova-pro-aws-bedrock"):
+    elif model_family in ("claude-aws-bedrock", "nova-lite-aws-bedrock"):
         model_id = (
             CLAUDE_HAIKU_4_5_BEDROCK_MODEL_ID
             if model_family == "claude-aws-bedrock"
-            else NOVA_PRO_BEDROCK_MODEL_ID
+            else NOVA_LITE_BEDROCK_MODEL_ID
         )
 
         region = boto3.session.Session().region_name

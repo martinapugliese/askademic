@@ -23,7 +23,7 @@ async def main():
         "gemini",
         "claude",
         "claude-aws-bedrock",
-        "nova-pro-aws-bedrock",
+        "nova-lite-aws-bedrock",
     ]:
 
         if model_family == "gemini" and os.getenv("GOOGLE_API_KEY") is None:
@@ -44,7 +44,7 @@ async def main():
             )
             continue
 
-        if model_family in ("claude-aws-bedrock", "nova-pro-aws-bedrock"):
+        if model_family in ("claude-aws-bedrock", "nova-lite-aws-bedrock"):
             try:
                 _ = boto3.client("sts").get_caller_identity()
             except (ClientError, NoCredentialsError):
