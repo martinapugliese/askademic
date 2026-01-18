@@ -48,9 +48,9 @@ async def ask_user_question():
 async def check_environment_variables(user_model: str):
 
     if user_model == "gemini":
-        if not os.getenv("GEMINI_API_KEY"):
+        if not os.getenv("GOOGLE_API_KEY"):
             console.print(
-                "[bold red]The GEMINI_API_KEY environment variable is not set.[/bold red]"
+                "[bold red]The GOOGLE_API_KEY environment variable is not set.[/bold red]"
             )
             sys.exit()
     elif user_model in "claude":
@@ -59,7 +59,7 @@ async def check_environment_variables(user_model: str):
                 "[bold red]The ANTHROPIC_API_KEY environment variable is not set.[/bold red]"
             )
             sys.exit()
-    elif user_model in ("claude-aws-bedrock", "nova-pro-aws-bedrock"):
+    elif user_model in ("claude-aws-bedrock", "nova-lite-aws-bedrock"):
         try:
             _ = boto3.client("sts").get_caller_identity()
         except boto3.exceptions.ClientError:
@@ -75,7 +75,7 @@ async def check_environment_variables(user_model: str):
         console.print(
             "[bold red]Invalid model family selected. "
             + "Please choose 'gemini', 'claude', 'claude-aws-bedrock'"
-            + " or 'nova-pro-aws-bedrock'.[/bold red]"
+            + " or 'nova-lite-aws-bedrock'.[/bold red]"
         )
         sys.exit()
 
@@ -125,12 +125,12 @@ async def ask_me():
         "gemini",
         "claude",
         "claude-aws-bedrock",
-        "nova-pro-aws-bedrock",
+        "nova-lite-aws-bedrock",
     ):
         console.print(
             """[bold red]Please configure the LLM family
         to be either "gemini" or "claude", "claude-aws-bedrock"
-         or "nova-pro-aws-bedrock"):[/bold red]"""
+         or "nova-lite-aws-bedrock"):[/bold red]"""
         )
         return
 

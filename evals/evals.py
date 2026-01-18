@@ -2,6 +2,7 @@ import asyncio
 import os
 
 import boto3
+from botocore.exceptions import ClientError, NoCredentialsError
 from dotenv import load_dotenv
 from evals_allower import run_evals as run_evals_allower
 from evals_article import run_evals as run_evals_article
@@ -22,13 +23,13 @@ async def main():
         "gemini",
         "claude",
         "claude-aws-bedrock",
-        "nova-pro-aws-bedrock",
+        "nova-lite-aws-bedrock",
     ]:
 
-        if model_family == "gemini" and os.getenv("GEMINI_API_KEY") is None:
+        if model_family == "gemini" and os.getenv("GOOGLE_API_KEY") is None:
             console.print(
                 """
-                [bold red]GEMINI_API_KEY environment variable is not set.
+                [bold red]GOOGLE_API_KEY environment variable is not set.
                 Skipping evals.[/bold red]
                 """
             )
@@ -43,13 +44,13 @@ async def main():
             )
             continue
 
-        if model_family == "claude-aws-bedrock":
+        if model_family in ("claude-aws-bedrock", "nova-lite-aws-bedrock"):
             try:
                 _ = boto3.client("sts").get_caller_identity()
-            except boto3.exceptions.ClientError:
+            except (ClientError, NoCredentialsError):
                 console.print(
-                    """[bold red]AWS credentials are not set or invalid.
-                    Skipping CLAUDE AWS Bedrock evals.[/bold red]"""
+                    f"""[bold red]AWS credentials are not set or invalid.
+                    Skipping {model_family} evals.[/bold red]"""
                 )
                 continue
 

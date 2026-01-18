@@ -7,11 +7,13 @@ Instructions:
 - Type "help" to see instructions again
 """
 
-# LLM model IDs
-GEMINI_2_FLASH_MODEL_ID = "gemini-2.0-flash"
-CLAUDE_HAIKU_3_5_MODEL_ID = "anthropic:claude-3-5-haiku-latest"
-CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID = "{region}.anthropic.claude-3-5-haiku-20241022-v1:0"
-NOVA_PRO_BEDROCK_MODEL_ID = "{region}.amazon.nova-pro-v1:0"
+# LLM model IDs (using provider:model syntax)
+GEMINI_2_FLASH_MODEL_ID = "google-gla:gemini-2.0-flash"
+CLAUDE_HAIKU_4_5_MODEL_ID = "anthropic:claude-haiku-4-5-latest"
+CLAUDE_HAIKU_4_5_BEDROCK_MODEL_ID = (
+    "bedrock:{region}.anthropic.claude-haiku-4-5-20251001-v1:0"
+)
+NOVA_LITE_BEDROCK_MODEL_ID = "bedrock:{region}.amazon.nova-2-lite-v1:0"
 MISTRAL_LARGE_MODEL_ID = "mistral:mistral-large-latest"
 
 # ARXIV URLS
