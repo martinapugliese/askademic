@@ -70,7 +70,7 @@ class SummaryAgent:
             output_type=Summary,
         )
 
-        if "nova" in model:
+        if "nova" in str(model):
             self._max_results = 100
         else:
             self._max_results = 300

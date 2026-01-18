@@ -67,7 +67,7 @@ pre-commit run --all-files      # Run pre-commit hooks
 ### Environment Variables
 Required in `.env` file (copy from `.env-template`):
 - `LLM_FAMILY`: "gemini", "claude", "claude-aws-bedrock", or "nova-pro-aws-bedrock"
-- `GEMINI_API_KEY`: For Gemini models
+- `GOOGLE_API_KEY`: For Gemini models
 - `ANTHROPIC_API_KEY`: For Claude models
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`: For AWS Bedrock
 

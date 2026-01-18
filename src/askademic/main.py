@@ -48,9 +48,9 @@ async def ask_user_question():
 async def check_environment_variables(user_model: str):
 
     if user_model == "gemini":
-        if not os.getenv("GEMINI_API_KEY"):
+        if not os.getenv("GOOGLE_API_KEY"):
             console.print(
-                "[bold red]The GEMINI_API_KEY environment variable is not set.[/bold red]"
+                "[bold red]The GOOGLE_API_KEY environment variable is not set.[/bold red]"
             )
             sys.exit()
     elif user_model in "claude":
