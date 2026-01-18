@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from pydantic_ai.agent import AgentRunResult  # noqa: F401
 
-os.environ["GEMINI_API_KEY"] = "mock"
+os.environ["GOOGLE_API_KEY"] = "mock"
 
 from askademic.article import (  # noqa: E402
     USER_PROMPT_ARTICLE_RETRIEVAL_TEMPLATE,
@@ -65,7 +65,7 @@ async def test_article_agent(
 
     # Mock the agents
     article_agent = ArticleAgent(
-        model="gemini-2.0-flash",
+        model="google-gla:gemini-2.0-flash",
     )
     article_agent._get_article = MagicMock(
         return_value="Mocked article text for testing purposes."

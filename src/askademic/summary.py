@@ -3,7 +3,6 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
-from pydantic_ai.models import Model
 from pydantic_ai.settings import ModelSettings
 
 from askademic.prompts.general import (
@@ -54,14 +53,14 @@ class SummaryResponse(BaseModel):
 
 
 class SummaryAgent:
-    def __init__(self, model: Model, model_settings: ModelSettings = None):
+    def __init__(self, model: str, model_settings: ModelSettings = None):
 
         self._category_agent = Agent(
             model=model,
             model_settings=model_settings,
             system_prompt=SYSTEM_PROMPT_CATEGORY,
             output_type=Category,
-            tools=[Tool(get_categories, takes_ctx=False)],
+            tools=[Tool(get_categories)],
         )
 
         self._summary_agent = Agent(
@@ -71,7 +70,7 @@ class SummaryAgent:
             output_type=Summary,
         )
 
-        if "nova" in model.model_name:
+        if "nova" in model:
             self._max_results = 100
         else:
             self._max_results = 300

@@ -3,7 +3,6 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
-from pydantic_ai.models import Model
 from pydantic_ai.settings import ModelSettings
 
 from askademic.prompts.general import (
@@ -61,7 +60,9 @@ class ArticleRetrievalResponse(BaseModel):
 
 
 class ArticleAgent:
-    def __init__(self, model: Model, model_settings: ModelSettings = None, use_cache: bool = True):
+    def __init__(
+        self, model: str, model_settings: ModelSettings = None, use_cache: bool = True
+    ):
 
         self._get_article = get_article
         self.use_cache = use_cache

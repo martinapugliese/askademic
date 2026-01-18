@@ -5,10 +5,6 @@ from typing import Tuple
 import boto3
 import feedparser
 import pandas as pd
-from pydantic_ai.models import Model
-from pydantic_ai.models.anthropic import AnthropicModel
-from pydantic_ai.models.bedrock import BedrockConverseModel, BedrockModelSettings
-from pydantic_ai.models.gemini import GeminiModel
 from pydantic_ai.settings import ModelSettings
 
 from askademic.constants import (
@@ -23,9 +19,10 @@ logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 
-def choose_model(model_family: str = "gemini") -> Tuple[Model, ModelSettings]:
+def choose_model(model_family: str = "gemini") -> Tuple[str, ModelSettings]:
     """
     Choose the model ID based on the given model family.
+    Returns a tuple of (model_string, model_settings) using the provider:model syntax.
     """
     if model_family not in [
         "gemini",
@@ -36,17 +33,12 @@ def choose_model(model_family: str = "gemini") -> Tuple[Model, ModelSettings]:
         raise ValueError(f"Invalid model family '{model_family}'.")
 
     if model_family == "gemini":
-        model_name = GEMINI_2_FLASH_MODEL_ID
-        model = GeminiModel(model_name=model_name)
         model_settings = ModelSettings(max_tokens=1000, temperature=0)
-        return model, model_settings
+        return GEMINI_2_FLASH_MODEL_ID, model_settings
     elif model_family == "claude":
-        model_name = CLAUDE_HAIKU_3_5_MODEL_ID
-        model = AnthropicModel(model_name=model_name)
         model_settings = ModelSettings(max_tokens=1000, temperature=0)
-        return model, model_settings
+        return CLAUDE_HAIKU_3_5_MODEL_ID, model_settings
     elif model_family in ("claude-aws-bedrock", "nova-pro-aws-bedrock"):
-
         model_id = (
             CLAUDE_HAIKU_3_5_BEDROCK_MODEL_ID
             if model_family == "claude-aws-bedrock"
@@ -60,14 +52,11 @@ def choose_model(model_family: str = "gemini") -> Tuple[Model, ModelSettings]:
             region = region.split("-")[0]
             model_name = model_id.format(region=region)
 
-        model_settings = BedrockModelSettings(
+        model_settings = ModelSettings(
             temperature=0,
             max_tokens=4000,
-            top_k=1,
-            bedrock_performance_configuration={"latency": "optimized"},
         )
-        model = BedrockConverseModel(model_name=model_name)
-        return model, model_settings
+        return model_name, model_settings
 
 
 def list_categories() -> dict:

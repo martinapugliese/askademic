@@ -3,7 +3,6 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
-from pydantic_ai.models import Model
 from pydantic_ai.settings import ModelSettings
 
 from askademic.prompts.general import (
@@ -56,7 +55,7 @@ class QuestionAnswerResponse(BaseModel):
 class QuestionAgent:
     def __init__(
         self,
-        model: Model,
+        model: str,
         model_settings: ModelSettings = None,
         query_list_limit: int = 10,
         relevance_score_threshold: float = 0.8,

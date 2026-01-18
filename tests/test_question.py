@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from pydantic_ai.agent import AgentRunResult  # noqa: F401
 
-os.environ["GEMINI_API_KEY"] = "mock"
+os.environ["GOOGLE_API_KEY"] = "mock"
 
 from askademic.question import (  # noqa: E402
     Article,
@@ -93,9 +93,9 @@ async def test_question_agent(
 ):
     """Test the QuestionAgent class."""
 
-    assert os.environ["GEMINI_API_KEY"] == "mock"
+    assert os.environ["GOOGLE_API_KEY"] == "mock"
 
-    question_agent = QuestionAgent("gemini-2.0-flash")
+    question_agent = QuestionAgent("google-gla:gemini-2.0-flash")
     question_agent._query_agent = MagicMock()
     question_agent._abstract_relevance_agent = MagicMock()
     question_agent._many_articles_agent = MagicMock()

@@ -4,7 +4,6 @@ from typing import List
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
-from pydantic_ai.models import Model
 from pydantic_ai.settings import ModelSettings
 
 from askademic.prompts.general import SYSTEM_PROMPT_GENERAL
@@ -106,7 +105,7 @@ async def list_research_categories(ctx: RunContext[Context]) -> dict:
 
 
 class GeneralAgent:
-    def __init__(self, model: Model, model_settings: ModelSettings = None):
+    def __init__(self, model: str, model_settings: ModelSettings = None):
         self.agent = general_agent_base
         self.agent.model = model
         if model_settings:
