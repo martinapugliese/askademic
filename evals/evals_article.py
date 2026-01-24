@@ -13,11 +13,21 @@ from askademic.utils import choose_model
 
 
 class ArticleResponseTestCase:
-    def __init__(self, request: str, article_data: str, title: str, link: str):
+    def __init__(
+        self,
+        request: str,
+        article_data: str,
+        title: str,
+        link: str,
+        fuzzy_keywords: list[str] = None,
+    ):
         self.request = request
         self.article_data = article_data
         self.title = title
         self.link = link
+        # For fuzzy matching: if set, just check that response contains
+        # at least one keyword and has a valid arXiv link format
+        self.fuzzy_keywords = fuzzy_keywords
 
 
 eval_cases = [
@@ -47,12 +57,14 @@ eval_cases = [
         "THE DETERMINISTIC KERMACK-MCKENDRICK MODEL BOUNDS THE GENERAL STOCHASTIC EPIDEMIC",
         "https://arxiv.org/pdf/1602.01730.pdf",
     ),
-    # not existing paper
+    # Fuzzy match: paper doesn't exist exactly, so we just check that a relevant
+    # paper is returned (contains keywords) with a valid arXiv link
     ArticleResponseTestCase(
         "Find this paper 'Quark Gluon plasma and AI'",
-        "http://arxiv.org/pdf/2412.19393v1",
-        "Hydrodynamic Description of the Quark-Gluon Plasma ",
-        "http://arxiv.org/pdf/2311.10621v2",
+        "",
+        "",
+        "",
+        fuzzy_keywords=["quark", "gluon", "plasma", "qgp"],
     ),
 ]
 
@@ -63,6 +75,55 @@ LINK_PATTERN = r"https?://arxiv\.org/pdf/(?:\w+-\w+/)?(\d{4}\.\d{5}|[\w\-]+)"
 console = Console()
 
 MAX_ATTEMPTS = 5
+
+
+def check_fuzzy_match(case, response) -> tuple[bool, str]:
+    """
+    Check if response passes fuzzy matching criteria.
+    Returns (passed, reason) tuple.
+    """
+    title = response.output.article_title.lower()
+    link = response.output.article_link
+
+    # Check for valid arXiv link format
+    link_match = re.match(LINK_PATTERN, link)
+    if link_match is None:
+        return False, f"Invalid arXiv link format: {link}"
+
+    # Check if at least one keyword is in the title
+    keyword_found = any(kw.lower() in title for kw in case.fuzzy_keywords)
+    if not keyword_found:
+        return False, f"No keywords {case.fuzzy_keywords} found in title: {title}"
+
+    return True, ""
+
+
+def check_exact_match(case, response) -> tuple[bool, str]:
+    """
+    Check if response passes exact matching criteria.
+    Returns (passed, reason) tuple.
+    """
+    match1 = re.match(LINK_PATTERN, case.link)
+    match2 = re.match(LINK_PATTERN, response.output.article_link)
+
+    # Check titles match (case insensitive)
+    title_matches = case.title.lower().replace(
+        "\n", " "
+    ) == response.output.article_title.lower().replace("\n", " ")
+
+    # Check links regex match exists and IDs are the same
+    links_match = (
+        match1 is not None and match2 is not None and match1.group(1) == match2.group(1)
+    )
+
+    if not title_matches or not links_match:
+        reason = (
+            f"Got: {response.output.article_title} and {response.output.article_link}\n"
+            f"Expected: {case.title} and {case.link}"
+        )
+        return False, reason
+
+    return True, ""
 
 
 async def run_evals(model_family: str):
@@ -79,22 +140,15 @@ async def run_evals(model_family: str):
                 print(f"Evaluating case: {case.request}")
                 response = await article_agent.run(request=case.request)
 
-                match1 = re.match(LINK_PATTERN, case.link)
-                match2 = re.match(LINK_PATTERN, response.output.article_link)
+                # Use fuzzy matching if keywords are specified, else exact match
+                if case.fuzzy_keywords:
+                    passed, reason = check_fuzzy_match(case, response)
+                else:
+                    passed, reason = check_exact_match(case, response)
 
-                # check titles match (case insensitive), links regex match exists and are the same
-                if (
-                    case.title.lower().replace("\n", " ")
-                    != response.output.article_title.lower().replace("\n", " ")
-                    or match1 is None
-                    or match2 is None
-                    or match1.group(1) != match2.group(1)
-                ):
+                if not passed:
                     print(f"Test failed for question: {case.request}")
-                    print(
-                        f"Got: {response.output.article_title} and {response.output.article_link}"
-                    )
-                    print(f"Expected: {case.title} and {case.link}")
+                    print(reason)
                     print("\n")
                     c_failed += 1
                 else:

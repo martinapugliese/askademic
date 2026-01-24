@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import os
 
@@ -14,63 +15,120 @@ from rich.console import Console
 
 console = Console()
 
+ALL_MODELS = ["gemini", "claude", "claude-aws-bedrock", "nova-lite-aws-bedrock"]
+ALL_EVALS = ["allower", "orchestrator", "summary", "question", "article", "general"]
+
+EVAL_RUNNERS = {
+    "allower": run_evals_allower,
+    "orchestrator": run_evals_orchestrator,
+    "summary": run_evals_summary,
+    "question": run_evals_question,
+    "article": run_evals_article,
+    "general": run_evals_general,
+}
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Run askademic evaluation suite",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=f"""
+Examples:
+  python evals.py                           # Run all evals with all models
+  python evals.py -m gemini                 # Run all evals with gemini only
+  python evals.py -e article question       # Run article and question evals
+  python evals.py -m claude -e allower      # Run allower eval with claude only
+
+Available models: {', '.join(ALL_MODELS)}
+Available evals: {', '.join(ALL_EVALS)}
+        """,
+    )
+    parser.add_argument(
+        "-m",
+        "--model",
+        nargs="+",
+        choices=ALL_MODELS,
+        default=ALL_MODELS,
+        metavar="MODEL",
+        help=f"Model(s) to run evals with. Choices: {', '.join(ALL_MODELS)}",
+    )
+    parser.add_argument(
+        "-e",
+        "--eval",
+        nargs="+",
+        choices=ALL_EVALS,
+        default=ALL_EVALS,
+        metavar="EVAL",
+        help=f"Eval(s) to run. Choices: {', '.join(ALL_EVALS)}",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="List available models and evals, then exit",
+    )
+    return parser.parse_args()
+
+
+def check_model_credentials(model_family: str) -> bool:
+    """Check if credentials are available for the given model family."""
+    if model_family == "gemini" and os.getenv("GOOGLE_API_KEY") is None:
+        console.print(
+            "[bold red]GOOGLE_API_KEY environment variable is not set. "
+            "Skipping gemini evals.[/bold red]"
+        )
+        return False
+
+    if model_family == "claude" and os.getenv("ANTHROPIC_API_KEY") is None:
+        console.print(
+            "[bold red]ANTHROPIC_API_KEY environment variable is not set. "
+            "Skipping claude evals.[/bold red]"
+        )
+        return False
+
+    if model_family in ("claude-aws-bedrock", "nova-lite-aws-bedrock"):
+        try:
+            _ = boto3.client("sts").get_caller_identity()
+        except (ClientError, NoCredentialsError):
+            console.print(
+                f"[bold red]AWS credentials are not set or invalid. "
+                f"Skipping {model_family} evals.[/bold red]"
+            )
+            return False
+
+    return True
+
 
 async def main():
+    args = parse_args()
+
+    if args.list:
+        console.print("[bold]Available models:[/bold]")
+        for model in ALL_MODELS:
+            console.print(f"  - {model}")
+        console.print("\n[bold]Available evals:[/bold]")
+        for eval_name in ALL_EVALS:
+            console.print(f"  - {eval_name}")
+        return
 
     load_dotenv()
 
-    for model_family in [
-        "gemini",
-        "claude",
-        "claude-aws-bedrock",
-        "nova-lite-aws-bedrock",
-    ]:
+    models = args.model
+    evals = args.eval
 
-        if model_family == "gemini" and os.getenv("GOOGLE_API_KEY") is None:
-            console.print(
-                """
-                [bold red]GOOGLE_API_KEY environment variable is not set.
-                Skipping evals.[/bold red]
-                """
-            )
+    console.print(f"[bold cyan]Models:[/bold cyan] {', '.join(models)}")
+    console.print(f"[bold cyan]Evals:[/bold cyan] {', '.join(evals)}\n")
+
+    for model_family in models:
+        if not check_model_credentials(model_family):
             continue
 
-        if model_family == "claude" and os.getenv("ANTHROPIC_API_KEY") is None:
+        console.print(f"\n[bold blue]===== Model: {model_family} =====[/bold blue]")
+
+        for eval_name in evals:
             console.print(
-                """
-                [bold red]ANTHROPIC_API_KEY environment variable is not set.
-                Skipping CLAUDE evals.[/bold red]
-                """
+                f"\n[bold magenta]Running {eval_name} evals...[/bold magenta]"
             )
-            continue
-
-        if model_family in ("claude-aws-bedrock", "nova-lite-aws-bedrock"):
-            try:
-                _ = boto3.client("sts").get_caller_identity()
-            except (ClientError, NoCredentialsError):
-                console.print(
-                    f"""[bold red]AWS credentials are not set or invalid.
-                    Skipping {model_family} evals.[/bold red]"""
-                )
-                continue
-
-        console.print("\n[bold magenta]Running allower evals...[/bold magenta]")
-        await run_evals_allower(model_family)
-
-        console.print("\n[bold magenta]Running orchestrator evals...[/bold magenta]")
-        await run_evals_orchestrator(model_family)
-
-        console.print("\n[bold magenta]Running summary evals...[/bold magenta]")
-        await run_evals_summary(model_family)
-
-        console.print("\n[bold magenta]Running question evals...[/bold magenta]")
-        await run_evals_question(model_family)
-
-        console.print("\n[bold magenta]Running article evals...[/bold magenta]")
-        await run_evals_article(model_family)
-
-        console.print("\n[bold magenta]Running general agent evals...[/bold magenta]")
-        await run_evals_general(model_family)
+            await EVAL_RUNNERS[eval_name](model_family)
 
 
 if __name__ == "__main__":
