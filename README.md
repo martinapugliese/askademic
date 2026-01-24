@@ -91,7 +91,31 @@ At the moment, we run them manually every time we ship a PR. They're a handful o
 ```
 python evals.py
 ```
-from within the `evals/` folder. If you have suggestions we'd love to hear.
+from within the `evals/` folder.
+
+You can select which model(s) and eval(s) to run:
+```bash
+# Run all evals with all models (default)
+python evals.py
+
+# Run all evals with a specific model
+python evals.py -m gemini
+
+# Run specific evals only
+python evals.py -e article question
+
+# Combine model and eval selection
+python evals.py -m claude -e allower orchestrator
+
+# List available models and evals
+python evals.py --list
+```
+
+Available models: `gemini`, `claude`, `claude-aws-bedrock`, `nova-lite-aws-bedrock`
+
+Available evals: `allower`, `orchestrator`, `summary`, `question`, `article`, `general`
+
+If you have suggestions we'd love to hear.
 
 # Acknowledgments
 
