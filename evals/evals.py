@@ -3,6 +3,7 @@ import asyncio
 import os
 
 import boto3
+import logfire
 from botocore.exceptions import ClientError, NoCredentialsError
 from dotenv import load_dotenv
 from evals_allower import run_evals as run_evals_allower
@@ -12,6 +13,13 @@ from evals_orchestrator import run_evals as run_evals_orchestrator
 from evals_question import run_evals as run_evals_question
 from evals_summary import run_evals as run_evals_summary
 from rich.console import Console
+
+# Load environment and configure logfire early
+load_dotenv()
+logfire_token = os.getenv("LOGFIRE_TOKEN", None)
+if logfire_token:
+    logfire.configure(token=logfire_token, console=False)
+    logfire.instrument_pydantic_ai()
 
 console = Console()
 
