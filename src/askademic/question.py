@@ -63,6 +63,8 @@ class QuestionAgent:
 
             Args:
                 query: The search query to find relevant articles.
+            Returns:
+                A JSON string containing a list of articles with their links and abstracts.
             """
             logger.info(f"{datetime.now()}: Searching articles with query: {query}")
             result = search_articles_by_abs(query)
@@ -77,6 +79,8 @@ class QuestionAgent:
             Args:
                 link: The arXiv link or ID (e.g., "https://arxiv.org/abs/1706.03762"
                       or "1706.03762" or "https://arxiv.org/pdf/1706.03762.pdf").
+            Returns:
+                The full text content of the article.
             """
             normalized_link = self._normalize_arxiv_link(link)
             logger.info(f"{datetime.now()}: Fetching article: {normalized_link}")
@@ -126,7 +130,7 @@ class QuestionAgent:
         logger.info(f"{datetime.now()}: QuestionAgent received question: {question}")
 
         deps = QuestionAgentDeps(use_cache=self.use_cache)
-        usage_limits = UsageLimits(tool_calls_limit=5)
+        usage_limits = UsageLimits(tool_calls_limit=20)
         result = await self._agent.run(question, deps=deps, usage_limits=usage_limits)
 
         logger.info(f"{datetime.now()}: QuestionAgent completed question")
