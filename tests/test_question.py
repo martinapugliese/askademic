@@ -3,169 +3,142 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
-from pydantic_ai.agent import AgentRunResult  # noqa: F401
+from pydantic_ai.agent import AgentRunResult
 
 os.environ["GOOGLE_API_KEY"] = "mock"
 
 from askademic.question import (  # noqa: E402
-    Article,
-    ArticleListResponse,
-    QueryResponse,
     QuestionAgent,
     QuestionAnswerResponse,
 )
 
-testdata = [
-    (
-        "what is reinforcement learning?",
-        QueryResponse(queries=["reinforcement learning"]),
-        "abstracts table",
-        ArticleListResponse(
-            article_list=[
-                Article(
-                    article_url="article1_link",
-                    relevance_score=0.9,
-                ),
-                Article(
-                    article_url="article2_link",
-                    relevance_score=0.8,
-                ),
-                Article(
-                    article_url="article3_link",
-                    relevance_score=0.1,
-                ),
-            ]
+
+@pytest.fixture
+def question_agent():
+    """Create a QuestionAgent instance for testing."""
+    return QuestionAgent("google-gla:gemini-2.0-flash")
+
+
+def test_question_agent_initialization(question_agent):
+    """Test that QuestionAgent initializes correctly."""
+    assert question_agent._agent is not None
+    assert question_agent.use_cache is True
+
+
+def test_question_agent_initialization_no_cache():
+    """Test QuestionAgent initialization with cache disabled."""
+    agent = QuestionAgent("google-gla:gemini-2.0-flash", use_cache=False)
+    assert agent.use_cache is False
+
+
+@pytest.mark.parametrize(
+    "link,expected",
+    [
+        (
+            "https://arxiv.org/pdf/1706.03762.pdf",
+            "https://arxiv.org/pdf/1706.03762.pdf",
         ),
-        "article_text",
-        QuestionAnswerResponse(
-            response="Reinforcement learning is a type of machine learning...",
-            article_list=[
-                "article1_link",
-                "article2_link",
-            ],
+        (
+            "https://arxiv.org/abs/1706.03762",
+            "https://arxiv.org/pdf/1706.03762.pdf",
         ),
-    ),
-    (
-        "what is supervised learning?",
-        QueryResponse(queries=["supervised learning", "machine learning"]),
-        "abstracts table",
-        ArticleListResponse(
-            article_list=[
-                Article(
-                    article_url="article4_link",
-                    relevance_score=0.1,
-                ),
-                Article(
-                    article_url="article5_link",
-                    relevance_score=0.1,
-                ),
-                Article(
-                    article_url="article6_link",
-                    relevance_score=0.2,
-                ),
-            ]
+        (
+            "1706.03762",
+            "https://arxiv.org/pdf/1706.03762.pdf",
         ),
-        "article_text",
-        QuestionAnswerResponse(
-            response="Supervised learning is a type of machine learning...",
-            article_list=[
-                "article4_link",
-                "article5_link",
-            ],
+        (
+            "2401.00001",
+            "https://arxiv.org/pdf/2401.00001.pdf",
         ),
-    ),
-]
+        (
+            "invalid_link",
+            "invalid_link",
+        ),
+    ],
+)
+def test_normalize_arxiv_link(question_agent, link, expected):
+    """Test that arXiv links are normalized correctly."""
+    result = question_agent._normalize_arxiv_link(link)
+    assert result == expected
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "question, query_list, search_articles_by_abs_response, "
-    "article_list_response, get_article_response, question_answer_response",
-    testdata,
-)
-async def test_question_agent(
-    question,
-    query_list,
-    search_articles_by_abs_response,
-    article_list_response,
-    get_article_response,
-    question_answer_response,
-):
-    """Test the QuestionAgent class."""
-
-    assert os.environ["GOOGLE_API_KEY"] == "mock"
-
+async def test_question_agent_run():
+    """Test the QuestionAgent run method with mocked agent."""
     question_agent = QuestionAgent("google-gla:gemini-2.0-flash")
-    question_agent._query_agent = MagicMock()
-    question_agent._abstract_relevance_agent = MagicMock()
-    question_agent._many_articles_agent = MagicMock()
-    question_agent._get_article = MagicMock()
-    question_agent._search_articles_by_abs = MagicMock()
 
-    query_list_future = asyncio.Future()
-    query_list_future.set_result(
+    expected_response = QuestionAnswerResponse(
+        response="Reinforcement learning is a type of machine learning...",
+        article_list=[
+            "https://arxiv.org/pdf/1706.03762.pdf",
+        ],
+    )
+
+    future = asyncio.Future()
+    future.set_result(
         AgentRunResult(
-            output=query_list,
+            output=expected_response,
             _output_tool_name=None,
             _state=None,
             _new_message_index=None,
             _traceparent_value=None,
         )
     )
-    question_agent._query_agent.run.return_value = query_list_future
 
-    question_agent._search_articles_by_abs.return_value = (
-        search_articles_by_abs_response
+    question_agent._agent = MagicMock()
+    question_agent._agent.run.return_value = future
+
+    result = await question_agent.run("what is reinforcement learning?")
+
+    assert result.output == expected_response
+    question_agent._agent.run.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_question_agent_call_alias():
+    """Test that __call__ is an alias for run()."""
+    question_agent = QuestionAgent("google-gla:gemini-2.0-flash")
+
+    expected_response = QuestionAnswerResponse(
+        response="Test response",
+        article_list=["https://arxiv.org/pdf/1234.56789.pdf"],
     )
 
-    article_list_future = asyncio.Future()
-    article_list_future.set_result(
+    future = asyncio.Future()
+    future.set_result(
         AgentRunResult(
-            output=article_list_response,
+            output=expected_response,
             _output_tool_name=None,
             _state=None,
             _new_message_index=None,
             _traceparent_value=None,
         )
     )
-    question_agent._abstract_relevance_agent.run.return_value = article_list_future
 
-    question_agent._get_article.return_value = get_article_response
+    question_agent._agent = MagicMock()
+    question_agent._agent.run.return_value = future
 
-    question_answer_future = asyncio.Future()
-    question_answer_future.set_result(
-        AgentRunResult(
-            output=question_answer_response,
-            _output_tool_name=None,
-            _state=None,
-            _new_message_index=None,
-            _traceparent_value=None,
-        )
-    )
-    question_agent._many_articles_agent.run.return_value = question_answer_future
+    result = await question_agent("test question")
 
-    response = await question_agent(question=question)
+    assert result.output == expected_response
+    question_agent._agent.run.assert_called_once()
 
-    assert response.output == question_answer_response
-    assert question_agent._query_agent.run.call_count == 1
 
-    query_list_dimension = min(
-        len(query_list.queries), question_agent._query_list_limit
-    )
-    assert question_agent._search_articles_by_abs.call_count == query_list_dimension
-    assert (
-        question_agent._abstract_relevance_agent.run.call_count == query_list_dimension
-    )
+def test_search_articles_tool():
+    """Test that the search_articles tool is properly registered."""
+    question_agent = QuestionAgent("google-gla:gemini-2.0-flash")
 
-    article_link_list = []
-    for _ in range(query_list_dimension):
-        article_link_list += article_list_response.article_list
-    article_link_list = [
-        article.article_url
-        for article in article_link_list
-        if article.relevance_score >= question_agent._relevance_score_threshold
-    ]
-    article_link_list = article_link_list[: question_agent._article_list_limit]
-    assert question_agent._get_article.call_count == len(article_link_list)
+    # Check that the agent has tools registered
+    assert question_agent._agent._function_toolset is not None
+    tool_names = list(question_agent._agent._function_toolset.tools)
+    assert "search_articles" in tool_names
 
-    assert question_agent._many_articles_agent.run.call_count == 1
+
+def test_fetch_article_tool():
+    """Test that the fetch_article tool is properly registered."""
+    question_agent = QuestionAgent("google-gla:gemini-2.0-flash")
+
+    # Check that the agent has tools registered
+    assert question_agent._agent._function_toolset is not None
+    tool_names = list(question_agent._agent._function_toolset.tools)
+    assert "fetch_article" in tool_names
