@@ -334,11 +334,9 @@ def get_article(url: str, max_attempts: int = 10, use_cache: bool = True) -> str
     # curtail the article to 70k characters (there can be books, too long)
     article = article[:70000]
 
-    formatted_article = f"""
-        -------{url}------------
-        {article}
-        ------END----------------
-    """
+    formatted_article = f"""<article url="{url}">
+{article}
+</article>"""
 
     # Save to cache if retrieval was successful and not "Article Not Found"
     if article != "Article Not Found" and use_cache:
