@@ -2,12 +2,22 @@
 Checks response contains substring.
 """
 
+import os
 import time
 
+import logfire
+from dotenv import load_dotenv
 from rich.console import Console
 
 from askademic.question import QuestionAgent
 from askademic.utils import choose_model
+
+# Load environment and configure logfire
+load_dotenv()
+logfire_token = os.getenv("LOGFIRE_TOKEN", None)
+if logfire_token:
+    logfire.configure(token=logfire_token, console=False)
+    logfire.instrument_pydantic_ai()
 
 
 class QuestionAnswerTestCaseSingle:
@@ -55,9 +65,6 @@ async def run_evals(model_family: str):
     question_agent = QuestionAgent(
         model=model,
         model_settings=model_settings,
-        query_list_limit=2,
-        relevance_score_threshold=0.8,
-        article_list_limit=2,
     )
 
     # single-answer ones

@@ -13,7 +13,6 @@ CLAUDE_HAIKU_4_5_MODEL_ID = "anthropic:claude-haiku-4-5-latest"
 CLAUDE_HAIKU_4_5_BEDROCK_MODEL_ID = (
     "bedrock:{region}.anthropic.claude-haiku-4-5-20251001-v1:0"
 )
-NOVA_LITE_BEDROCK_MODEL_ID = "bedrock:{region}.amazon.nova-2-lite-v1:0"
 MISTRAL_LARGE_MODEL_ID = "mistral:mistral-large-latest"
 
 # ARXIV URLS

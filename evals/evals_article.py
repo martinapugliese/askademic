@@ -3,13 +3,23 @@ Checks match link-title pairs by
 searching first by title and then by link.
 """
 
+import os
 import re
 import time
 
+import logfire
+from dotenv import load_dotenv
 from rich.console import Console
 
 from askademic.article import ArticleAgent
 from askademic.utils import choose_model
+
+# Load environment and configure logfire
+load_dotenv()
+logfire_token = os.getenv("LOGFIRE_TOKEN", None)
+if logfire_token:
+    logfire.configure(token=logfire_token, console=False)
+    logfire.instrument_pydantic_ai()
 
 
 class ArticleResponseTestCase:

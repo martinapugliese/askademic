@@ -1,18 +1,13 @@
 import logging
+import re
 from datetime import datetime
 
 from pydantic import BaseModel, Field
-from pydantic_ai import Agent
+from pydantic_ai import Agent, RunContext
 from pydantic_ai.settings import ModelSettings
+from pydantic_ai.usage import UsageLimits
 
-from askademic.prompts.general import (
-    SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
-    SYSTEM_PROMPT_MANY_ARTICLES,
-    SYSTEM_PROMPT_QUERY,
-    USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE,
-    USER_PROMPT_MANY_ARTICLES_TEMPLATE,
-    USER_PROMPT_QUERY_TEMPLATE,
-)
+from askademic.prompts.general import SYSTEM_PROMPT_QUESTION_AGENT
 from askademic.tools import get_article, search_articles_by_abs
 
 today = datetime.now().strftime("%Y-%m-%d")
@@ -20,36 +15,19 @@ logging.basicConfig(level=logging.INFO, filename=f"logs/{today}_logs.txt")
 logger = logging.getLogger(__name__)
 
 
-class QueryResponse(BaseModel):
-    """The list of queries that are relevant for the request."""
-
-    queries: list[str] = Field(description="The list of queries to search for articles")
-
-
-class Article(BaseModel):
-    """An article that is relevant for the request."""
-
-    article_url: str = Field(description="The url to the article")
-    relevance_score: float = Field(
-        description="The relevance score of the article to the question"
-    )
-
-
-class ArticleListResponse(BaseModel):
-    """The list of articles that are relevant for the request."""
-
-    article_list: list[Article] = Field(
-        description="The list of articles needed to answer the question."
-    )
-
-
 class QuestionAnswerResponse(BaseModel):
     """The response to the question based on the articles."""
 
     response: str = Field(description="The response to the question")
     article_list: list[str] = Field(
-        description="The list of abstract/article urls you used to answer to the question."
+        description="The list of article URLs you used to answer the question."
     )
+
+
+class QuestionAgentDeps(BaseModel):
+    """Dependencies for the question agent."""
+
+    use_cache: bool = True
 
 
 class QuestionAgent:
@@ -57,87 +35,107 @@ class QuestionAgent:
         self,
         model: str,
         model_settings: ModelSettings = None,
-        query_list_limit: int = 10,
-        relevance_score_threshold: float = 0.8,
-        article_list_limit: int = 10,
+        use_cache: bool = True,
     ):
         """
-        Initialize the QuestionAgent with the query list limit.
+        Initialize the QuestionAgent.
+
         Args:
-            query_list_limit (int): The maximum number of queries to generate.
+            model: The model to use for the agent.
+            model_settings: Optional model settings.
+            use_cache: Whether to use cached articles. Default is True.
         """
+        self.use_cache = use_cache
 
-        self._query_list_limit = query_list_limit
-        self._relevance_score_threshold = relevance_score_threshold
-        self._article_list_limit = article_list_limit
-        self._search_articles_by_abs = search_articles_by_abs
-        self._get_article = get_article
-
-        self._query_agent = Agent(
+        self._agent = Agent(
             model=model,
             model_settings=model_settings,
-            system_prompt=SYSTEM_PROMPT_QUERY,
-            output_type=QueryResponse,
-        )
-
-        self._abstract_relevance_agent = Agent(
-            model=model,
-            model_settings=model_settings,
-            system_prompt=SYSTEM_PROMPT_ABSTRACT_RELEVANCE,
-            output_type=ArticleListResponse,
-        )
-
-        self._many_articles_agent = Agent(
-            model=model,
-            model_settings=model_settings,
-            system_prompt=SYSTEM_PROMPT_MANY_ARTICLES,
+            system_prompt=SYSTEM_PROMPT_QUESTION_AGENT,
             output_type=QuestionAnswerResponse,
+            deps_type=QuestionAgentDeps,
         )
 
-    async def __call__(self, question: str) -> QuestionAnswerResponse:
+        @self._agent.tool
+        def search_articles(ctx: RunContext[QuestionAgentDeps], query: str) -> str:
+            """
+            Search arXiv for articles by searching in their abstracts.
+            Returns a JSON string with article links and abstracts.
 
-        # Generate Queries
-        query_list = await self._query_agent.run(
-            USER_PROMPT_QUERY_TEMPLATE.format(question=question),
-        )
+            Args:
+                query: The search query to find relevant articles.
+            Returns:
+                A JSON string containing a list of articles with their links and abstracts.
+            """
+            logger.info(f"{datetime.now()}: Searching articles with query: {query}")
+            result = search_articles_by_abs(query)
+            logger.info(f"{datetime.now()}: Search results: {result[:200]}...")
+            return result
 
-        # Retrieve abstract lists
-        abstract_list = [
-            self._search_articles_by_abs(query)
-            for query in query_list.output.queries[: self._query_list_limit]
-        ]
+        @self._agent.tool
+        def fetch_article(ctx: RunContext[QuestionAgentDeps], link: str) -> str:
+            """
+            Fetch the full content of an article from arXiv.
 
-        # Filter relevant abstracts
-        article_link_list = []
-        for abstracts in abstract_list:
-            article_link_list_tmp = await self._abstract_relevance_agent.run(
-                USER_PROMPT_ABSTRACT_RELEVANCE_TEMPLATE.format(
-                    question=question, abstracts=abstracts
-                ),
-            )
-            article_link_list += list(article_link_list_tmp.output.article_list)
+            Args:
+                link: The arXiv link or ID (e.g., "https://arxiv.org/abs/1706.03762"
+                      or "1706.03762" or "https://arxiv.org/pdf/1706.03762.pdf").
+            Returns:
+                The full text content of the article.
+            """
+            normalized_link = self._normalize_arxiv_link(link)
+            logger.info(f"{datetime.now()}: Fetching article: {normalized_link}")
+            result = get_article(normalized_link, use_cache=ctx.deps.use_cache)
+            logger.info(f"{datetime.now()}: Article fetched, length: {len(result)}")
+            return result
 
-        logger.info("article_link_list: %s", article_link_list)
+    def _normalize_arxiv_link(self, link: str) -> str:
+        """
+        Normalize various arXiv link formats to PDF URL.
 
-        # Filter the article list based on the relevance score threshold
-        article_link_list = [
-            article.article_url
-            for article in article_link_list
-            if article.relevance_score >= self._relevance_score_threshold
-            and article.article_url != "No articles found"
-        ]
+        Handles:
+        - Full PDF URL: https://arxiv.org/pdf/1706.03762.pdf
+        - Abstract URL: https://arxiv.org/abs/1706.03762
+        - Just the ID: 1706.03762 or 2401.00001
+        """
+        if link.endswith(".pdf"):
+            return link
 
-        logger.info("article_link_list after filtering: %s", article_link_list)
+        arxiv_id = None
+        id_pattern = r"(\d{4}\.\d{4,5})"
 
-        article_link_list = article_link_list[: self._article_list_limit]
-        article_list = [self._get_article(article) for article in article_link_list]
-        article_list = "\n".join(article_list)
+        if "arxiv.org" in link:
+            match = re.search(id_pattern, link)
+            if match:
+                arxiv_id = match.group(1)
+        else:
+            match = re.match(id_pattern, link.strip())
+            if match:
+                arxiv_id = match.group(1)
 
-        # Use the article list to answer the question
-        question_answer = await self._many_articles_agent.run(
-            USER_PROMPT_MANY_ARTICLES_TEMPLATE.format(
-                question=question, articles=article_list
-            ),
-        )
+        if arxiv_id:
+            return f"https://arxiv.org/pdf/{arxiv_id}.pdf"
 
-        return question_answer
+        return link
+
+    async def run(self, question: str):
+        """
+        Run the question agent to answer a research question.
+
+        Args:
+            question: The research question to answer.
+
+        Returns:
+            The agent result with the answer and list of article URLs used.
+        """
+        logger.info(f"{datetime.now()}: QuestionAgent received question: {question}")
+
+        deps = QuestionAgentDeps(use_cache=self.use_cache)
+        usage_limits = UsageLimits(tool_calls_limit=20)
+        result = await self._agent.run(question, deps=deps, usage_limits=usage_limits)
+
+        logger.info(f"{datetime.now()}: QuestionAgent completed question")
+        return result
+
+    async def __call__(self, question: str):
+        """Alias for run() to maintain backward compatibility."""
+        return await self.run(question)

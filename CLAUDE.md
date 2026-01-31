@@ -60,13 +60,12 @@ pre-commit run --all-files      # Run pre-commit hooks
 - **Gemini 2.0 Flash** (default, preferred for cost and context window)
 - **Claude 4.5 Haiku** (experimental, rate limited)
 - **Claude via AWS Bedrock** (experimental)
-- **Nova 2 Lite via AWS Bedrock** (experimental)
 
 ## Configuration
 
 ### Environment Variables
 Required in `.env` file (copy from `.env-template`):
-- `LLM_FAMILY`: "gemini", "claude", "claude-aws-bedrock", or "nova-lite-aws-bedrock"
+- `LLM_FAMILY`: "gemini", "claude", or "claude-aws-bedrock"
 - `GOOGLE_API_KEY`: For Gemini models
 - `ANTHROPIC_API_KEY`: For Claude models
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`: For AWS Bedrock

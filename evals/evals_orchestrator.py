@@ -2,8 +2,11 @@
 Checks delegation to right agent via type of response.
 """
 
+import os
 import time
 
+import logfire
+from dotenv import load_dotenv
 from pydantic_ai.usage import UsageLimits
 from rich.console import Console
 
@@ -13,6 +16,13 @@ from askademic.orchestrator import orchestrator_agent_base
 from askademic.question import QuestionAnswerResponse
 from askademic.summary import SummaryResponse
 from askademic.utils import choose_model
+
+# Load environment and configure logfire
+load_dotenv()
+logfire_token = os.getenv("LOGFIRE_TOKEN", None)
+if logfire_token:
+    logfire.configure(token=logfire_token, console=False)
+    logfire.instrument_pydantic_ai()
 
 
 class OrchestratorTestCase:

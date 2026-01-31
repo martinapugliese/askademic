@@ -70,10 +70,7 @@ class SummaryAgent:
             output_type=Summary,
         )
 
-        if "nova" in str(model):
-            self._max_results = 100
-        else:
-            self._max_results = 300
+        self._max_results = 300
 
         self._identify_latest_day = identify_latest_day
         self._retrieve_recent_articles = retrieve_recent_articles

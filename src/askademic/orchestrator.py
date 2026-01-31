@@ -73,9 +73,6 @@ async def answer_question(ctx: RunContext[Context], question: str) -> list[str]:
     question_agent = QuestionAgent(
         orchestrator_agent_base.model,
         orchestrator_agent_base.model_settings,
-        query_list_limit=2,
-        relevance_score_threshold=0.8,
-        article_list_limit=2,
     )
     r = await question_agent(question=question)
     return r
@@ -99,7 +96,7 @@ async def answer_article(ctx: RunContext[Context], question: str) -> list[str]:
     article_agent = ArticleAgent(
         orchestrator_agent_base.model,
         orchestrator_agent_base.model_settings,
-        use_cache=True  # Enable caching by default
+        use_cache=True,  # Enable caching by default
     )
     r = await article_agent.run(request=question)
     return r

@@ -3,6 +3,7 @@ import asyncio
 import os
 
 import boto3
+import logfire
 from botocore.exceptions import ClientError, NoCredentialsError
 from dotenv import load_dotenv
 from evals_allower import run_evals as run_evals_allower
@@ -13,9 +14,16 @@ from evals_question import run_evals as run_evals_question
 from evals_summary import run_evals as run_evals_summary
 from rich.console import Console
 
+# Load environment and configure logfire early
+load_dotenv()
+logfire_token = os.getenv("LOGFIRE_TOKEN", None)
+if logfire_token:
+    logfire.configure(token=logfire_token, console=False)
+    logfire.instrument_pydantic_ai()
+
 console = Console()
 
-ALL_MODELS = ["gemini", "claude", "claude-aws-bedrock", "nova-lite-aws-bedrock"]
+ALL_MODELS = ["gemini", "claude", "claude-aws-bedrock"]
 ALL_EVALS = ["allower", "orchestrator", "summary", "question", "article", "general"]
 
 EVAL_RUNNERS = {
@@ -85,13 +93,13 @@ def check_model_credentials(model_family: str) -> bool:
         )
         return False
 
-    if model_family in ("claude-aws-bedrock", "nova-lite-aws-bedrock"):
+    if model_family == "claude-aws-bedrock":
         try:
             _ = boto3.client("sts").get_caller_identity()
         except (ClientError, NoCredentialsError):
             console.print(
-                f"[bold red]AWS credentials are not set or invalid. "
-                f"Skipping {model_family} evals.[/bold red]"
+                "[bold red]AWS credentials are not set or invalid. "
+                "Skipping claude-aws-bedrock evals.[/bold red]"
             )
             return False
 

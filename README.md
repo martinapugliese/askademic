@@ -25,7 +25,6 @@ As its underlying LLM, you can choose to run it either with:
 * Gemini (it will use 2.0 Flash) [preferred and default option]
 * Claude (it will use Haiku 4.5) [experimental]
 * Claude via AWS Bedrock (it will use Haiku 4.5) [experimental]
-* Nova 2 Lite via AWS Bedrock [experimental]
 
 Gemini is preferred because:
 * it has a free tier - we privilege cost-effectiveness over speed, which means for short conversations you should be within the quotas of the free tier
@@ -111,7 +110,7 @@ python evals.py -m claude -e allower orchestrator
 python evals.py --list
 ```
 
-Available models: `gemini`, `claude`, `claude-aws-bedrock`, `nova-lite-aws-bedrock`
+Available models: `gemini`, `claude`, `claude-aws-bedrock`
 
 Available evals: `allower`, `orchestrator`, `summary`, `question`, `article`, `general`
 
