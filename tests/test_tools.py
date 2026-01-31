@@ -74,7 +74,6 @@ def test_get_article_():
     article = get_article("http://arxiv.org/pdf/1604.06737v1")
 
     assert "Unlike unstructured data found in nature," in article
-    assert "------END----------------" in article
 
 
 def test_get_article_is_curtailed():
@@ -82,4 +81,6 @@ def test_get_article_is_curtailed():
     # a book
     article = get_article("http://arxiv.org/pdf/1302.6946")
 
-    assert len(article) == 70106  # max len + added wrapping chars
+    assert len(article) == 70058  # max len + xml tags
+    assert article.startswith("<article url=")
+    assert article.endswith("</article>")
